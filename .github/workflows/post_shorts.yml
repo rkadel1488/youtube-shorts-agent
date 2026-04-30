@@ -1,0 +1,76 @@
+name: Post YouTube Shorts
+
+on:
+  schedule:
+    - cron: '0 8 * * *'    # 8 AM UTC — Slot 0
+    - cron: '0 18 * * *'   # 6 PM UTC — Slot 1
+  workflow_dispatch:        # Manual trigger from GitHub UI
+    inputs:
+      slot:
+        description: 'Which slot to run (0 = morning, 1 = evening)'
+        required: false
+        default: '0'
+
+jobs:
+  post-short:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    env:
+      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+      GOOGLE_AI_STUDIO_API_KEY: ${{ secrets.GOOGLE_AI_STUDIO_API_KEY }}
+      PEXELS_API_KEY: ${{ secrets.PEXELS_API_KEY }}
+      YOUTUBE_CLIENT_SECRETS_FILE: client_secrets.json
+      YOUTUBE_TOKEN_FILE: youtube_token.json
+      POSTING_TIMES: "08:00,18:00"
+      MADE_FOR_KIDS: "false"
+      GEMINI_TTS_VOICE: "Charon"
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install system fonts
+        run: sudo apt-get install -y fonts-dejavu-core
+
+      - name: Install Python dependencies
+        run: pip install -r requirements.txt
+
+      - name: Restore YouTube credentials
+        run: |
+          echo '${{ secrets.YOUTUBE_CLIENT_SECRETS }}' > client_secrets.json
+          echo '${{ secrets.YOUTUBE_TOKEN }}' > youtube_token.json
+
+      - name: Determine slot from schedule
+        id: slot
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "slot=${{ github.event.inputs.slot }}" >> $GITHUB_OUTPUT
+          else
+            HOUR=$(date -u +%H | sed 's/^0//')
+            if [ "${HOUR:-0}" -lt 12 ]; then
+              echo "slot=0" >> $GITHUB_OUTPUT
+            else
+              echo "slot=1" >> $GITHUB_OUTPUT
+            fi
+          fi
+
+      - name: Run pipeline
+        run: python main.py --run-now --slot ${{ steps.slot.outputs.slot }}
+
+      - name: Upload result as artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: short-output-${{ github.run_number }}
+          path: |
+            output/**/result.json
+            output/**/seo.json
+            output/**/script.json
+          retention-days: 30
