@@ -2,12 +2,13 @@ name: Post YouTube Shorts
 
 on:
   schedule:
-    - cron: '0 8 * * *'    # 8 AM UTC — Slot 0
-    - cron: '0 18 * * *'   # 6 PM UTC — Slot 1
+    - cron: '0 8 * * *'    # 8 AM UTC  — Slot 0 (morning)
+    - cron: '0 14 * * *'   # 2 PM UTC  — Slot 1 (afternoon)
+    - cron: '0 20 * * *'   # 8 PM UTC  — Slot 2 (evening)
   workflow_dispatch:        # Manual trigger from GitHub UI
     inputs:
       slot:
-        description: 'Which slot to run (0 = morning, 1 = evening)'
+        description: 'Which slot to run (0 = morning, 1 = afternoon, 2 = evening)'
         required: false
         default: '0'
 
@@ -22,7 +23,7 @@ jobs:
       PEXELS_API_KEY: ${{ secrets.PEXELS_API_KEY }}
       YOUTUBE_CLIENT_SECRETS_FILE: client_secrets.json
       YOUTUBE_TOKEN_FILE: youtube_token.json
-      POSTING_TIMES: "08:00,18:00"
+      POSTING_TIMES: "08:00,14:00,20:00"
       MADE_FOR_KIDS: "false"
       GEMINI_TTS_VOICE: "Charon"
 
@@ -54,10 +55,12 @@ jobs:
             echo "slot=${{ github.event.inputs.slot }}" >> $GITHUB_OUTPUT
           else
             HOUR=$(date -u +%H | sed 's/^0//')
-            if [ "${HOUR:-0}" -lt 12 ]; then
+            if [ "${HOUR:-0}" -lt 11 ]; then
               echo "slot=0" >> $GITHUB_OUTPUT
-            else
+            elif [ "${HOUR:-0}" -lt 17 ]; then
               echo "slot=1" >> $GITHUB_OUTPUT
+            else
+              echo "slot=2" >> $GITHUB_OUTPUT
             fi
           fi
 

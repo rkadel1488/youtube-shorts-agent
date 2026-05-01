@@ -40,21 +40,19 @@ log = get_logger("main")
 
 def _pick_niche(slot: int) -> dict:
     day = datetime.now().timetuple().tm_yday
-    index = (day * 2 + slot) % len(NICHES)
+    index = (day * 3 + slot) % len(NICHES)
     return NICHES[index]
 
 
 def _current_slot() -> int:
-    """Return 0 for the first daily post, 1 for the second."""
+    """Return the slot index (0, 1, 2) based on the current hour."""
     hour = datetime.now().hour
     times = sorted(POSTING_TIMES)
-    if len(times) < 2:
-        return 0
-    threshold_hour = int(times[0].split(":")[0])
-    second_hour = int(times[1].split(":")[0])
-    if hour >= second_hour:
-        return 1
-    return 0
+    slot = 0
+    for i, t in enumerate(times):
+        if hour >= int(t.split(":")[0]):
+            slot = i
+    return slot
 
 
 # ── Core pipeline ──────────────────────────────────────────────────────────────
@@ -164,8 +162,8 @@ def _post_slot(slot: int):
 
 def start_scheduler():
     """Register posting times and keep the scheduler alive."""
-    if len(POSTING_TIMES) < 2:
-        log.warning("Less than 2 posting times configured — only %d scheduled", len(POSTING_TIMES))
+    if len(POSTING_TIMES) < 3:
+        log.warning("Less than 3 posting times configured — only %d scheduled", len(POSTING_TIMES))
 
     for i, t in enumerate(sorted(POSTING_TIMES)):
         schedule.every().day.at(t).do(_post_slot, slot=i)
@@ -197,8 +195,8 @@ if __name__ == "__main__":
         "--slot",
         type=int,
         default=0,
-        choices=[0, 1],
-        help="Which daily slot to run (0=AM, 1=PM). Only used with --run-now",
+        choices=[0, 1, 2],
+        help="Which daily slot to run (0=morning, 1=afternoon, 2=evening). Only used with --run-now",
     )
     args = parser.parse_args()
 
