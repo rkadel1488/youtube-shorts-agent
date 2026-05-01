@@ -2,15 +2,16 @@ name: Post YouTube Shorts
 
 on:
   schedule:
-    - cron: '0 8 * * *'    # 8 AM UTC  — Slot 0 (morning)
-    - cron: '0 14 * * *'   # 2 PM UTC  — Slot 1 (afternoon)
-    - cron: '0 20 * * *'   # 8 PM UTC  — Slot 2 (evening)
+    - cron: '0 2 * * *'    # 2 AM UTC  — Slot 0 (night)
+    - cron: '0 8 * * *'    # 8 AM UTC  — Slot 1 (morning)
+    - cron: '0 14 * * *'   # 2 PM UTC  — Slot 2 (afternoon)
+    - cron: '0 20 * * *'   # 8 PM UTC  — Slot 3 (evening)
   workflow_dispatch:        # Manual trigger from GitHub UI
     inputs:
       slot:
-        description: 'Which slot to run (0 = morning, 1 = afternoon, 2 = evening)'
+        description: 'Which slot to run (0 = night, 1 = morning, 2 = afternoon, 3 = evening)'
         required: false
-        default: '0'
+        default: '1'
 
 jobs:
   post-short:
@@ -23,7 +24,10 @@ jobs:
       PEXELS_API_KEY: ${{ secrets.PEXELS_API_KEY }}
       YOUTUBE_CLIENT_SECRETS_FILE: client_secrets.json
       YOUTUBE_TOKEN_FILE: youtube_token.json
-      POSTING_TIMES: "08:00,14:00,20:00"
+      TIKTOK_CLIENT_KEY: ${{ secrets.TIKTOK_CLIENT_KEY }}
+      TIKTOK_CLIENT_SECRET: ${{ secrets.TIKTOK_CLIENT_SECRET }}
+      TIKTOK_TOKEN_FILE: tiktok_token.json
+      POSTING_TIMES: "02:00,08:00,14:00,20:00"
       MADE_FOR_KIDS: "false"
       GEMINI_TTS_VOICE: "Charon"
 
@@ -43,10 +47,13 @@ jobs:
       - name: Install Python dependencies
         run: pip install -r requirements.txt
 
-      - name: Restore YouTube credentials
+      - name: Restore credentials
         run: |
           echo '${{ secrets.YOUTUBE_CLIENT_SECRETS }}' > client_secrets.json
           echo '${{ secrets.YOUTUBE_TOKEN }}' > youtube_token.json
+          if [ -n '${{ secrets.TIKTOK_TOKEN }}' ]; then
+            echo '${{ secrets.TIKTOK_TOKEN }}' > tiktok_token.json
+          fi
 
       - name: Determine slot from schedule
         id: slot
@@ -55,12 +62,14 @@ jobs:
             echo "slot=${{ github.event.inputs.slot }}" >> $GITHUB_OUTPUT
           else
             HOUR=$(date -u +%H | sed 's/^0//')
-            if [ "${HOUR:-0}" -lt 11 ]; then
+            if [ "${HOUR:-0}" -lt 5 ]; then
               echo "slot=0" >> $GITHUB_OUTPUT
-            elif [ "${HOUR:-0}" -lt 17 ]; then
+            elif [ "${HOUR:-0}" -lt 11 ]; then
               echo "slot=1" >> $GITHUB_OUTPUT
-            else
+            elif [ "${HOUR:-0}" -lt 17 ]; then
               echo "slot=2" >> $GITHUB_OUTPUT
+            else
+              echo "slot=3" >> $GITHUB_OUTPUT
             fi
           fi
 

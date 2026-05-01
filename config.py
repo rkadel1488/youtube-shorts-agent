@@ -14,6 +14,11 @@ ANTHROPIC_API_KEY: str = os.getenv("ANTHROPIC_API_KEY", "")
 GOOGLE_AI_STUDIO_API_KEY: str = os.getenv("GOOGLE_AI_STUDIO_API_KEY", "")
 PEXELS_API_KEY: str = os.getenv("PEXELS_API_KEY", "")
 
+# TikTok OAuth credentials
+TIKTOK_CLIENT_KEY: str = os.getenv("TIKTOK_CLIENT_KEY", "")
+TIKTOK_CLIENT_SECRET: str = os.getenv("TIKTOK_CLIENT_SECRET", "")
+TIKTOK_TOKEN_FILE: str = os.getenv("TIKTOK_TOKEN_FILE", "tiktok_token.json")
+
 # Gemini TTS voice — options: Zephyr, Puck, Charon, Kore, Fenrir, Leda, Orus, Aoede
 GEMINI_TTS_VOICE: str = os.getenv("GEMINI_TTS_VOICE", "Charon")
 
@@ -22,8 +27,8 @@ YOUTUBE_CLIENT_SECRETS_FILE: str = os.getenv("YOUTUBE_CLIENT_SECRETS_FILE", "cli
 YOUTUBE_TOKEN_FILE: str = os.getenv("YOUTUBE_TOKEN_FILE", "youtube_token.json")
 YOUTUBE_SCOPES = ["https://www.googleapis.com/auth/youtube.upload"]
 
-# Posting schedule
-POSTING_TIMES: list[str] = os.getenv("POSTING_TIMES", "08:00,14:00,20:00").split(",")
+# Posting schedule — 4 slots per day (02:00, 08:00, 14:00, 20:00 UTC by default)
+POSTING_TIMES: list[str] = os.getenv("POSTING_TIMES", "02:00,08:00,14:00,20:00").split(",")
 
 # Video output settings
 VIDEO_WIDTH = 1080

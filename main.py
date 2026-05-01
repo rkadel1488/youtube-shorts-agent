@@ -27,20 +27,21 @@ import schedule
 from agents.audio_agent import generate_voiceover
 from agents.script_agent import generate_script
 from agents.seo_agent import generate_seo
+from agents.tiktok_agent import upload_to_tiktok
 from agents.upload_agent import upload_video
 from agents.video_agent import create_video
-from config import NICHES, OUTPUT_DIR, POSTING_TIMES
+from config import NICHES, OUTPUT_DIR, POSTING_TIMES, TIKTOK_CLIENT_KEY
 from utils.logger import get_logger
 
 log = get_logger("main")
 
 # ── Niche rotation ─────────────────────────────────────────────────────────────
-# Each day has 2 posting slots (AM=0, PM=1).
-# Niche index = (day_of_year * 2 + slot) % len(NICHES)
+# 4 posting slots per day (02:00, 08:00, 14:00, 20:00).
+# Niche index rotates daily so each day starts on a different niche.
 
 def _pick_niche(slot: int) -> dict:
     day = datetime.now().timetuple().tm_yday
-    index = (day * 3 + slot) % len(NICHES)
+    index = (day + slot) % len(NICHES)
     return NICHES[index]
 
 
@@ -115,7 +116,7 @@ def run_pipeline(slot: int = 0) -> dict:
         )
 
         # ── Step 5: Upload to YouTube ─────────────────────────────────────────
-        log.info("[5/5] Uploading to YouTube…")
+        log.info("[5/6] Uploading to YouTube…")
         video_id = upload_video(
             video_path=video_path,
             title=seo_data["title"],
@@ -134,6 +135,24 @@ def run_pipeline(slot: int = 0) -> dict:
                 "topic": script_data["topic"],
             }
         )
+
+        # ── Step 6: Upload to TikTok (skipped if credentials not set) ─────────
+        if TIKTOK_CLIENT_KEY:
+            log.info("[6/6] Uploading to TikTok…")
+            try:
+                tiktok_publish_id = upload_to_tiktok(
+                    video_path=video_path,
+                    title=seo_data["title"],
+                    hashtags=seo_data["hashtags"],
+                )
+                result["tiktok_publish_id"] = tiktok_publish_id
+                log.info("TikTok publish_id: %s", tiktok_publish_id)
+            except Exception as exc:
+                log.warning("TikTok upload failed (non-fatal): %s", exc)
+                result["tiktok_error"] = str(exc)
+        else:
+            log.info("[6/6] TikTok credentials not configured — skipping.")
+
         _save_json(job_dir / "result.json", result)
 
         log.info("=" * 60)
@@ -162,8 +181,8 @@ def _post_slot(slot: int):
 
 def start_scheduler():
     """Register posting times and keep the scheduler alive."""
-    if len(POSTING_TIMES) < 3:
-        log.warning("Less than 3 posting times configured — only %d scheduled", len(POSTING_TIMES))
+    if len(POSTING_TIMES) < 4:
+        log.warning("Less than 4 posting times configured — only %d scheduled", len(POSTING_TIMES))
 
     for i, t in enumerate(sorted(POSTING_TIMES)):
         schedule.every().day.at(t).do(_post_slot, slot=i)
@@ -195,8 +214,8 @@ if __name__ == "__main__":
         "--slot",
         type=int,
         default=0,
-        choices=[0, 1, 2],
-        help="Which daily slot to run (0=morning, 1=afternoon, 2=evening). Only used with --run-now",
+        choices=[0, 1, 2, 3],
+        help="Which daily slot to run (0=night, 1=morning, 2=afternoon, 3=evening). Only used with --run-now",
     )
     args = parser.parse_args()
 
