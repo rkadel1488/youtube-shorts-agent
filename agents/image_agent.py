@@ -21,25 +21,21 @@ POLLINATIONS_URL = "https://image.pollinations.ai/prompt/{prompt}"
 
 # Cinematic style per niche
 NICHE_STYLES = {
-    "dark_psychology": (
-        "dark moody atmosphere, psychological thriller, "
-        "dramatic chiaroscuro lighting, deep shadows, mysterious, cinematic 8K"
+    "facts_mystery": (
+        "dark enigmatic atmosphere, mysterious ancient ruins, "
+        "dramatic chiaroscuro lighting, deep shadows, eerie glow, cinematic 8K"
     ),
-    "ai_tools": (
-        "futuristic digital world, glowing holographic interface, "
-        "cyberpunk neon blue and purple, cinematic 8K"
+    "storytelling": (
+        "cinematic narrative scene, deeply emotional moment, "
+        "dramatic golden hour lighting, rich storytelling composition, photorealistic 8K"
     ),
-    "history_facts": (
-        "epic historical cinematic scene, dramatic golden hour lighting, "
-        "ancient civilization, photorealistic documentary 8K"
+    "animated_stories": (
+        "vibrant colorful illustrated world, whimsical fantasy environment, "
+        "storybook art style, bright vivid palette, magical atmosphere, highly detailed"
     ),
-    "money_secrets": (
-        "luxury wealth lifestyle, sleek modern architecture, "
-        "gold and black palette, editorial cinematic 8K"
-    ),
-    "space_universe": (
-        "breathtaking cosmic vista, deep space nebula, "
-        "stars and galaxies, epic galactic scale, NASA quality 8K"
+    "travel_culture": (
+        "breathtaking scenic landscape, stunning cultural architecture, "
+        "vivid natural colors, travel photography style, golden light, cinematic 8K"
     ),
 }
 

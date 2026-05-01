@@ -33,37 +33,31 @@ VIDEO_FPS = 30
 # Claude model
 CLAUDE_MODEL = "claude-sonnet-4-6"
 
-# Niche rotation — 5 niches, 2 shorts/day, cycling daily
+# Niche rotation — 4 niches, 2 shorts/day, cycling daily
 NICHES = [
     {
-        "name": "dark_psychology",
-        "label": "Dark Psychology",
+        "name": "facts_mystery",
+        "label": "Facts & Mystery",
         "category_id": "27",  # Education
-        "search_terms": ["psychology", "mind", "brain", "people", "behavior"],
+        "search_terms": ["mystery", "ancient", "secret", "enigma", "discovery"],
     },
     {
-        "name": "ai_tools",
-        "label": "AI Tools",
-        "category_id": "28",  # Science & Technology
-        "search_terms": ["technology", "computer", "robot", "digital", "screen"],
+        "name": "storytelling",
+        "label": "Storytelling",
+        "category_id": "24",  # Entertainment
+        "search_terms": ["story", "narrative", "drama", "emotion", "character"],
     },
     {
-        "name": "history_facts",
-        "label": "History Facts",
-        "category_id": "27",
-        "search_terms": ["ancient", "history", "ruins", "map", "civilization"],
+        "name": "animated_stories",
+        "label": "Animated Stories",
+        "category_id": "1",   # Film & Animation
+        "search_terms": ["animation", "fantasy", "colorful", "magic", "cartoon"],
     },
     {
-        "name": "money_secrets",
-        "label": "Money Secrets",
-        "category_id": "27",
-        "search_terms": ["money", "business", "finance", "investment", "wealth"],
-    },
-    {
-        "name": "space_universe",
-        "label": "Space & Universe",
-        "category_id": "28",
-        "search_terms": ["space", "galaxy", "stars", "universe", "cosmos"],
+        "name": "travel_culture",
+        "label": "Travel & Culture",
+        "category_id": "19",  # Travel & Events
+        "search_terms": ["travel", "culture", "landscape", "architecture", "destination"],
     },
 ]
 
