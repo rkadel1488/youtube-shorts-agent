@@ -13,7 +13,7 @@ python setup_youtube_auth.py
 
 # Run a single Short immediately (for testing)
 python main.py --run-now
-python main.py --run-now --slot 2   # slot 0=night, 1=morning, 2=afternoon, 3=evening
+python main.py --run-now --slot 2   # slot 0=midnight, 1=early, 2=mid, 3=afternoon, 4=evening
 
 # Start the scheduler (runs indefinitely, fires at POSTING_TIMES)
 python main.py
@@ -33,7 +33,7 @@ Copy `.env` (local) or set GitHub Actions secrets:
 | `YOUTUBE_CLIENT_SECRETS` | JSON contents of `client_secrets.json` (GitHub secret) |
 | `YOUTUBE_TOKEN` | JSON contents of `youtube_token.json` (GitHub secret) |
 | `GEMINI_TTS_VOICE` | Default `Charon`; options: Zephyr, Puck, Charon, Kore, Fenrir, Leda, Orus, Aoede |
-| `POSTING_TIMES` | Comma-separated HH:MM times, default `02:00,08:00,14:00,20:00` |
+| `POSTING_TIMES` | Comma-separated HH:MM times, default `00:00,05:00,10:00,15:00,20:00` |
 | `MADE_FOR_KIDS` | `true`/`false`, default `false` |
 
 ## Architecture

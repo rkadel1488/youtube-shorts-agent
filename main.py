@@ -35,7 +35,7 @@ from utils.logger import get_logger
 log = get_logger("main")
 
 # ── Niche rotation ─────────────────────────────────────────────────────────────
-# 4 posting slots per day (02:00, 08:00, 14:00, 20:00).
+# 5 posting slots per day (00:00, 05:00, 10:00, 15:00, 20:00).
 # Niche index rotates daily so each day starts on a different niche.
 
 def _pick_niche(slot: int) -> dict:
@@ -163,8 +163,8 @@ def _post_slot(slot: int):
 
 def start_scheduler():
     """Register posting times and keep the scheduler alive."""
-    if len(POSTING_TIMES) < 4:
-        log.warning("Less than 4 posting times configured — only %d scheduled", len(POSTING_TIMES))
+    if len(POSTING_TIMES) < 5:
+        log.warning("Less than 5 posting times configured — only %d scheduled", len(POSTING_TIMES))
 
     for i, t in enumerate(sorted(POSTING_TIMES)):
         schedule.every().day.at(t).do(_post_slot, slot=i)
@@ -196,8 +196,8 @@ if __name__ == "__main__":
         "--slot",
         type=int,
         default=0,
-        choices=[0, 1, 2, 3],
-        help="Which daily slot to run (0=night, 1=morning, 2=afternoon, 3=evening). Only used with --run-now",
+        choices=[0, 1, 2, 3, 4],
+        help="Which daily slot to run (0=midnight, 1=early, 2=mid, 3=afternoon, 4=evening). Only used with --run-now",
     )
     args = parser.parse_args()
 

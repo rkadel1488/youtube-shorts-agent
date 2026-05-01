@@ -2,14 +2,15 @@ name: Post YouTube Shorts
 
 on:
   schedule:
-    - cron: '0 2 * * *'    # 2 AM UTC  — Slot 0 (night)
-    - cron: '0 8 * * *'    # 8 AM UTC  — Slot 1 (morning)
-    - cron: '0 14 * * *'   # 2 PM UTC  — Slot 2 (afternoon)
-    - cron: '0 20 * * *'   # 8 PM UTC  — Slot 3 (evening)
+    - cron: '0 0 * * *'    # 12 AM UTC — Slot 0 (midnight)
+    - cron: '0 5 * * *'    #  5 AM UTC — Slot 1 (early)
+    - cron: '0 10 * * *'   # 10 AM UTC — Slot 2 (mid)
+    - cron: '0 15 * * *'   #  3 PM UTC — Slot 3 (afternoon)
+    - cron: '0 20 * * *'   #  8 PM UTC — Slot 4 (evening)
   workflow_dispatch:        # Manual trigger from GitHub UI
     inputs:
       slot:
-        description: 'Which slot to run (0 = night, 1 = morning, 2 = afternoon, 3 = evening)'
+        description: 'Which slot to run (0=midnight, 1=early, 2=mid, 3=afternoon, 4=evening)'
         required: false
         default: '1'
 
@@ -24,7 +25,7 @@ jobs:
       PEXELS_API_KEY: ${{ secrets.PEXELS_API_KEY }}
       YOUTUBE_CLIENT_SECRETS_FILE: client_secrets.json
       YOUTUBE_TOKEN_FILE: youtube_token.json
-      POSTING_TIMES: "02:00,08:00,14:00,20:00"
+      POSTING_TIMES: "00:00,05:00,10:00,15:00,20:00"
       MADE_FOR_KIDS: "false"
       GEMINI_TTS_VOICE: "Charon"
 
@@ -56,14 +57,16 @@ jobs:
             echo "slot=${{ github.event.inputs.slot }}" >> $GITHUB_OUTPUT
           else
             HOUR=$(date -u +%H | sed 's/^0//')
-            if [ "${HOUR:-0}" -lt 5 ]; then
+            if [ "${HOUR:-0}" -lt 3 ]; then
               echo "slot=0" >> $GITHUB_OUTPUT
-            elif [ "${HOUR:-0}" -lt 11 ]; then
+            elif [ "${HOUR:-0}" -lt 8 ]; then
               echo "slot=1" >> $GITHUB_OUTPUT
-            elif [ "${HOUR:-0}" -lt 17 ]; then
+            elif [ "${HOUR:-0}" -lt 13 ]; then
               echo "slot=2" >> $GITHUB_OUTPUT
-            else
+            elif [ "${HOUR:-0}" -lt 18 ]; then
               echo "slot=3" >> $GITHUB_OUTPUT
+            else
+              echo "slot=4" >> $GITHUB_OUTPUT
             fi
           fi
 
