@@ -27,10 +27,9 @@ import schedule
 from agents.audio_agent import generate_voiceover
 from agents.script_agent import generate_script
 from agents.seo_agent import generate_seo
-from agents.tiktok_agent import upload_to_tiktok
 from agents.upload_agent import upload_video
 from agents.video_agent import create_video
-from config import NICHES, OUTPUT_DIR, POSTING_TIMES, TIKTOK_CLIENT_KEY
+from config import NICHES, OUTPUT_DIR, POSTING_TIMES
 from utils.logger import get_logger
 
 log = get_logger("main")
@@ -116,7 +115,7 @@ def run_pipeline(slot: int = 0) -> dict:
         )
 
         # ── Step 5: Upload to YouTube ─────────────────────────────────────────
-        log.info("[5/6] Uploading to YouTube…")
+        log.info("[5/5] Uploading to YouTube…")
         video_id = upload_video(
             video_path=video_path,
             title=seo_data["title"],
@@ -135,23 +134,6 @@ def run_pipeline(slot: int = 0) -> dict:
                 "topic": script_data["topic"],
             }
         )
-
-        # ── Step 6: Upload to TikTok (skipped if credentials not set) ─────────
-        if TIKTOK_CLIENT_KEY:
-            log.info("[6/6] Uploading to TikTok…")
-            try:
-                tiktok_publish_id = upload_to_tiktok(
-                    video_path=video_path,
-                    title=seo_data["title"],
-                    hashtags=seo_data["hashtags"],
-                )
-                result["tiktok_publish_id"] = tiktok_publish_id
-                log.info("TikTok publish_id: %s", tiktok_publish_id)
-            except Exception as exc:
-                log.warning("TikTok upload failed (non-fatal): %s", exc)
-                result["tiktok_error"] = str(exc)
-        else:
-            log.info("[6/6] TikTok credentials not configured — skipping.")
 
         _save_json(job_dir / "result.json", result)
 

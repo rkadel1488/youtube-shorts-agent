@@ -11,9 +11,6 @@ pip install -r requirements.txt
 # One-time YouTube OAuth setup (opens browser, saves youtube_token.json)
 python setup_youtube_auth.py
 
-# One-time TikTok OAuth setup (opens browser, saves tiktok_token.json)
-python setup_tiktok_auth.py
-
 # Run a single Short immediately (for testing)
 python main.py --run-now
 python main.py --run-now --slot 2   # slot 0=night, 1=morning, 2=afternoon, 3=evening
@@ -35,9 +32,6 @@ Copy `.env` (local) or set GitHub Actions secrets:
 | `PEXELS_API_KEY` | Present in config but unused — image generation now uses Pollinations.ai (free, no key) |
 | `YOUTUBE_CLIENT_SECRETS` | JSON contents of `client_secrets.json` (GitHub secret) |
 | `YOUTUBE_TOKEN` | JSON contents of `youtube_token.json` (GitHub secret) |
-| `TIKTOK_CLIENT_KEY` | TikTok app client key (from developers.tiktok.com) |
-| `TIKTOK_CLIENT_SECRET` | TikTok app client secret |
-| `TIKTOK_TOKEN` | JSON contents of `tiktok_token.json` (GitHub secret) — TikTok upload skipped if absent |
 | `GEMINI_TTS_VOICE` | Default `Charon`; options: Zephyr, Puck, Charon, Kore, Fenrir, Leda, Orus, Aoede |
 | `POSTING_TIMES` | Comma-separated HH:MM times, default `02:00,08:00,14:00,20:00` |
 | `MADE_FOR_KIDS` | `true`/`false`, default `false` |
@@ -53,13 +47,10 @@ main.py::run_pipeline()
   ├─ agents/audio_agent.py   → Gemini TTS → voiceover.mp3
   ├─ agents/video_agent.py   → Pollinations FLUX (via image_agent) + MoviePy → final.mp4
   │    └─ agents/image_agent.py  → Pollinations.ai free API → 4 × scene_XX.jpg
-  ├─ agents/upload_agent.py  → YouTube Data API v3 → video ID
-  └─ agents/tiktok_agent.py  → TikTok Content Posting API v2 → publish_id (skipped if TIKTOK_CLIENT_KEY unset)
+  └─ agents/upload_agent.py  → YouTube Data API v3 → video ID
 ```
 
 Each agent function signature is simple and self-contained — they receive plain Python types and return a path or dict. All agents implement a `retries` loop with exponential backoff.
-
-**TikTok upload** is non-fatal: if it fails, the job still reports `status: success` with a `tiktok_error` key in `result.json`. TikTok token auto-refreshes via `refresh_token` stored in `tiktok_token.json`.
 
 **Niche rotation**: `config.py::NICHES` defines 4 niches. The active niche is selected by `_pick_niche(slot)` using `(day_of_year + slot) % len(NICHES)`, so the starting niche rotates every day.
 
@@ -67,7 +58,7 @@ Each agent function signature is simple and self-contained — they receive plai
 
 **Video rendering** (`video_agent.py`): Generates 4 AI images via Pollinations → applies Ken Burns zoom/pan effect alternating per image → builds word-chunk caption overlays with Pillow (no ImageMagick) → composites with MoviePy → muxes voiceover audio → exports 1080×1920 MP4 at 30fps.
 
-**CI/CD**: `.github/workflows/post_shorts.yml` triggers via cron at 02:00, 08:00, 14:00, 20:00 UTC (4 slots). Can also be triggered manually via `workflow_dispatch` with a `slot` input (default `1`). Uploads `result.json`, `seo.json`, and `script.json` as artifacts retained for 30 days. Add `TIKTOK_TOKEN` as a GitHub secret to enable TikTok uploads in CI.
+**CI/CD**: `.github/workflows/post_shorts.yml` triggers via cron at 02:00, 08:00, 14:00, 20:00 UTC (4 slots). Can also be triggered manually via `workflow_dispatch` with a `slot` input (default `1`). Uploads `result.json`, `seo.json`, and `script.json` as artifacts retained for 30 days.
 
 **Known quirk**: `moviepy==1.0.3` references `Image.ANTIALIAS` which was removed in Pillow 10+; `video_agent.py` patches this with `Image.ANTIALIAS = Image.LANCZOS` at import time.
 

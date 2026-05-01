@@ -24,9 +24,6 @@ jobs:
       PEXELS_API_KEY: ${{ secrets.PEXELS_API_KEY }}
       YOUTUBE_CLIENT_SECRETS_FILE: client_secrets.json
       YOUTUBE_TOKEN_FILE: youtube_token.json
-      TIKTOK_CLIENT_KEY: ${{ secrets.TIKTOK_CLIENT_KEY }}
-      TIKTOK_CLIENT_SECRET: ${{ secrets.TIKTOK_CLIENT_SECRET }}
-      TIKTOK_TOKEN_FILE: tiktok_token.json
       POSTING_TIMES: "02:00,08:00,14:00,20:00"
       MADE_FOR_KIDS: "false"
       GEMINI_TTS_VOICE: "Charon"
@@ -51,9 +48,6 @@ jobs:
         run: |
           echo '${{ secrets.YOUTUBE_CLIENT_SECRETS }}' > client_secrets.json
           echo '${{ secrets.YOUTUBE_TOKEN }}' > youtube_token.json
-          if [ -n '${{ secrets.TIKTOK_TOKEN }}' ]; then
-            echo '${{ secrets.TIKTOK_TOKEN }}' > tiktok_token.json
-          fi
 
       - name: Determine slot from schedule
         id: slot
