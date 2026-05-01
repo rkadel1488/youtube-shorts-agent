@@ -7,10 +7,14 @@ Run ONCE before starting the agent:
 Prerequisites:
   1. Go to https://developers.tiktok.com and create an app
   2. Enable the "Content Posting API" product
-  3. Add redirect URI: http://localhost:8080/callback
+  3. Add redirect URI: https://localhost (TikTok requires HTTPS, not http://localhost)
   4. Copy client_key and client_secret to .env as TIKTOK_CLIENT_KEY / TIKTOK_CLIENT_SECRET
+
+How the auth flow works:
+  - Your browser opens TikTok's auth page
+  - After approving, TikTok redirects to https://localhost?code=...  (page won't load — that's fine)
+  - Copy the full URL from your browser's address bar and paste it here
 """
-import http.server
 import json
 import sys
 import time
@@ -22,38 +26,28 @@ import requests
 
 from config import TIKTOK_CLIENT_KEY, TIKTOK_CLIENT_SECRET, TIKTOK_TOKEN_FILE
 
-REDIRECT_URI = "http://localhost:8080/callback"
+# Must exactly match what you registered in the TikTok developer portal
+REDIRECT_URI = "https://localhost"
 AUTH_URL = "https://www.tiktok.com/v2/auth/authorize/"
 TOKEN_URL = "https://open.tiktokapis.com/v2/oauth/token/"
 SCOPES = "user.info.basic,video.publish,video.upload"
 
-_auth_code: str | None = None
 
-
-class _CallbackHandler(http.server.BaseHTTPRequestHandler):
-    def do_GET(self):
-        global _auth_code
-        parsed = urllib.parse.urlparse(self.path)
+def _extract_code(raw: str) -> str:
+    """
+    Accept either a full redirect URL or a bare code string.
+    e.g. "https://localhost?code=abc123&state=..." → "abc123"
+         "abc123" → "abc123"
+    """
+    raw = raw.strip()
+    if raw.startswith("http"):
+        parsed = urllib.parse.urlparse(raw)
         params = urllib.parse.parse_qs(parsed.query)
         code = params.get("code", [None])[0]
-
-        if code:
-            _auth_code = code
-            body = b"<h2>TikTok auth complete — you can close this tab.</h2>"
-            self.send_response(200)
-            self.send_header("Content-Type", "text/html")
-            self.end_headers()
-            self.wfile.write(body)
-        else:
-            error = params.get("error_description", ["unknown error"])[0]
-            body = f"<h2>Auth failed: {error}</h2>".encode()
-            self.send_response(400)
-            self.send_header("Content-Type", "text/html")
-            self.end_headers()
-            self.wfile.write(body)
-
-    def log_message(self, *args):
-        pass  # suppress default request logging
+        if not code:
+            raise ValueError(f"No 'code' parameter found in URL: {raw}")
+        return code
+    return raw  # bare code pasted directly
 
 
 def main():
@@ -70,26 +64,38 @@ def main():
     })
     auth_url = f"{AUTH_URL}?{params}"
 
-    print("Opening browser for TikTok authentication…")
-    print(f"If the browser doesn't open, visit:\n  {auth_url}\n")
+    print("\n" + "=" * 60)
+    print("  TikTok OAuth Setup")
+    print("=" * 60)
+    print("\nStep 1: Opening TikTok authorization page in your browser…")
+    print(f"        (If it doesn't open, visit the URL below manually)\n")
+    print(f"  {auth_url}\n")
     webbrowser.open(auth_url)
 
-    server = http.server.HTTPServer(("localhost", 8080), _CallbackHandler)
-    server.timeout = 120
-    print("Waiting for callback on http://localhost:8080/callback …")
-    server.handle_request()
+    print("Step 2: Approve the permissions in your browser.")
+    print("        TikTok will redirect to https://localhost — the page")
+    print("        will show a connection error. That is expected.\n")
+    print("Step 3: Copy the FULL URL from your browser's address bar")
+    print("        (it will look like: https://localhost?code=...&state=...)\n")
 
-    if not _auth_code:
-        print("\n[ERROR] No auth code received.")
+    raw = input("Paste the redirect URL (or just the code) here: ").strip()
+    if not raw:
+        print("\n[ERROR] Nothing entered.")
         sys.exit(1)
 
-    # Exchange code for tokens
+    try:
+        auth_code = _extract_code(raw)
+    except ValueError as exc:
+        print(f"\n[ERROR] {exc}")
+        sys.exit(1)
+
+    print("\nExchanging code for access token…")
     resp = requests.post(
         TOKEN_URL,
         data={
             "client_key": TIKTOK_CLIENT_KEY,
             "client_secret": TIKTOK_CLIENT_SECRET,
-            "code": _auth_code,
+            "code": auth_code,
             "grant_type": "authorization_code",
             "redirect_uri": REDIRECT_URI,
         },
