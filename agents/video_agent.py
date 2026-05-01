@@ -1,53 +1,51 @@
 """
-Creates a 1080×1920 YouTube Short from:
-  - Stock video clips (Pexels)
+Creates a 1080x1920 YouTube Short from:
+  - AI-generated images (Google Imagen 3) with Ken Burns zoom/pan effect
   - An MP3 voiceover
-  - Auto-generated caption overlays (Pillow, no ImageMagick needed)
+  - Auto-generated caption overlays (Pillow — no ImageMagick needed)
 
 Pipeline:
-  1. Download clips from Pexels
-  2. Crop/resize each clip to 1080×1920
-  3. Concatenate clips to match audio length
-  4. Render caption overlay images with Pillow
+  1. Generate 4 AI images via Imagen 3
+  2. Apply Ken Burns effect to each image (alternating zoom-in / zoom-out)
+  3. Concatenate image clips to match audio length
+  4. Render caption overlays with Pillow
   5. Composite captions onto video
   6. Mux in voiceover audio
   7. Export final MP4
 """
-import math
 import textwrap
 from pathlib import Path
 
 import numpy as np
-from PIL import Image
+from PIL import Image, ImageDraw, ImageFont
 
 # MoviePy 1.0.3 uses Image.ANTIALIAS which was removed in Pillow 10+
 if not hasattr(Image, "ANTIALIAS"):
     Image.ANTIALIAS = Image.LANCZOS
-from PIL import Image, ImageDraw, ImageFont
+
 from moviepy.editor import (
     AudioFileClip,
     ColorClip,
     CompositeVideoClip,
     ImageClip,
-    VideoFileClip,
+    VideoClip,
     concatenate_videoclips,
 )
 
+from agents.image_agent import generate_images
 from config import VIDEO_FPS, VIDEO_HEIGHT, VIDEO_WIDTH
 from utils.logger import get_logger
-from utils.pexels_client import fetch_clips
 
 log = get_logger(__name__)
 
-# ── Caption styling ────────────────────────────────────────────────────────────
+# ── Caption styling ─────────────────────────────────────────────────────────
 CAPTION_FONT_SIZE = 68
-CAPTION_MAX_CHARS = 28      # chars per line before wrapping
-CAPTION_Y_RATIO = 0.72      # vertical position (fraction of frame height)
+CAPTION_MAX_CHARS = 28
+CAPTION_Y_RATIO = 0.74
 CAPTION_PADDING = 22
-CAPTION_BG_ALPHA = 180      # 0-255 transparency of background box
+CAPTION_BG_ALPHA = 185
 CAPTION_WORDS_PER_CHUNK = 4
 
-# System font candidates (Windows -> Linux fallback)
 FONT_CANDIDATES = [
     "C:/Windows/Fonts/arialbd.ttf",
     "C:/Windows/Fonts/arial.ttf",
@@ -56,24 +54,25 @@ FONT_CANDIDATES = [
 ]
 
 
-def _load_font(size: int) -> ImageFont.FreeTypeFont | ImageFont.ImageFont:
+def _load_font(size: int):
     for path in FONT_CANDIDATES:
         if Path(path).exists():
             return ImageFont.truetype(path, size)
     return ImageFont.load_default()
 
 
+# ── Caption rendering ────────────────────────────────────────────────────────
+
 def _make_caption_frame(text: str, width: int, font) -> np.ndarray:
-    """Render *text* as an RGBA numpy array (caption overlay)."""
+    """Render *text* as an RGBA numpy array for use as a caption overlay."""
     wrapped = textwrap.fill(text, width=CAPTION_MAX_CHARS)
     lines = wrapped.split("\n")
 
-    # Measure text size
     dummy = Image.new("RGBA", (1, 1))
     draw = ImageDraw.Draw(dummy)
-    line_bboxes = [draw.textbbox((0, 0), line, font=font) for line in lines]
-    text_w = max(bb[2] - bb[0] for bb in line_bboxes)
-    line_h = max(bb[3] - bb[1] for bb in line_bboxes)
+    bboxes = [draw.textbbox((0, 0), line, font=font) for line in lines]
+    text_w = max(bb[2] - bb[0] for bb in bboxes)
+    line_h = max(bb[3] - bb[1] for bb in bboxes)
     total_h = line_h * len(lines) + CAPTION_PADDING * (len(lines) - 1)
 
     box_w = text_w + CAPTION_PADDING * 4
@@ -91,72 +90,18 @@ def _make_caption_frame(text: str, width: int, font) -> np.ndarray:
     )
 
     y_cursor = y0 + CAPTION_PADDING
-    for line, bbox in zip(lines, line_bboxes):
+    for line, bbox in zip(lines, bboxes):
         lw = bbox[2] - bbox[0]
         lx = (width - lw) // 2
-        # Shadow
         draw.text((lx + 2, y_cursor + 2), line, font=font, fill=(0, 0, 0, 200))
-        # Main text
         draw.text((lx, y_cursor), line, font=font, fill=(255, 255, 255, 255))
         y_cursor += line_h + CAPTION_PADDING
 
     return np.array(img)
 
 
-def _to_vertical(clip: VideoFileClip) -> VideoFileClip:
-    """Crop and resize a landscape clip to 1080×1920."""
-    target_ratio = VIDEO_WIDTH / VIDEO_HEIGHT  # ~0.5625
-    clip_ratio = clip.w / clip.h
-
-    if clip_ratio > target_ratio:
-        # Wider than target: scale height to 1920, crop width
-        new_h = VIDEO_HEIGHT
-        new_w = int(clip.w * VIDEO_HEIGHT / clip.h)
-        clip = clip.resize((new_w, new_h))
-        x1 = (new_w - VIDEO_WIDTH) // 2
-        clip = clip.crop(x1=x1, y1=0, x2=x1 + VIDEO_WIDTH, y2=VIDEO_HEIGHT)
-    else:
-        # Taller than target: scale width to 1080, crop height
-        new_w = VIDEO_WIDTH
-        new_h = int(clip.h * VIDEO_WIDTH / clip.w)
-        clip = clip.resize((new_w, new_h))
-        y1 = (new_h - VIDEO_HEIGHT) // 2
-        clip = clip.crop(x1=0, y1=y1, x2=VIDEO_WIDTH, y2=y1 + VIDEO_HEIGHT)
-
-    return clip
-
-
-def _build_base_video(clip_paths: list[Path], target_duration: float) -> CompositeVideoClip:
-    """Concatenate and loop clips to reach *target_duration*."""
-    processed = []
-    for path in clip_paths:
-        try:
-            c = VideoFileClip(str(path)).without_audio()
-            c = _to_vertical(c)
-            processed.append(c)
-        except Exception as exc:
-            log.warning("Skipping clip %s: %s", path, exc)
-
-    if not processed:
-        log.warning("No valid clips — using black fallback")
-        return ColorClip(size=(VIDEO_WIDTH, VIDEO_HEIGHT), color=(0, 0, 0), duration=target_duration)
-
-    # Loop until we have enough footage
-    total = sum(c.duration for c in processed)
-    while total < target_duration + 1:
-        processed.extend(processed[:])
-        total = sum(c.duration for c in processed)
-
-    base = concatenate_videoclips(processed, method="compose")
-
-    if base.duration > target_duration:
-        base = base.subclip(0, target_duration)
-
-    return base
-
-
 def _build_captions(script: str, total_duration: float) -> list[ImageClip]:
-    """Split script into chunks and create timed ImageClips for each."""
+    """Split script into word-chunks and create timed caption ImageClips."""
     words = script.split()
     chunks = [
         " ".join(words[i: i + CAPTION_WORDS_PER_CHUNK])
@@ -165,17 +110,17 @@ def _build_captions(script: str, total_duration: float) -> list[ImageClip]:
     if not chunks:
         return []
 
-    chunk_duration = total_duration / len(chunks)
+    chunk_dur = total_duration / len(chunks)
     font = _load_font(CAPTION_FONT_SIZE)
-    caption_clips = []
     y_pos = int(VIDEO_HEIGHT * CAPTION_Y_RATIO)
+    caption_clips = []
 
     for idx, chunk in enumerate(chunks):
         frame = _make_caption_frame(chunk, VIDEO_WIDTH, font)
         clip = (
             ImageClip(frame, ismask=False)
-            .set_start(idx * chunk_duration)
-            .set_duration(chunk_duration)
+            .set_start(idx * chunk_dur)
+            .set_duration(chunk_dur)
             .set_position(("center", y_pos))
         )
         caption_clips.append(clip)
@@ -183,39 +128,145 @@ def _build_captions(script: str, total_duration: float) -> list[ImageClip]:
     return caption_clips
 
 
+# ── Ken Burns effect ─────────────────────────────────────────────────────────
+
+def _fit_image(img: Image.Image) -> Image.Image:
+    """Resize and center-crop image to exactly 1080x1920 with a 10% padding border
+    so there is room to zoom/pan without black edges."""
+    pad_w = int(VIDEO_WIDTH * 1.12)
+    pad_h = int(VIDEO_HEIGHT * 1.12)
+
+    img_ratio = img.width / img.height
+    target_ratio = pad_w / pad_h
+
+    if img_ratio > target_ratio:
+        new_h = pad_h
+        new_w = int(img.width * pad_h / img.height)
+    else:
+        new_w = pad_w
+        new_h = int(img.height * pad_w / img.width)
+
+    img = img.resize((new_w, new_h), Image.LANCZOS)
+    left = (new_w - pad_w) // 2
+    top = (new_h - pad_h) // 2
+    return img.crop((left, top, left + pad_w, top + pad_h))
+
+
+def _ken_burns_clip(img_path: Path, duration: float, reverse: bool = False) -> VideoClip:
+    """
+    Wrap an image in a Ken Burns effect clip.
+    Even-indexed images zoom in; odd-indexed images zoom out.
+    """
+    img = Image.open(img_path).convert("RGB")
+    img_padded = _fit_image(img)
+    pad_w, pad_h = img_padded.size
+    img_array = np.array(img_padded)
+
+    zoom_start = 1.0
+    zoom_end = 0.90  # zoom in by ~10% over the clip duration
+
+    def make_frame(t: float) -> np.ndarray:
+        progress = (t / duration) if duration > 0 else 0
+        if reverse:
+            progress = 1.0 - progress
+
+        scale = zoom_start - (zoom_start - zoom_end) * progress
+        crop_w = int(pad_w * scale)
+        crop_h = int(pad_h * scale)
+
+        # Subtle horizontal drift
+        drift_x = int((pad_w - crop_w) * 0.15 * progress)
+        cx = pad_w // 2 + (drift_x if not reverse else -drift_x)
+        cy = pad_h // 2
+
+        left = max(0, cx - crop_w // 2)
+        top = max(0, cy - crop_h // 2)
+        right = min(pad_w, left + crop_w)
+        bottom = min(pad_h, top + crop_h)
+
+        cropped = img_array[top:bottom, left:right]
+        resized = Image.fromarray(cropped).resize((VIDEO_WIDTH, VIDEO_HEIGHT), Image.LANCZOS)
+        return np.array(resized)
+
+    return VideoClip(make_frame, duration=duration).set_fps(VIDEO_FPS)
+
+
+# ── Slideshow builder ────────────────────────────────────────────────────────
+
+def _build_image_slideshow(img_paths: list[Path], target_duration: float):
+    """Build base video from AI images with alternating Ken Burns effects."""
+    if not img_paths:
+        log.warning("No images available — using black fallback")
+        return ColorClip(size=(VIDEO_WIDTH, VIDEO_HEIGHT), color=(0, 0, 0), duration=target_duration)
+
+    per_img = target_duration / len(img_paths)
+    clips = []
+
+    for i, img_path in enumerate(img_paths):
+        try:
+            clip = _ken_burns_clip(img_path, per_img, reverse=(i % 2 == 1))
+            clips.append(clip)
+            log.info("Ken Burns clip %d created (%.1fs)", i + 1, per_img)
+        except Exception as exc:
+            log.warning("Skipping image %s: %s", img_path.name, exc)
+
+    if not clips:
+        return ColorClip(size=(VIDEO_WIDTH, VIDEO_HEIGHT), color=(0, 0, 0), duration=target_duration)
+
+    # Loop if fewer images than needed (shouldn't happen with 4 images)
+    while sum(c.duration for c in clips) < target_duration:
+        clips.extend(clips[:])
+
+    base = concatenate_videoclips(clips, method="compose")
+    if base.duration > target_duration:
+        base = base.subclip(0, target_duration)
+
+    return base
+
+
+# ── Main entry point ─────────────────────────────────────────────────────────
+
 def create_video(
     script: str,
     audio_path: Path,
     keywords: list[str],
     output_path: Path,
     temp_dir: Path,
+    topic: str = "",
+    niche: dict | None = None,
 ) -> Path:
     """
-    Full pipeline: download clips -> build base video -> add captions -> mux audio -> export.
+    Full pipeline: generate AI images -> Ken Burns slideshow -> captions -> audio -> MP4.
     Returns *output_path*.
     """
-    log.info("Starting video creation…")
+    log.info("Starting video creation...")
+    niche = niche or {"name": "dark_psychology", "label": "Dark Psychology"}
 
-    # 1. Load audio to get exact duration
+    # 1. Get audio duration
     audio = AudioFileClip(str(audio_path))
     duration = audio.duration
     log.info("Audio duration: %.2fs", duration)
 
-    # 2. Download stock clips from Pexels
-    clips_dir = temp_dir / "clips"
-    clip_paths = fetch_clips(keywords, count=6, dest_dir=clips_dir)
+    # 2. Generate AI images
+    images_dir = temp_dir / "images"
+    img_paths = generate_images(
+        topic=topic or script[:60],
+        niche=niche,
+        keywords=keywords,
+        output_dir=images_dir,
+    )
 
-    # 3. Build base video
-    base = _build_base_video(clip_paths, duration)
+    # 3. Build Ken Burns slideshow
+    base = _build_image_slideshow(img_paths, duration)
 
     # 4. Build caption overlays
     captions = _build_captions(script, duration)
 
-    # 5. Composite
+    # 5. Composite captions onto base
     layers = [base] + captions
     final = CompositeVideoClip(layers, size=(VIDEO_WIDTH, VIDEO_HEIGHT))
 
-    # 6. Attach audio
+    # 6. Attach voiceover
     final = final.set_audio(audio)
 
     # 7. Export
@@ -228,12 +279,11 @@ def create_video(
         audio_codec="aac",
         temp_audiofile=str(temp_dir / "temp_audio.m4a"),
         remove_temp=True,
-        logger=None,  # suppress moviepy's own progress bar
+        logger=None,
         threads=4,
         preset="fast",
     )
 
-    # Clean up in-memory clips
     audio.close()
     base.close()
     final.close()

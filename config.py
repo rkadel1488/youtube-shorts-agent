@@ -3,8 +3,9 @@ from pathlib import Path
 from dotenv import load_dotenv
 
 BASE_DIR = Path(__file__).parent
-# override=False so real environment variables (GitHub Actions secrets) take priority over .env
-load_dotenv(BASE_DIR / ".env", override=False)
+# Only load .env if running locally (GitHub Actions sets secrets as real env vars)
+if not os.getenv("GITHUB_ACTIONS"):
+    load_dotenv(BASE_DIR / ".env", override=True)
 OUTPUT_DIR = BASE_DIR / "output"
 OUTPUT_DIR.mkdir(exist_ok=True)
 

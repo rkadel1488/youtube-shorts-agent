@@ -105,13 +105,15 @@ def run_pipeline(slot: int = 0) -> dict:
         )
 
         # ── Step 4: Create video ──────────────────────────────────────────────
-        log.info("[4/5] Creating video…")
+        log.info("[4/5] Creating video...")
         video_path = create_video(
             script=script_data["script"],
             audio_path=audio_path,
             keywords=niche["search_terms"] + script_data.get("keywords", []),
             output_path=job_dir / "final.mp4",
             temp_dir=temp_dir,
+            topic=script_data["topic"],
+            niche=niche,
         )
 
         # ── Step 5: Upload to YouTube ─────────────────────────────────────────
