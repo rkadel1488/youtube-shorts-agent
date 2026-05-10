@@ -23,7 +23,7 @@ YOUTUBE_TOKEN_FILE: str = os.getenv("YOUTUBE_TOKEN_FILE", "youtube_token.json")
 YOUTUBE_SCOPES = ["https://www.googleapis.com/auth/youtube.upload"]
 
 # Posting schedule — 5 slots per day (00:00, 05:00, 10:00, 15:00, 20:00 UTC by default)
-POSTING_TIMES: list[str] = os.getenv("POSTING_TIMES", "00:00,05:00,10:00,15:00,20:00").split(",")
+POSTING_TIMES: list[str] = os.getenv("POSTING_TIMES", "08:00,14:00,20:00").split(",")
 
 # Video output settings
 VIDEO_WIDTH = 1080

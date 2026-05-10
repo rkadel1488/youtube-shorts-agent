@@ -1,17 +1,21 @@
 """
-Generates a YouTube Shorts script + supporting metadata using Claude.
+Generates a YouTube Shorts script + supporting metadata.
+
+Loads a pre-written script from scripts/{niche}/{i:02d}.json (fast, no API call).
+Falls back to Claude API generation if no pre-written scripts are available.
 
 Output schema (JSON):
 {
   "topic": "...",
   "hook": "...",
   "script": "...",
-  "keywords": ["word1", "word2", ...]   # for Pexels search
+  "keywords": ["word1", "word2", ...]
 }
 """
 import json
 import random
 import time
+from pathlib import Path
 
 import anthropic
 
@@ -19,7 +23,8 @@ from config import ANTHROPIC_API_KEY, CLAUDE_MODEL, STORY_TOPICS
 from utils.logger import get_logger
 
 log = get_logger(__name__)
-_client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
+
+SCRIPTS_DIR = Path(__file__).parent.parent / "scripts"
 
 SYSTEM_PROMPT = """You are an expert YouTube Shorts scriptwriter.
 Your scripts go viral because they open with an irresistible hook, use short punchy sentences,
@@ -45,35 +50,61 @@ Return ONLY this JSON (no markdown):
 }}"""
 
 
+def _load_from_disk(niche_name: str) -> dict | None:
+    """Pick a random pre-written script JSON from scripts/{niche}/."""
+    niche_dir = SCRIPTS_DIR / niche_name
+    if not niche_dir.exists():
+        return None
+    files = sorted(niche_dir.glob("*.json"))
+    if not files:
+        return None
+    chosen = random.choice(files)
+    try:
+        data = json.loads(chosen.read_text(encoding="utf-8"))
+        for key in ("topic", "hook", "script", "keywords"):
+            if key not in data:
+                raise ValueError(f"Missing key '{key}' in {chosen}")
+        log.info("Loaded pre-written script from %s: '%s'", chosen.name, data["topic"])
+        return data
+    except Exception as exc:
+        log.warning("Failed to load %s: %s", chosen, exc)
+        return None
+
+
 def generate_script(niche: dict, retries: int = 3) -> dict:
     """
-    Pick a random pre-defined storyline for *niche* and call Claude to write the script.
+    Load a pre-written script from disk, or fall back to Claude API.
     Returns a dict with keys: topic, hook, script, keywords.
     """
+    result = _load_from_disk(niche["name"])
+    if result:
+        return result
+
+    log.info("No pre-written scripts found for '%s' — calling Claude API", niche["name"])
     topics = STORY_TOPICS.get(niche["name"], [])
     topic = random.choice(topics) if topics else niche["label"]
     log.info("Selected storyline: '%s'", topic)
     prompt = SCRIPT_TEMPLATE.format(niche_label=niche["label"], topic=topic)
 
+    client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
     for attempt in range(1, retries + 1):
         try:
             log.info("Generating script for niche '%s' (attempt %d)…", niche["label"], attempt)
-            message = _client.messages.create(
+            message = client.messages.create(
                 model=CLAUDE_MODEL,
                 max_tokens=512,
                 system=SYSTEM_PROMPT,
                 messages=[{"role": "user", "content": prompt}],
             )
             raw = message.content[0].text.strip()
-            result = json.loads(raw)
+            api_result = json.loads(raw)
 
-            # Validate required keys
             for key in ("topic", "hook", "script", "keywords"):
-                if key not in result:
+                if key not in api_result:
                     raise ValueError(f"Missing key '{key}' in Claude response")
 
-            log.info("Script generated: '%s'", result["topic"])
-            return result
+            log.info("Script generated via API: '%s'", api_result["topic"])
+            return api_result
 
         except json.JSONDecodeError as exc:
             log.warning("JSON parse error on attempt %d: %s", attempt, exc)
