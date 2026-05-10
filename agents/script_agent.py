@@ -10,11 +10,12 @@ Output schema (JSON):
 }
 """
 import json
+import random
 import time
 
 import anthropic
 
-from config import ANTHROPIC_API_KEY, CLAUDE_MODEL, NICHES
+from config import ANTHROPIC_API_KEY, CLAUDE_MODEL, STORY_TOPICS
 from utils.logger import get_logger
 
 log = get_logger(__name__)
@@ -25,30 +26,34 @@ Your scripts go viral because they open with an irresistible hook, use short pun
 build curiosity, reveal something surprising, and end with a clear call-to-action.
 Always respond with valid JSON only — no markdown fences, no extra commentary."""
 
-SCRIPT_TEMPLATE = """Write a NEW, unique YouTube Shorts script for the niche: {niche_label}.
+SCRIPT_TEMPLATE = """Write a YouTube Shorts script for the niche: {niche_label}.
+
+Topic to cover: {topic}
 
 Rules:
 - Total spoken length: 20–27 seconds (~60-75 words)
-- Hook (first sentence): shock/curiosity-gap, under 12 words
+- Hook (first sentence): shock/curiosity-gap based on the topic, under 12 words
 - Body: short sentences (max 10 words each), build tension, deliver a surprising fact or reveal
 - CTA (last sentence): "Follow for [specific benefit]."
-- NEVER use a topic already covered. Be creative.
 
 Return ONLY this JSON (no markdown):
 {{
-  "topic": "one-line topic description",
+  "topic": "{topic}",
   "hook": "the opening hook line only",
   "script": "full script including hook, body, and CTA",
-  "keywords": ["3-5 single English words useful for finding relevant stock video on Pexels"]
+  "keywords": ["3-5 single English words useful for finding relevant images"]
 }}"""
 
 
 def generate_script(niche: dict, retries: int = 3) -> dict:
     """
-    Call Claude to generate a script for *niche*.
+    Pick a random pre-defined storyline for *niche* and call Claude to write the script.
     Returns a dict with keys: topic, hook, script, keywords.
     """
-    prompt = SCRIPT_TEMPLATE.format(niche_label=niche["label"])
+    topics = STORY_TOPICS.get(niche["name"], [])
+    topic = random.choice(topics) if topics else niche["label"]
+    log.info("Selected storyline: '%s'", topic)
+    prompt = SCRIPT_TEMPLATE.format(niche_label=niche["label"], topic=topic)
 
     for attempt in range(1, retries + 1):
         try:

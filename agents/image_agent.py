@@ -21,21 +21,29 @@ POLLINATIONS_URL = "https://image.pollinations.ai/prompt/{prompt}"
 
 # Cinematic style per niche
 NICHE_STYLES = {
-    "facts_mystery": (
-        "dark enigmatic atmosphere, mysterious ancient ruins, "
-        "dramatic chiaroscuro lighting, deep shadows, eerie glow, cinematic 8K"
+    "cricket": (
+        "dramatic cricket stadium, floodlit match atmosphere, "
+        "action shot of batting or bowling, crowd roaring, cinematic sports photography 8K"
     ),
-    "storytelling": (
-        "cinematic narrative scene, deeply emotional moment, "
-        "dramatic golden hour lighting, rich storytelling composition, photorealistic 8K"
+    "history": (
+        "epic historical scene, ancient civilization or battlefield, "
+        "dramatic painterly lighting, rich period detail, cinematic documentary style 8K"
     ),
-    "animated_stories": (
-        "vibrant colorful illustrated world, whimsical fantasy environment, "
-        "storybook art style, bright vivid palette, magical atmosphere, highly detailed"
+    "facts": (
+        "stunning scientific visualization, outer space or nature macro, "
+        "vivid colors, awe-inspiring scale, photorealistic educational imagery 8K"
     ),
-    "travel_culture": (
-        "breathtaking scenic landscape, stunning cultural architecture, "
-        "vivid natural colors, travel photography style, golden light, cinematic 8K"
+    "horror": (
+        "dark atmospheric horror scene, deep shadows and eerie fog, "
+        "chilling moonlight, abandoned location, cinematic psychological thriller style 8K"
+    ),
+    "anime": (
+        "vibrant anime art style, dynamic character pose, "
+        "dramatic speed lines and lighting effects, colorful Japanese animation aesthetic, highly detailed"
+    ),
+    "movies": (
+        "cinematic Hollywood scene, dramatic studio lighting, "
+        "film noir or blockbuster atmosphere, rich color grading, photorealistic 8K"
     ),
 }
 
