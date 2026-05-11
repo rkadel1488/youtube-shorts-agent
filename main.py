@@ -16,6 +16,7 @@ Usage:
 """
 import argparse
 import json
+import random
 import shutil
 import sys
 import time
@@ -34,14 +35,9 @@ from utils.logger import get_logger
 
 log = get_logger("main")
 
-# ── Niche rotation ─────────────────────────────────────────────────────────────
-# 3 posting slots per day (08:00, 14:00, 20:00 UTC by default).
-# Niche index rotates daily so each day starts on a different niche.
-
-def _pick_niche(slot: int) -> dict:
-    day = datetime.now().timetuple().tm_yday
-    index = (day + slot) % len(NICHES)
-    return NICHES[index]
+def _pick_niche(slot: int = 0) -> dict:
+    """Pick a fully random niche each run so every post is a different topic."""
+    return random.choice(NICHES)
 
 
 def _current_slot() -> int:
