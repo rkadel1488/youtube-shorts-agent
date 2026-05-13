@@ -3,12 +3,11 @@ YouTube Shorts AI Agent — Main Orchestrator
 ============================================
 Runs a daily scheduler that fires three times per day (configurable via POSTING_TIMES).
 Each run:
-  1. Picks the niche for this slot
-  2. Generates a script  (Claude)
-  3. Generates SEO       (Claude)
-  4. Generates voiceover (ElevenLabs)
-  5. Creates the video   (Pexels + MoviePy)
-  6. Uploads to YouTube  (YouTube Data API)
+  1. Generates a random script on any topic  (Claude picks freely)
+  2. Generates SEO                           (Claude)
+  3. Generates voiceover                     (Gemini TTS)
+  4. Creates the video                       (Pollinations FLUX + MoviePy)
+  5. Uploads to YouTube                      (YouTube Data API)
 
 Usage:
     python main.py               # Start scheduler (runs indefinitely)
@@ -16,7 +15,6 @@ Usage:
 """
 import argparse
 import json
-import random
 import shutil
 import sys
 import time
@@ -30,25 +28,10 @@ from agents.script_agent import generate_script
 from agents.seo_agent import generate_seo
 from agents.upload_agent import upload_video
 from agents.video_agent import create_video
-from config import NICHES, OUTPUT_DIR, POSTING_TIMES
+from config import OUTPUT_DIR, POSTING_TIMES, YOUTUBE_CATEGORY_ID
 from utils.logger import get_logger
 
 log = get_logger("main")
-
-def _pick_niche(slot: int = 0) -> dict:
-    """Pick a fully random niche each run so every post is a different topic."""
-    return random.choice(NICHES)
-
-
-def _current_slot() -> int:
-    """Return the slot index (0, 1, 2) based on the current hour."""
-    hour = datetime.now().hour
-    times = sorted(POSTING_TIMES)
-    slot = 0
-    for i, t in enumerate(times):
-        if hour >= int(t.split(":")[0]):
-            slot = i
-    return slot
 
 
 # ── Core pipeline ──────────────────────────────────────────────────────────────
@@ -58,33 +41,30 @@ def run_pipeline(slot: int = 0) -> dict:
     Execute the full content pipeline for one Short.
     Returns a summary dict with all generated metadata.
     """
-    niche = _pick_niche(slot)
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    job_id = f"{timestamp}_{niche['name']}"
+    job_id = f"{timestamp}_slot{slot}"
 
     log.info("=" * 60)
-    log.info("STARTING JOB: %s | Niche: %s", job_id, niche["label"])
+    log.info("STARTING JOB: %s", job_id)
     log.info("=" * 60)
 
-    # Working directories for this job
     job_dir = OUTPUT_DIR / job_id
     temp_dir = job_dir / "temp"
     job_dir.mkdir(parents=True, exist_ok=True)
     temp_dir.mkdir(parents=True, exist_ok=True)
 
-    result = {"job_id": job_id, "niche": niche["label"], "status": "failed"}
+    result = {"job_id": job_id, "status": "failed"}
 
     try:
         # ── Step 1: Generate script ───────────────────────────────────────────
         log.info("[1/5] Generating script…")
-        script_data = generate_script(niche)
+        script_data = generate_script()
         _save_json(job_dir / "script.json", script_data)
         log.info("Topic: %s", script_data["topic"])
 
         # ── Step 2: Generate SEO ──────────────────────────────────────────────
         log.info("[2/5] Generating SEO metadata…")
         seo_data = generate_seo(
-            niche=niche,
             topic=script_data["topic"],
             hook=script_data["hook"],
         )
@@ -103,11 +83,10 @@ def run_pipeline(slot: int = 0) -> dict:
         video_path = create_video(
             script=script_data["script"],
             audio_path=audio_path,
-            keywords=niche["search_terms"] + script_data.get("keywords", []),
+            keywords=script_data.get("keywords", []),
             output_path=job_dir / "final.mp4",
             temp_dir=temp_dir,
             topic=script_data["topic"],
-            niche=niche,
         )
 
         # ── Step 5: Upload to YouTube ─────────────────────────────────────────
@@ -118,7 +97,7 @@ def run_pipeline(slot: int = 0) -> dict:
             description=seo_data["description"],
             tags=seo_data["tags"],
             hashtags=seo_data["hashtags"],
-            category_id=niche["category_id"],
+            category_id=YOUTUBE_CATEGORY_ID,
         )
 
         result.update(
@@ -143,7 +122,6 @@ def run_pipeline(slot: int = 0) -> dict:
         log.error("JOB FAILED (%s): %s", job_id, exc, exc_info=True)
 
     finally:
-        # Clean up temp clips/files but keep final outputs
         if temp_dir.exists():
             shutil.rmtree(temp_dir, ignore_errors=True)
 
@@ -186,7 +164,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--run-now",
         action="store_true",
-        help="Run one Short immediately (slot 0) and exit",
+        help="Run one Short immediately and exit",
     )
     parser.add_argument(
         "--slot",

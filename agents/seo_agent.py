@@ -26,7 +26,6 @@ Always respond with valid JSON only — no markdown fences, no extra commentary.
 
 SEO_TEMPLATE = """Generate YouTube Shorts SEO metadata for this script.
 
-Niche: {niche_label}
 Topic: {topic}
 Script excerpt: {hook}
 
@@ -45,13 +44,12 @@ Return ONLY this JSON:
 }}"""
 
 
-def generate_seo(niche: dict, topic: str, hook: str, retries: int = 3) -> dict:
+def generate_seo(topic: str, hook: str, retries: int = 3) -> dict:
     """
     Call Claude to generate SEO metadata.
     Returns a dict with keys: title, description, tags, hashtags.
     """
     prompt = SEO_TEMPLATE.format(
-        niche_label=niche["label"],
         topic=topic,
         hook=hook,
     )

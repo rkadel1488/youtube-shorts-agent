@@ -233,14 +233,13 @@ def create_video(
     output_path: Path,
     temp_dir: Path,
     topic: str = "",
-    niche: dict | None = None,
+    **_kwargs,
 ) -> Path:
     """
     Full pipeline: generate AI images -> Ken Burns slideshow -> captions -> audio -> MP4.
     Returns *output_path*.
     """
     log.info("Starting video creation...")
-    niche = niche or {"name": "dark_psychology", "label": "Dark Psychology"}
 
     # 1. Get audio duration
     audio = AudioFileClip(str(audio_path))
@@ -251,7 +250,6 @@ def create_video(
     images_dir = temp_dir / "images"
     img_paths = generate_images(
         topic=topic or script[:60],
-        niche=niche,
         keywords=keywords,
         output_dir=images_dir,
     )
