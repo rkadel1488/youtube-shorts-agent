@@ -44,9 +44,13 @@ Pick ONE specific story, event, person, or fact from that category that most peo
 
 Rules:
 - Total spoken length: 20–27 seconds (~60-75 words)
-- Hook (first sentence): shock/curiosity-gap, under 12 words
-- Body: short sentences (max 10 words each), build tension, deliver a surprising fact or reveal
-- CTA (last sentence): "Follow for [specific benefit]."
+- Hook (first sentence, under 12 words): MUST use one of these proven formulas:
+    • Bold claim: "This [person/thing] did something that defied all logic."
+    • Lie/myth bust: "Everything you know about [X] is wrong."
+    • Curiosity gap: "Nobody talks about what really happened to [X]."
+    • Shock stat: "In [year], [shocking specific fact] happened — and nobody noticed."
+- Body: short punchy sentences (max 10 words each), build tension, deliver the surprising reveal
+- CTA (last sentence): "Follow for [specific benefit related to this niche]."
 
 Return ONLY this JSON (no markdown):
 {{
