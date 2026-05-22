@@ -1,13 +1,13 @@
 """
 Creates a 1080x1920 YouTube Short from:
-  - AI-generated images (Google Imagen 3) with Ken Burns zoom/pan effect
+  - Copyright-free stock video clips (Pexels) cropped to portrait
   - An MP3 voiceover
   - Auto-generated caption overlays (Pillow — no ImageMagick needed)
 
 Pipeline:
-  1. Generate 4 AI images via Imagen 3
-  2. Apply Ken Burns effect to each image (alternating zoom-in / zoom-out)
-  3. Concatenate image clips to match audio length
+  1. Fetch stock video clips from Pexels
+  2. Crop / resize each clip to 1080x1920 portrait
+  3. Concatenate clips to match audio length (loop if needed)
   4. Render caption overlays with Pillow
   5. Composite captions onto video
   6. Mux in voiceover audio
@@ -28,17 +28,17 @@ from moviepy.editor import (
     ColorClip,
     CompositeVideoClip,
     ImageClip,
-    VideoClip,
+    VideoFileClip,
     concatenate_videoclips,
 )
 
-from agents.image_agent import generate_images
+from agents.video_clip_agent import fetch_clips
 from config import VIDEO_FPS, VIDEO_HEIGHT, VIDEO_WIDTH
 from utils.logger import get_logger
 
 log = get_logger(__name__)
 
-# ── Caption styling ─────────────────────────────────────────────────────────
+# ── Caption styling ──────────────────────────────────────────────────────────
 CAPTION_FONT_SIZE = 68
 CAPTION_MAX_CHARS = 28
 CAPTION_Y_RATIO = 0.74
@@ -128,100 +128,59 @@ def _build_captions(script: str, total_duration: float) -> list[ImageClip]:
     return caption_clips
 
 
-# ── Ken Burns effect ─────────────────────────────────────────────────────────
+# ── Video clip processing ────────────────────────────────────────────────────
 
-def _fit_image(img: Image.Image) -> Image.Image:
-    """Resize and center-crop image to exactly 1080x1920 with a 10% padding border
-    so there is room to zoom/pan without black edges."""
-    pad_w = int(VIDEO_WIDTH * 1.12)
-    pad_h = int(VIDEO_HEIGHT * 1.12)
+def _crop_to_portrait(clip: VideoFileClip) -> VideoFileClip:
+    """Center-crop a video clip to 1080x1920 portrait format."""
+    target_ratio = VIDEO_WIDTH / VIDEO_HEIGHT  # ~0.5625
+    clip_ratio = clip.w / clip.h
 
-    img_ratio = img.width / img.height
-    target_ratio = pad_w / pad_h
-
-    if img_ratio > target_ratio:
-        new_h = pad_h
-        new_w = int(img.width * pad_h / img.height)
+    if clip_ratio > target_ratio:
+        # Wider than portrait — scale by height, crop sides
+        scale = VIDEO_HEIGHT / clip.h
+        new_w = int(clip.w * scale)
+        clip = clip.resize((new_w, VIDEO_HEIGHT))
+        x1 = (new_w - VIDEO_WIDTH) // 2
+        clip = clip.crop(x1=x1, x2=x1 + VIDEO_WIDTH)
     else:
-        new_w = pad_w
-        new_h = int(img.height * pad_w / img.width)
+        # Taller than portrait — scale by width, crop top/bottom
+        scale = VIDEO_WIDTH / clip.w
+        new_h = int(clip.h * scale)
+        clip = clip.resize((VIDEO_WIDTH, new_h))
+        y1 = (new_h - VIDEO_HEIGHT) // 2
+        clip = clip.crop(y1=y1, y2=y1 + VIDEO_HEIGHT)
 
-    img = img.resize((new_w, new_h), Image.LANCZOS)
-    left = (new_w - pad_w) // 2
-    top = (new_h - pad_h) // 2
-    return img.crop((left, top, left + pad_w, top + pad_h))
-
-
-def _ken_burns_clip(img_path: Path, duration: float, reverse: bool = False) -> VideoClip:
-    """
-    Wrap an image in a Ken Burns effect clip.
-    Even-indexed images zoom in; odd-indexed images zoom out.
-    """
-    img = Image.open(img_path).convert("RGB")
-    img_padded = _fit_image(img)
-    pad_w, pad_h = img_padded.size
-    img_array = np.array(img_padded)
-
-    zoom_start = 1.0
-    zoom_end = 0.90  # zoom in by ~10% over the clip duration
-
-    def make_frame(t: float) -> np.ndarray:
-        progress = (t / duration) if duration > 0 else 0
-        if reverse:
-            progress = 1.0 - progress
-
-        scale = zoom_start - (zoom_start - zoom_end) * progress
-        crop_w = int(pad_w * scale)
-        crop_h = int(pad_h * scale)
-
-        # Subtle horizontal drift
-        drift_x = int((pad_w - crop_w) * 0.15 * progress)
-        cx = pad_w // 2 + (drift_x if not reverse else -drift_x)
-        cy = pad_h // 2
-
-        left = max(0, cx - crop_w // 2)
-        top = max(0, cy - crop_h // 2)
-        right = min(pad_w, left + crop_w)
-        bottom = min(pad_h, top + crop_h)
-
-        cropped = img_array[top:bottom, left:right]
-        resized = Image.fromarray(cropped).resize((VIDEO_WIDTH, VIDEO_HEIGHT), Image.LANCZOS)
-        return np.array(resized)
-
-    return VideoClip(make_frame, duration=duration).set_fps(VIDEO_FPS)
+    return clip.resize((VIDEO_WIDTH, VIDEO_HEIGHT))
 
 
-# ── Slideshow builder ────────────────────────────────────────────────────────
-
-def _build_image_slideshow(img_paths: list[Path], target_duration: float):
-    """Build base video from AI images with alternating Ken Burns effects."""
-    if not img_paths:
-        log.warning("No images available — using black fallback")
+def _build_clip_video(clip_paths: list[Path], target_duration: float):
+    """Assemble stock video clips into a portrait video matching target_duration."""
+    if not clip_paths:
+        log.warning("No clips available — using black fallback")
         return ColorClip(size=(VIDEO_WIDTH, VIDEO_HEIGHT), color=(0, 0, 0), duration=target_duration)
 
-    per_img = target_duration / len(img_paths)
-    clips = []
-
-    for i, img_path in enumerate(img_paths):
+    processed = []
+    for path in clip_paths:
         try:
-            clip = _ken_burns_clip(img_path, per_img, reverse=(i % 2 == 1))
-            clips.append(clip)
-            log.info("Ken Burns clip %d created (%.1fs)", i + 1, per_img)
+            raw = VideoFileClip(str(path), audio=False)
+            portrait = _crop_to_portrait(raw)
+            processed.append(portrait)
+            log.info("Loaded clip %s (%.1fs)", path.name, raw.duration)
         except Exception as exc:
-            log.warning("Skipping image %s: %s", img_path.name, exc)
+            log.warning("Skipping clip %s: %s", path.name, exc)
 
-    if not clips:
+    if not processed:
         return ColorClip(size=(VIDEO_WIDTH, VIDEO_HEIGHT), color=(0, 0, 0), duration=target_duration)
 
-    # Loop if fewer images than needed (shouldn't happen with 4 images)
-    while sum(c.duration for c in clips) < target_duration:
-        clips.extend(clips[:])
+    # Concatenate and loop until we cover target_duration
+    base = concatenate_videoclips(processed, method="compose")
+    while base.duration < target_duration:
+        base = concatenate_videoclips(
+            [base, concatenate_videoclips(processed, method="compose")],
+            method="compose",
+        )
 
-    base = concatenate_videoclips(clips, method="compose")
-    if base.duration > target_duration:
-        base = base.subclip(0, target_duration)
-
-    return base
+    return base.subclip(0, target_duration)
 
 
 # ── Main entry point ─────────────────────────────────────────────────────────
@@ -236,7 +195,7 @@ def create_video(
     **_kwargs,
 ) -> Path:
     """
-    Full pipeline: generate AI images -> Ken Burns slideshow -> captions -> audio -> MP4.
+    Full pipeline: fetch stock clips -> portrait crop -> captions -> audio -> MP4.
     Returns *output_path*.
     """
     log.info("Starting video creation...")
@@ -246,21 +205,18 @@ def create_video(
     duration = audio.duration
     log.info("Audio duration: %.2fs", duration)
 
-    # 2. Generate AI images
-    images_dir = temp_dir / "images"
-    img_paths = generate_images(
-        topic=topic or script[:60],
-        keywords=keywords,
-        output_dir=images_dir,
-    )
+    # 2. Fetch stock video clips from Pexels
+    clips_dir = temp_dir / "clips"
+    search_terms = keywords if keywords else [topic or "cinematic"]
+    clip_paths = fetch_clips(keywords=search_terms, output_dir=clips_dir, num_clips=5)
 
-    # 3. Build Ken Burns slideshow
-    base = _build_image_slideshow(img_paths, duration)
+    # 3. Build portrait video from clips
+    base = _build_clip_video(clip_paths, duration)
 
     # 4. Build caption overlays
     captions = _build_captions(script, duration)
 
-    # 5. Composite captions onto base
+    # 5. Composite captions onto base video
     layers = [base] + captions
     final = CompositeVideoClip(layers, size=(VIDEO_WIDTH, VIDEO_HEIGHT))
 
