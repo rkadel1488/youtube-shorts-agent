@@ -184,9 +184,9 @@ def create_video(
         preset="fast",
     )
 
-    raw.close()
-    base.close()
     final.close()
+    base.close()
+    raw.close()
 
     log.info("Done: %s (%.1f MB)", output_path, output_path.stat().st_size / 1e6)
     return output_path
