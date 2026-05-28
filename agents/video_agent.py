@@ -167,7 +167,7 @@ def create_video(
         log.warning("No music available — video will be silent")
 
     # 4. Add title card overlay
-    title = _title_overlay(video_title, duration)
+    title = _title_overlay(topic, duration)
     final = CompositeVideoClip([base, title], size=(VIDEO_WIDTH, VIDEO_HEIGHT))
 
     # 5. Export
