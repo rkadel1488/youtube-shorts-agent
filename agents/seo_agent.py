@@ -24,16 +24,16 @@ from utils.logger import get_logger
 
 log = get_logger(__name__)
 
-SYSTEM_PROMPT = """You are a top YouTube Shorts SEO strategist in 2025 specialising in cricket content.
+SYSTEM_PROMPT = """You are a top YouTube Shorts SEO strategist in 2025 specialising in viral short-form video content.
 You write titles and descriptions that maximise click-through rate and watch time.
 Always respond with valid JSON only — no markdown fences, no extra commentary."""
 
-SEO_TEMPLATE = """Generate high-performing YouTube Shorts SEO metadata for this cricket highlight video.
+SEO_TEMPLATE = """Generate high-performing YouTube Shorts SEO metadata for this video.
 
 Topic: {topic}
 Hook (opening line): {hook}
 
-Here are the tags and hashtags currently used by the TOP-VIEWED cricket highlight videos on YouTube.
+Here are the tags and hashtags currently used by the TOP-VIEWED videos on YouTube in this niche.
 Use these as your primary source — they are proven to rank:
 
 Trending tags from top videos:
@@ -44,7 +44,7 @@ Trending hashtags from top videos:
 
 TITLE rules:
 - 50-60 characters max
-- Cricket-specific: mention teams, player names, or match moment if known
+- Mention the key topic, player, or moment if known
 - Use a curiosity gap or bold claim (e.g. "Nobody saw this coming", "This changed everything")
 - You MAY use ONE emoji at the start or end for visual pop
 - No ALL-CAPS words
@@ -53,41 +53,46 @@ DESCRIPTION rules:
 - 4-5 sentences total
 - Sentence 1: restate the hook in different words to reinforce curiosity
 - Sentences 2-3: expand on why this moment is historic or dramatic
-- Sentence 4: soft CTA — "Follow for daily cricket highlights."
-- End the description with: #Shorts #Cricket
+- Sentence 4: soft CTA — "Follow for more."
+- End the description with: #Shorts
 
 TAGS rules (plain English, no #):
 - Return exactly 20 tags
 - PRIORITISE the trending tags listed above — include as many as are relevant
 - Add topic-specific tags for this exact match/moment
-- Mix broad ("cricket highlights") with specific ("India vs Australia 2025")
+- Mix broad with specific
 
 HASHTAGS rules:
 - Return exactly 5 hashtags (with #)
 - PRIORITISE the trending hashtags listed above
-- Always include #Shorts and #Cricket
-- Add 1-2 specific to this match or moment
+- Always include #Shorts
+- Add 1-2 specific to this topic or moment
 
 Return ONLY this JSON:
 {{
   "title": "...",
   "description": "...",
   "tags": ["tag1", ...],
-  "hashtags": ["#Shorts", "#Cricket", "#tag3", "#tag4", "#tag5"]
+  "hashtags": ["#Shorts", "#tag2", "#tag3", "#tag4", "#tag5"]
 }}"""
 
 
-def generate_seo(topic: str, hook: str, retries: int = 3) -> dict:
+def generate_seo(topic: str, hook: str, niche: str = "cricket", retries: int = 3) -> dict:
     """
-    Fetch trending tags from top YouTube cricket videos, then call Claude
-    to generate SEO metadata that mirrors what's already ranking.
+    Fetch trending tags (cricket only) then call Claude to generate SEO metadata.
+    For non-cricket niches, trending tag lookup is skipped.
     Returns a dict with keys: title, description, tags, hashtags.
     """
-    # Step 1: pull real trending tags from top-viewed YouTube videos
-    log.info("Fetching trending tags from top cricket highlight videos...")
-    trending = get_trending_tags(topic)
-    trending_tags_str = ", ".join(trending["tags"]) if trending["tags"] else "cricket highlights, cricket match, cricket shorts, cricket 2025"
-    trending_hashtags_str = ", ".join(trending["hashtags"]) if trending["hashtags"] else "#Cricket, #Shorts, #CricketHighlights, #CricketLovers"
+    # Step 1: pull real trending tags from top-viewed YouTube videos (cricket only)
+    if niche == "cricket":
+        log.info("Fetching trending tags from top cricket highlight videos...")
+        trending = get_trending_tags(topic)
+        trending_tags_str = ", ".join(trending["tags"]) if trending["tags"] else "cricket highlights, cricket match, cricket shorts, cricket 2025"
+        trending_hashtags_str = ", ".join(trending["hashtags"]) if trending["hashtags"] else "#Cricket, #Shorts, #CricketHighlights, #CricketLovers"
+    else:
+        log.info("Skipping trending tags lookup for niche '%s'", niche)
+        trending_tags_str = ""
+        trending_hashtags_str = ""
 
     client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
     prompt = SEO_TEMPLATE.format(

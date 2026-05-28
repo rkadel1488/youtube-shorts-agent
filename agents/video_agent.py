@@ -164,7 +164,16 @@ def create_video(
         except Exception as exc:
             log.warning("Could not add music: %s", exc)
     else:
-        log.warning("No music available — video will be silent")
+        log.info("Music unavailable — trying AI voiceover as fallback...")
+        try:
+            from agents.audio_agent import generate_voiceover
+            vo_path = temp_dir / "voiceover_fallback.mp3"
+            generate_voiceover(topic, vo_path)
+            music = AudioFileClip(str(vo_path))
+            base = base.set_audio(music)
+            log.info("AI voiceover added as audio fallback")
+        except Exception as exc:
+            log.warning("AI voiceover fallback also failed: %s — video will be silent", exc)
 
     # 4. Add title card overlay
     title = _title_overlay(topic, duration)
@@ -189,4 +198,85 @@ def create_video(
     raw.close()
 
     log.info("Done: %s (%.1f MB)", output_path, output_path.stat().st_size / 1e6)
+    return output_path
+
+
+def create_ai_video(
+    topic: str,
+    image_paths: list,
+    voiceover_path: Path,
+    output_path: Path,
+    temp_dir: Path,
+) -> Path:
+    """
+    Assemble a YouTube Short from AI-generated images + voiceover.
+    Applies Ken Burns zoom effect to each image, muxes voiceover audio.
+    """
+    from moviepy.editor import concatenate_videoclips
+
+    temp_dir.mkdir(parents=True, exist_ok=True)
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+
+    if not image_paths:
+        raise RuntimeError("No images provided for AI video")
+
+    # Load voiceover
+    voiceover = AudioFileClip(str(voiceover_path))
+    total_duration = max(voiceover.duration, 10.0)
+
+    seg_duration = total_duration / len(image_paths)
+    clips = []
+
+    for i, img_path in enumerate(image_paths):
+        img = Image.open(img_path).convert("RGB").resize(
+            (VIDEO_WIDTH, VIDEO_HEIGHT), Image.LANCZOS
+        )
+        arr = np.array(img)
+
+        # Alternate zoom in / zoom out for Ken Burns effect
+        zoom_in = (i % 2 == 0)
+        start_scale = 1.0 if zoom_in else 1.12
+        end_scale = 1.12 if zoom_in else 1.0
+
+        def _make_zoom(s, e, d):
+            return lambda t: s + (e - s) * (t / d)
+
+        clip = (
+            ImageClip(arr)
+            .set_duration(seg_duration)
+            .resize(_make_zoom(start_scale, end_scale, seg_duration))
+            .crop(x_center=VIDEO_WIDTH // 2, y_center=VIDEO_HEIGHT // 2,
+                  width=VIDEO_WIDTH, height=VIDEO_HEIGHT)
+            .resize((VIDEO_WIDTH, VIDEO_HEIGHT))
+        )
+        clips.append(clip)
+
+    video = concatenate_videoclips(clips, method="compose")
+    if video.duration > total_duration:
+        video = video.subclip(0, total_duration)
+
+    video = video.set_audio(voiceover)
+
+    title = _title_overlay(topic, min(6.0, total_duration))
+    final = CompositeVideoClip([video, title], size=(VIDEO_WIDTH, VIDEO_HEIGHT))
+
+    log.info("Rendering AI video -> %s", output_path)
+    final.write_videofile(
+        str(output_path),
+        fps=VIDEO_FPS,
+        codec="libx264",
+        audio_codec="aac",
+        temp_audiofile=str(temp_dir / "tmp_audio.m4a"),
+        remove_temp=True,
+        logger=None,
+        threads=4,
+        preset="fast",
+    )
+
+    final.close()
+    video.close()
+    for c in clips:
+        c.close()
+
+    log.info("AI video done: %s (%.1f MB)", output_path, output_path.stat().st_size / 1e6)
     return output_path

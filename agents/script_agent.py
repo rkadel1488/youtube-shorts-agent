@@ -70,6 +70,107 @@ Return ONLY this JSON (no markdown):
 }}"""
 
 
+NICHE_PROMPTS = {
+    "fun_facts": """\
+Write a mind-blowing fun fact Short script.
+
+Rules:
+- Total spoken length: 20-27 seconds (~60-75 words)
+- Hook (first line, under 12 words): must make the viewer say "No way!"
+- Body: explains the fact in simple vivid terms, short punchy sentences (max 10 words each)
+- End with: "Follow for daily mind-blowing facts."
+
+Return ONLY this JSON (no markdown):
+{{
+  "topic": "short punchy title",
+  "hook": "opening hook line",
+  "script": "full script including hook, body, and CTA",
+  "keywords": ["facts", "mindblow", "didyouknow", "science", "amazing"]
+}}""",
+
+    "horror_story": """\
+Write a short horror story Short script.
+
+Rules:
+- Total spoken length: 20-27 seconds (~60-75 words)
+- Hook (first line, under 12 words): must be a spine-chilling opening
+- Body: build dread fast with short punchy sentences (max 10 words each)
+- End with a twist or scare, then: "Follow for more horror stories."
+
+Return ONLY this JSON (no markdown):
+{{
+  "topic": "short punchy title",
+  "hook": "opening hook line",
+  "script": "full script including hook, body, and CTA",
+  "keywords": ["horror", "scary", "creepy", "thriller", "horrortok"]
+}}""",
+
+    "football": """\
+Write a football (soccer) highlights Short script.
+
+Rules:
+- Total spoken length: 20-27 seconds (~60-75 words)
+- Hook (first line, under 12 words): about a dramatic goal, save, or moment
+- Body: build the tension in short punchy sentences (max 10 words each), deliver the result
+- End with: "Follow for daily football highlights."
+- Write like a live commentator — use present tense, energy, drama.
+
+Return ONLY this JSON (no markdown):
+{{
+  "topic": "short punchy title",
+  "hook": "opening hook line",
+  "script": "full script including hook, body, and CTA",
+  "keywords": ["football", "soccer", "goals", "highlights", "footballshorts"]
+}}""",
+}
+
+NICHE_SYSTEM_PROMPT = """You are an electrifying short-form video scriptwriter for YouTube Shorts.
+Your scripts are urgent, vivid, fast-paced, and perfectly timed for 20-27 seconds.
+Always respond with valid JSON only — no markdown fences, no extra commentary."""
+
+
+def generate_niche_script(niche: str, retries: int = 3) -> dict:
+    """
+    Generate a 20-27 second (~60-75 word) YouTube Shorts script for the given niche.
+    Supported niches: 'fun_facts', 'horror_story', 'football'.
+    Returns a dict with keys: topic, hook, script, keywords.
+    """
+    if niche not in NICHE_PROMPTS:
+        raise ValueError(f"Unknown niche '{niche}'. Supported: {list(NICHE_PROMPTS)}")
+
+    prompt = NICHE_PROMPTS[niche]
+    client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
+
+    for attempt in range(1, retries + 1):
+        try:
+            log.info("Generating %s script via Claude (attempt %d)...", niche, attempt)
+            message = client.messages.create(
+                model=CLAUDE_MODEL,
+                max_tokens=512,
+                system=NICHE_SYSTEM_PROMPT,
+                messages=[{"role": "user", "content": prompt}],
+            )
+            raw = message.content[0].text.strip()
+            result = json.loads(raw)
+
+            for key in ("topic", "hook", "script", "keywords"):
+                if key not in result:
+                    raise ValueError(f"Missing key '{key}' in Claude response")
+
+            log.info("Niche script generated [%s]: '%s'", niche, result["topic"])
+            return result
+
+        except json.JSONDecodeError as exc:
+            log.warning("JSON parse error on attempt %d: %s", attempt, exc)
+        except Exception as exc:
+            log.warning("Niche script generation error on attempt %d: %s", attempt, exc)
+
+        if attempt < retries:
+            time.sleep(2 ** attempt)
+
+    raise RuntimeError(f"Niche script generation failed after {retries} attempts")
+
+
 def generate_script(retries: int = 3) -> dict:
     """
     Fetch recent cricket match data and generate a highlight script via Claude.
