@@ -1,7 +1,8 @@
 """
-Generates a YouTube Shorts script + supporting metadata using Claude.
+Generates a YouTube Shorts cricket highlight script using Claude.
 
-Claude freely picks any random topic each run — no categories, no niches.
+Fetches real recent match data first, then asks Claude to write
+an exciting highlight commentary script based on that data.
 
 Output schema (JSON):
 {
@@ -12,61 +13,98 @@ Output schema (JSON):
 }
 """
 import json
+import random
 import time
 
 import anthropic
 
+from agents.cricket_agent import get_recent_matches
 from config import ANTHROPIC_API_KEY, CLAUDE_MODEL
 from utils.logger import get_logger
 
 log = get_logger(__name__)
 
-SYSTEM_PROMPT = """You are an expert YouTube Shorts scriptwriter.
-Your scripts go viral because they open with an irresistible hook, use short punchy sentences,
-build curiosity, reveal something surprising, and end with a clear call-to-action.
+SYSTEM_PROMPT = """You are an electrifying cricket highlights commentator for YouTube Shorts.
+Your scripts sound like the most exciting moment of a match — urgent, vivid, fast-paced.
 Always respond with valid JSON only — no markdown fences, no extra commentary."""
 
-SCRIPT_TEMPLATE = """Pick ONE specific, surprising, little-known story, event, person, or fact \
-and write a YouTube Shorts script about it.
+SCRIPT_TEMPLATE = """Write a YouTube Shorts cricket highlight script based on this recent match data:
 
-You have complete freedom — choose anything from history, science, sports, nature, space, \
-psychology, true crime, myths, technology, mysteries, or any other area. \
-Avoid overused or generic topics. Pick something most people have never heard of.
+{match_info}
 
 Rules:
 - Total spoken length: 20-27 seconds (~60-75 words)
-- Hook (first sentence, under 12 words): MUST use one of these proven formulas:
-    Bold claim:    "This [person/thing] did something that defied all logic."
-    Myth bust:     "Everything you know about [X] is wrong."
-    Curiosity gap: "Nobody talks about what really happened to [X]."
-    Shock stat:    "In [year], [shocking specific fact] -- and nobody noticed."
-- Body: short punchy sentences (max 10 words each), build tension, deliver the reveal
-- CTA (last sentence): "Follow for more stories like this every day."
+- Hook (first line, under 12 words): must grab attention instantly. Use one of:
+    • "This moment will be talked about for years."
+    • "[Player/Team] just did the impossible."
+    • "Nobody saw this coming in [match name]."
+    • "[Score/stat] — cricket has never seen anything like it."
+- Body: short punchy sentences (max 10 words). Build the tension, describe the key moment, deliver the result.
+- End with: "Follow for daily cricket highlights."
+- Write like a live commentator — use present tense, energy, drama.
 
 Return ONLY this JSON (no markdown):
-{
-  "topic": "short descriptive title for this story",
+{{
+  "topic": "short punchy title for this highlight (e.g. 'India vs Australia — Final Over Thriller')",
   "hook": "the opening hook line only",
   "script": "full script including hook, body, and CTA",
-  "keywords": ["3-5 single English words for finding relevant video footage"]
-}"""
+  "keywords": ["cricket", "stadium", "batting", "bowling", "cricket match"]
+}}"""
+
+FALLBACK_TEMPLATE = """Write a YouTube Shorts script about one of the most dramatic moments \
+in recent international cricket — a match-winning six, a stunning wicket, or a record-breaking innings.
+
+Rules:
+- Total spoken length: 20-27 seconds (~60-75 words)
+- Hook (first line, under 12 words): instant attention-grabber about a cricket moment
+- Body: short punchy sentences (max 10 words each), build tension, deliver the highlight
+- End with: "Follow for daily cricket highlights."
+- Write with the energy of a live commentator.
+
+Return ONLY this JSON (no markdown):
+{{
+  "topic": "short punchy title for this highlight",
+  "hook": "the opening hook line only",
+  "script": "full script including hook, body, and CTA",
+  "keywords": ["cricket", "stadium", "batting", "bowling", "cricket match"]
+}}"""
 
 
 def generate_script(retries: int = 3) -> dict:
     """
-    Ask Claude to freely pick any topic and write a Shorts script.
-    Returns a dict with keys: topic, hook, script, keywords.
+    Fetch recent cricket match data and generate a highlight script via Claude.
+    Falls back to generic cricket highlight if no live data is available.
     """
+    matches = get_recent_matches()
+
+    if matches:
+        match = random.choice(matches)
+        parts = [f"Match: {match['name']}"]
+        if match.get("score1"):
+            parts.append(f"{match['team1']}: {match['score1']}")
+        if match.get("score2"):
+            parts.append(f"{match['team2']}: {match['score2']}")
+        if match.get("status"):
+            parts.append(f"Status: {match['status']}")
+        if match.get("note"):
+            parts.append(f"Note: {match['note']}")
+        match_info = "\n".join(parts)
+        prompt = SCRIPT_TEMPLATE.format(match_info=match_info)
+        log.info("Generating highlight script for: %s", match["name"])
+    else:
+        prompt = FALLBACK_TEMPLATE
+        log.info("No live data — generating generic cricket highlight script")
+
     client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
 
     for attempt in range(1, retries + 1):
         try:
-            log.info("Generating script (attempt %d)...", attempt)
+            log.info("Calling Claude for script (attempt %d)...", attempt)
             message = client.messages.create(
                 model=CLAUDE_MODEL,
                 max_tokens=512,
                 system=SYSTEM_PROMPT,
-                messages=[{"role": "user", "content": SCRIPT_TEMPLATE}],
+                messages=[{"role": "user", "content": prompt}],
             )
             raw = message.content[0].text.strip()
             result = json.loads(raw)

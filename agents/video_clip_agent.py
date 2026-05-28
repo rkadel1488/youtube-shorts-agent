@@ -82,8 +82,8 @@ def fetch_clips(
                 if attempt < retries:
                     time.sleep(2 ** attempt)
 
-    # Fallback: if still short, retry with generic terms
-    fallbacks = ["nature", "city", "abstract", "sky", "water"]
+    # Fallback: if still short, retry with cricket-specific terms
+    fallbacks = ["cricket stadium", "cricket match", "cricket bat", "cricket crowd", "sports stadium"]
     for kw in fallbacks:
         if len(paths) >= num_clips:
             break

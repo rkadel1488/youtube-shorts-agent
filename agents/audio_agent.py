@@ -55,13 +55,21 @@ def generate_voiceover(script: str, output_path: Path, retries: int = 3) -> Path
     output_path.parent.mkdir(parents=True, exist_ok=True)
     wav_path = output_path.with_suffix(".wav")
 
+    # Prefix the script with a speaking-style instruction so Gemini TTS
+    # delivers it like an excited live sports commentator rather than a flat reader.
+    styled_script = (
+        "Speak with high energy and excitement, like a live cricket sports commentator "
+        "at the most thrilling moment of the match. Natural pace, passionate delivery:\n\n"
+        + script
+    )
+
     for attempt in range(1, retries + 1):
         try:
             log.info("Generating voiceover with Gemini TTS (attempt %d)…", attempt)
 
             response = client.models.generate_content(
                 model="gemini-2.5-flash-preview-tts",
-                contents=script,
+                contents=styled_script,
                 config=types.GenerateContentConfig(
                     response_modalities=["AUDIO"],
                     speech_config=types.SpeechConfig(

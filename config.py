@@ -15,7 +15,7 @@ GOOGLE_AI_STUDIO_API_KEY: str = os.getenv("GOOGLE_AI_STUDIO_API_KEY", "")
 PEXELS_API_KEY: str = os.getenv("PEXELS_API_KEY", "")
 
 # Gemini TTS voice — options: Zephyr, Puck, Charon, Kore, Fenrir, Leda, Orus, Aoede
-GEMINI_TTS_VOICE: str = os.getenv("GEMINI_TTS_VOICE", "Charon")
+GEMINI_TTS_VOICE: str = os.getenv("GEMINI_TTS_VOICE", "Puck")
 
 # YouTube OAuth files
 YOUTUBE_CLIENT_SECRETS_FILE: str = os.getenv("YOUTUBE_CLIENT_SECRETS_FILE", "client_secrets.json")
