@@ -3,11 +3,11 @@ YouTube Shorts AI Agent — Main Orchestrator
 ============================================
 Runs a daily scheduler that fires three times per day (configurable via POSTING_TIMES).
 Each run:
-  1. Generates a random script on any topic  (Claude picks freely)
-  2. Generates SEO                           (Claude)
-  3. Generates voiceover                     (Gemini TTS)
-  4. Creates the video                       (Pollinations FLUX + MoviePy)
-  5. Uploads to YouTube                      (YouTube Data API)
+  1. Fetches recent cricket match data + generates highlight script  (Claude)
+  2. Generates SEO with tags from top-viewed cricket videos          (Claude)
+  3. Fetches cricket footage from Pexels + royalty-free music        (Pexels / FreePD)
+  4. Creates the video with captions, no voiceover                   (MoviePy)
+  5. Uploads to YouTube                                              (YouTube Data API)
 
 Usage:
     python main.py               # Start scheduler (runs indefinitely)
@@ -23,7 +23,6 @@ from pathlib import Path
 
 import schedule
 
-from agents.audio_agent import generate_voiceover
 from agents.script_agent import generate_script
 from agents.seo_agent import generate_seo
 from agents.upload_agent import upload_video
@@ -38,17 +37,17 @@ log = get_logger("main")
 
 def run_pipeline(slot: int = 0) -> dict:
     """
-    Execute the full content pipeline for one Short.
+    Execute the full content pipeline for one cricket highlight Short.
     Returns a summary dict with all generated metadata.
     """
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    job_id = f"{timestamp}_slot{slot}"
+    job_id    = f"{timestamp}_slot{slot}"
 
     log.info("=" * 60)
     log.info("STARTING JOB: %s", job_id)
     log.info("=" * 60)
 
-    job_dir = OUTPUT_DIR / job_id
+    job_dir  = OUTPUT_DIR / job_id
     temp_dir = job_dir / "temp"
     job_dir.mkdir(parents=True, exist_ok=True)
     temp_dir.mkdir(parents=True, exist_ok=True)
@@ -56,14 +55,14 @@ def run_pipeline(slot: int = 0) -> dict:
     result = {"job_id": job_id, "status": "failed"}
 
     try:
-        # ── Step 1: Generate script ───────────────────────────────────────────
-        log.info("[1/5] Generating script…")
+        # ── Step 1: Generate cricket highlight script ─────────────────────────
+        log.info("[1/4] Generating cricket highlight script...")
         script_data = generate_script()
         _save_json(job_dir / "script.json", script_data)
         log.info("Topic: %s", script_data["topic"])
 
-        # ── Step 2: Generate SEO ──────────────────────────────────────────────
-        log.info("[2/5] Generating SEO metadata…")
+        # ── Step 2: Generate SEO with trending tags ───────────────────────────
+        log.info("[2/4] Generating SEO metadata...")
         seo_data = generate_seo(
             topic=script_data["topic"],
             hook=script_data["hook"],
@@ -71,26 +70,18 @@ def run_pipeline(slot: int = 0) -> dict:
         _save_json(job_dir / "seo.json", seo_data)
         log.info("Title: %s", seo_data["title"])
 
-        # ── Step 3: Generate voiceover ────────────────────────────────────────
-        log.info("[3/5] Generating voiceover…")
-        audio_path = generate_voiceover(
-            script=script_data["script"],
-            output_path=job_dir / "voiceover.mp3",
-        )
-
-        # ── Step 4: Create video ──────────────────────────────────────────────
-        log.info("[4/5] Creating video...")
+        # ── Step 3: Create video (clips + music, no voiceover) ────────────────
+        log.info("[3/4] Creating cricket highlight video...")
         video_path = create_video(
             script=script_data["script"],
-            audio_path=audio_path,
             keywords=script_data.get("keywords", []),
             output_path=job_dir / "final.mp4",
             temp_dir=temp_dir,
             topic=script_data["topic"],
         )
 
-        # ── Step 5: Upload to YouTube ─────────────────────────────────────────
-        log.info("[5/5] Uploading to YouTube…")
+        # ── Step 4: Upload to YouTube ─────────────────────────────────────────
+        log.info("[4/4] Uploading to YouTube...")
         video_id = upload_video(
             video_path=video_path,
             title=seo_data["title"],
@@ -100,15 +91,13 @@ def run_pipeline(slot: int = 0) -> dict:
             category_id=YOUTUBE_CATEGORY_ID,
         )
 
-        result.update(
-            {
-                "status": "success",
-                "video_id": video_id,
-                "url": f"https://www.youtube.com/shorts/{video_id}",
-                "title": seo_data["title"],
-                "topic": script_data["topic"],
-            }
-        )
+        result.update({
+            "status":   "success",
+            "video_id": video_id,
+            "url":      f"https://www.youtube.com/shorts/{video_id}",
+            "title":    seo_data["title"],
+            "topic":    script_data["topic"],
+        })
 
         _save_json(job_dir / "result.json", result)
 
@@ -160,7 +149,7 @@ def _save_json(path: Path, data: dict):
 # ── Entry point ────────────────────────────────────────────────────────────────
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="YouTube Shorts AI Agent")
+    parser = argparse.ArgumentParser(description="YouTube Shorts Cricket Highlights Agent")
     parser.add_argument(
         "--run-now",
         action="store_true",
@@ -171,7 +160,7 @@ if __name__ == "__main__":
         type=int,
         default=0,
         choices=[0, 1, 2],
-        help="Which daily slot to run (0=morning, 1=afternoon, 2=evening). Only used with --run-now",
+        help="Which daily slot to run (0=morning, 1=afternoon, 2=evening).",
     )
     args = parser.parse_args()
 
