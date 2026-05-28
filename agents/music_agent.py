@@ -1,15 +1,11 @@
 """
-Downloads a royalty-free track from the YouTube Audio Library.
+Downloads a free sports/action music track using yt-dlp.
 
-YouTube Audio Library tracks are 100% free to use on YouTube with no
-copyright claims, even on monetized videos.
+Sources tried in order:
+  1. NoCopyrightSounds (NCS) — explicitly free to use on YouTube, no claims
+  2. FreePD.com direct MP3 — 100% public domain, no attribution needed
 
-Strategy:
-  1. Pick a random track ID from a curated list of YouTube Audio Library
-     sports / action tracks (these are the actual YouTube video IDs for
-     each track as listed in the public audio library).
-  2. Download the audio using yt-dlp and convert to MP3.
-  3. Fall back to FreePD.com public domain tracks if yt-dlp fails.
+NCS tracks are specifically approved for YouTube use (monetized or not).
 """
 import random
 import subprocess
@@ -22,35 +18,31 @@ from utils.logger import get_logger
 
 log = get_logger(__name__)
 
-# ── YouTube Audio Library — sports/action tracks ──────────────────────────
-# These are official YouTube Audio Library track IDs (video IDs on YouTube).
-# All are free to use on YouTube, no attribution required.
-YT_AUDIO_LIBRARY_TRACKS = [
-    # Sports & Action genre — no attribution required
-    "https://www.youtube.com/watch?v=ckxMQeOa_Yo",   # Faster Does It
-    "https://www.youtube.com/watch?v=R8GfV5Z7OLY",   # Rollin At 5
-    "https://www.youtube.com/watch?v=0OIXF2RkVdA",   # MBB - Wake up
-    "https://www.youtube.com/watch?v=Y_l3ButeDk0",   # Impact Moderato
-    "https://www.youtube.com/watch?v=EzGxFbUnAW0",   # Powerful Trap
-    "https://www.youtube.com/watch?v=Q2oMBq3vvIk",   # Hotshot
-    "https://www.youtube.com/watch?v=TGTWXejA9HE",   # Run Amok
-    "https://www.youtube.com/watch?v=q_5bXkAmv8A",   # Cut and Run
-    "https://www.youtube.com/watch?v=qRUefh2YQUA",   # Upbeat Forever
-    "https://www.youtube.com/watch?v=bhxTKDgPZhw",   # Savage
+# NCS and similar channels that explicitly allow YouTube use (no Content ID claims)
+# These are real YouTube video IDs of sports/action tracks
+NCS_TRACK_URLS = [
+    "https://www.youtube.com/watch?v=BnTCMpAAWPE",  # NCS: Elektronomia - Sky High
+    "https://www.youtube.com/watch?v=TW9d8vYrVFQ",  # NCS: Jim Yosef - Speed
+    "https://www.youtube.com/watch?v=QL_6VApDxmc",  # NCS: Cartoon - On & On
+    "https://www.youtube.com/watch?v=gQjAEbWZFo4",  # NCS: Warriyo - Mortals
+    "https://www.youtube.com/watch?v=VjL-w0YWGAI",  # NCS: DEAF KEV - Invincible
+    "https://www.youtube.com/watch?v=h7ArUgxtlJs",  # NCS: Distrion & Alex Skrindo - Lightning
+    "https://www.youtube.com/watch?v=2Nv5juZKhKo",  # NCS: Electro-Light - Symbolism
+    "https://www.youtube.com/watch?v=yJg-Y5byMMw",  # NCS: Vanze - Forever
 ]
 
-# ── FreePD.com fallback — true public domain ──────────────────────────────
+# FreePD fallback — true public domain
 FREEPD_TRACKS = [
     "https://freepd.com/music/Exciting%20Trailer.mp3",
-    "https://freepd.com/music/Winning%20Elevation.mp3",
     "https://freepd.com/music/Action%20News.mp3",
     "https://freepd.com/music/Ambitious.mp3",
-    "https://freepd.com/music/Upbeat%20Forever.mp3",
 ]
 
 
-def _download_yt_audio(track_url: str, output_path: Path, timeout: int = 90) -> bool:
-    """Download audio from a YouTube Audio Library URL using yt-dlp."""
+def _download_yt_audio(url: str, output_path: Path) -> bool:
+    """Download audio from a YouTube URL as MP3 via yt-dlp."""
+    # yt-dlp adds extension automatically; we point to stem
+    out_template = str(output_path.with_suffix("")) + ".%(ext)s"
     cmd = [
         "yt-dlp",
         "--extract-audio",
@@ -59,33 +51,31 @@ def _download_yt_audio(track_url: str, output_path: Path, timeout: int = 90) -> 
         "--no-playlist",
         "--quiet",
         "--no-warnings",
-        "--output", str(output_path.with_suffix("")),   # yt-dlp appends .mp3
-        track_url,
+        "--output", out_template,
+        url,
     ]
     try:
-        result = subprocess.run(cmd, capture_output=True, text=True, timeout=timeout)
-        # yt-dlp may name it slightly differently — find the mp3
-        mp3_candidates = list(output_path.parent.glob(output_path.stem + "*.mp3"))
-        if mp3_candidates:
-            mp3_candidates[0].rename(output_path)
-        if result.returncode == 0 and output_path.exists() and output_path.stat().st_size > 10_000:
-            log.info("YouTube Audio Library track downloaded -> %s (%.0f KB)",
+        result = subprocess.run(cmd, capture_output=True, text=True, timeout=120)
+        # Find the resulting mp3 (yt-dlp may name it with the video title)
+        mp3_files = sorted(output_path.parent.glob("*.mp3"))
+        if mp3_files and mp3_files[-1].stat().st_size > 10_000:
+            mp3_files[-1].rename(output_path)
+            log.info("Music downloaded -> %s (%.0f KB)",
                      output_path.name, output_path.stat().st_size / 1024)
             return True
         log.warning("yt-dlp audio failed: %s", result.stderr[-200:])
     except subprocess.TimeoutExpired:
-        log.warning("yt-dlp audio download timed out")
+        log.warning("Music download timed out")
     except FileNotFoundError:
-        log.warning("yt-dlp not found")
+        log.warning("yt-dlp not installed")
     except Exception as exc:
-        log.warning("Audio download error: %s", exc)
+        log.warning("Music download error: %s", exc)
     return False
 
 
 def _download_freepd(output_path: Path) -> bool:
-    """Download a random FreePD.com public domain track as fallback."""
-    tracks = random.sample(FREEPD_TRACKS, len(FREEPD_TRACKS))
-    for url in tracks:
+    """Download a FreePD public domain track as final fallback."""
+    for url in random.sample(FREEPD_TRACKS, len(FREEPD_TRACKS)):
         try:
             resp = requests.get(url, timeout=30, stream=True,
                                 headers={"User-Agent": "Mozilla/5.0"})
@@ -94,7 +84,7 @@ def _download_freepd(output_path: Path) -> bool:
                 for chunk in resp.iter_content(65536):
                     f.write(chunk)
             if output_path.stat().st_size > 10_000:
-                log.info("FreePD fallback track downloaded -> %s", output_path.name)
+                log.info("FreePD track downloaded -> %s", output_path.name)
                 return True
         except Exception as exc:
             log.warning("FreePD download failed: %s", exc)
@@ -105,22 +95,21 @@ def _download_freepd(output_path: Path) -> bool:
 
 def download_music(output_path: Path) -> Path | None:
     """
-    Download a YouTube Audio Library sports track (or FreePD fallback).
-    Returns the MP3 path on success, or None if everything fails.
+    Download a free sports music track.
+    Tries NCS YouTube tracks first, then FreePD fallback.
+    Returns the MP3 path on success, or None.
     """
     output_path.parent.mkdir(parents=True, exist_ok=True)
 
-    # Try YouTube Audio Library tracks first (best for YouTube — no claims)
-    tracks = random.sample(YT_AUDIO_LIBRARY_TRACKS, len(YT_AUDIO_LIBRARY_TRACKS))
-    for track_url in tracks[:4]:   # try up to 4 before falling back
-        if _download_yt_audio(track_url, output_path):
+    for url in random.sample(NCS_TRACK_URLS, min(4, len(NCS_TRACK_URLS))):
+        log.info("Trying NCS track: %s", url)
+        if _download_yt_audio(url, output_path):
             return output_path
         time.sleep(1)
 
-    # Fallback: FreePD public domain
-    log.info("Falling back to FreePD.com for background music...")
+    log.info("NCS downloads failed — trying FreePD fallback...")
     if _download_freepd(output_path):
         return output_path
 
-    log.warning("All music downloads failed — video will be silent")
+    log.warning("All music downloads failed")
     return None

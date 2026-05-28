@@ -1,79 +1,74 @@
 """
-Finds and downloads Creative Commons licensed cricket Shorts from YouTube.
+Downloads a Creative Commons licensed cricket Short from YouTube using yt-dlp.
 
-Uses YouTube Data API to search for CC-licensed cricket highlight Shorts,
-then downloads the best match using yt-dlp.
+How it works:
+  1. yt-dlp searches YouTube for cricket highlights
+  2. Fetches metadata for the top results without downloading
+  3. Filters for videos with a Creative Commons licence
+  4. Downloads the first qualifying video as MP4
 
-All downloaded videos carry a Creative Commons Attribution licence (CC BY),
-which permits reuse with attribution in the video description.
+No YouTube API key needed — yt-dlp handles everything.
 """
 import json
-import random
 import subprocess
 import time
 from pathlib import Path
 
-from google.auth.transport.requests import Request
-from google.oauth2.credentials import Credentials
-from googleapiclient.discovery import build
-
-from config import YOUTUBE_CLIENT_SECRETS_FILE, YOUTUBE_SCOPES, YOUTUBE_TOKEN_FILE
 from utils.logger import get_logger
 
 log = get_logger(__name__)
 
-# Search queries for CC cricket Shorts
 SEARCH_QUERIES = [
-    "cricket highlights short",
-    "cricket six wicket highlights",
-    "cricket batting highlights short",
-    "cricket match highlights",
-    "cricket century highlights short",
+    "cricket highlights short creative commons",
+    "cricket six wickets highlights creative commons",
+    "cricket batting highlights creative commons",
+    "cricket match highlights 2024 creative commons",
+    "cricket best moments creative commons",
 ]
 
 
-def _get_youtube():
-    """Build YouTube API client from saved OAuth token."""
-    token_path = Path(YOUTUBE_TOKEN_FILE)
-    if not token_path.exists():
-        log.warning("YouTube token not found — cannot search for CC Shorts")
-        return None
+def _ytdlp_available() -> bool:
     try:
-        with open(token_path) as f:
-            creds = Credentials.from_authorized_user_info(json.load(f), YOUTUBE_SCOPES)
-        if creds and creds.expired and creds.refresh_token:
-            creds.refresh(Request())
-        return build("youtube", "v3", credentials=creds)
-    except Exception as exc:
-        log.warning("Could not build YouTube client: %s", exc)
-        return None
+        subprocess.run(["yt-dlp", "--version"], capture_output=True, check=True)
+        return True
+    except (FileNotFoundError, subprocess.CalledProcessError):
+        return False
 
 
-def _search_cc_shorts(youtube, query: str, max_results: int = 10) -> list[str]:
-    """Return video IDs for CC-licensed Shorts matching the query."""
+def _fetch_metadata(query: str, count: int = 25) -> list[dict]:
+    """Return metadata dicts for the top *count* search results (no download)."""
+    cmd = [
+        "yt-dlp",
+        f"ytsearch{count}:{query}",
+        "--dump-json",
+        "--no-download",
+        "--no-playlist",
+        "--quiet",
+    ]
     try:
-        resp = youtube.search().list(
-            q=query,
-            part="id",
-            type="video",
-            videoLicense="creativeCommon",   # CC BY licence only
-            videoDuration="short",           # under 4 minutes (catches Shorts)
-            order="viewCount",               # highest viewed first
-            maxResults=max_results,
-            relevanceLanguage="en",
-            safeSearch="none",
-        ).execute()
-        ids = [item["id"]["videoId"] for item in resp.get("items", [])
-               if item.get("id", {}).get("videoId")]
-        log.info("Found %d CC Shorts for query '%s'", len(ids), query)
-        return ids
+        result = subprocess.run(cmd, capture_output=True, text=True, timeout=60)
+        videos = []
+        for line in result.stdout.strip().splitlines():
+            try:
+                videos.append(json.loads(line))
+            except json.JSONDecodeError:
+                pass
+        return videos
+    except subprocess.TimeoutExpired:
+        log.warning("Metadata fetch timed out for query: %s", query)
     except Exception as exc:
-        log.warning("CC Shorts search failed for '%s': %s", query, exc)
-        return []
+        log.warning("Metadata fetch error: %s", exc)
+    return []
 
 
-def _download_video(video_id: str, output_path: Path, timeout: int = 120) -> bool:
-    """Download a YouTube video to output_path using yt-dlp. Returns True on success."""
+def _is_cc_licensed(video: dict) -> bool:
+    """Return True if the video carries a Creative Commons licence."""
+    license_field = (video.get("license") or "").lower()
+    return "creative commons" in license_field
+
+
+def _download_video(video_id: str, output_path: Path, timeout: int = 180) -> bool:
+    """Download a single YouTube video as MP4. Returns True on success."""
     url = f"https://www.youtube.com/watch?v={video_id}"
     cmd = [
         "yt-dlp",
@@ -87,54 +82,60 @@ def _download_video(video_id: str, output_path: Path, timeout: int = 120) -> boo
     ]
     try:
         result = subprocess.run(cmd, capture_output=True, text=True, timeout=timeout)
-        if result.returncode == 0 and output_path.exists() and output_path.stat().st_size > 50_000:
-            log.info("Downloaded CC Short %s -> %s (%.1f MB)",
+        if result.returncode == 0 and output_path.exists() and output_path.stat().st_size > 100_000:
+            log.info("Downloaded CC Short '%s' -> %s (%.1f MB)",
                      video_id, output_path.name, output_path.stat().st_size / 1e6)
             return True
-        log.warning("yt-dlp failed for %s: %s", video_id, result.stderr[-200:])
+        log.warning("Download failed for %s: %s", video_id, result.stderr[-300:])
     except subprocess.TimeoutExpired:
-        log.warning("yt-dlp timed out for %s", video_id)
-    except FileNotFoundError:
-        log.error("yt-dlp not found — install with: pip install yt-dlp")
+        log.warning("Download timed out for %s", video_id)
     except Exception as exc:
         log.warning("Download error for %s: %s", video_id, exc)
+    if output_path.exists():
+        output_path.unlink()
     return False
 
 
-def get_cc_cricket_short(output_path: Path, topic: str = "") -> Path | None:
+def download_cc_cricket_short(output_dir: Path) -> tuple[Path | None, dict]:
     """
-    Search YouTube for a CC-licensed cricket Short and download it.
-    Returns the local video path on success, or None if not found.
+    Find and download a CC-licensed cricket Short.
+    Returns (video_path, video_info) on success, or (None, {}) on failure.
     """
-    output_path.parent.mkdir(parents=True, exist_ok=True)
+    output_dir.mkdir(parents=True, exist_ok=True)
 
-    youtube = _get_youtube()
-    if not youtube:
-        log.warning("No YouTube client — skipping CC Shorts search")
-        return None
+    if not _ytdlp_available():
+        log.error("yt-dlp is not installed. Run: pip install yt-dlp")
+        return None, {}
 
-    # Build a topic-specific query first, then fall back to generic ones
-    queries = []
-    if topic:
-        queries.append(f"{topic} cricket highlights")
-    queries.extend(random.sample(SEARCH_QUERIES, len(SEARCH_QUERIES)))
+    for query in SEARCH_QUERIES:
+        log.info("Searching YouTube: '%s'", query)
+        videos = _fetch_metadata(query, count=25)
 
-    tried_ids: set[str] = set()
+        cc_videos = [v for v in videos if _is_cc_licensed(v)]
+        log.info("Found %d CC-licensed results for '%s'", len(cc_videos), query)
 
-    for query in queries[:3]:  # limit to 3 API calls to preserve quota
-        video_ids = _search_cc_shorts(youtube, query, max_results=10)
-        random.shuffle(video_ids)  # avoid always picking the same top result
-
-        for video_id in video_ids:
-            if video_id in tried_ids:
+        for video in cc_videos:
+            video_id = video.get("id") or video.get("webpage_url_basename", "")
+            if not video_id:
                 continue
-            tried_ids.add(video_id)
+            duration = video.get("duration", 0) or 0
+            # Only use videos under 3 minutes (proper Shorts / short clips)
+            if duration > 180:
+                continue
 
-            candidate = output_path.with_suffix(".mp4")
-            if _download_video(video_id, candidate):
-                return candidate
+            out_path = output_dir / f"{video_id}.mp4"
+            if _download_video(video_id, out_path):
+                info = {
+                    "title":       video.get("title", "Cricket Highlights"),
+                    "channel":     video.get("uploader", ""),
+                    "video_id":    video_id,
+                    "duration":    duration,
+                    "view_count":  video.get("view_count", 0),
+                    "license":     video.get("license", ""),
+                }
+                return out_path, info
 
-            time.sleep(1)  # small delay between download attempts
+        time.sleep(2)
 
-    log.warning("Could not download any CC cricket Short")
-    return None
+    log.warning("No CC cricket Short found after searching all queries")
+    return None, {}
