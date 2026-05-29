@@ -112,6 +112,132 @@ def _crop_portrait(clip: VideoFileClip) -> VideoFileClip:
     return clip.resize((VIDEO_WIDTH, VIDEO_HEIGHT))
 
 
+def _moment_label(text: str, duration: float) -> ImageClip:
+    """Yellow pill label at the bottom-left showing 'MOMENT N' for the first 2 seconds."""
+    font    = _load_font(42)
+    dummy   = Image.new("RGBA", (1, 1))
+    draw    = ImageDraw.Draw(dummy)
+    bbox    = draw.textbbox((0, 0), text, font=font)
+    text_w  = bbox[2] - bbox[0]
+    text_h  = bbox[3] - bbox[1]
+    pad     = 14
+    box_w   = text_w + pad * 4
+    box_h   = text_h + pad * 2
+    margin  = 40
+
+    img  = Image.new("RGBA", (box_w + margin, box_h + margin), (0, 0, 0, 0))
+    draw = ImageDraw.Draw(img)
+    draw.rounded_rectangle(
+        [margin // 2, margin // 2, margin // 2 + box_w, margin // 2 + box_h],
+        radius=box_h // 2,
+        fill=(255, 210, 0, 230),
+    )
+    draw.text(
+        (margin // 2 + pad * 2, margin // 2 + pad),
+        text, font=font, fill=(0, 0, 0, 255),
+    )
+    y_pos = VIDEO_HEIGHT - box_h - margin * 2
+    return (
+        ImageClip(np.array(img), ismask=False)
+        .set_start(0)
+        .set_duration(duration)
+        .set_position((margin, y_pos))
+    )
+
+
+# ── compilation entry ────────────────────────────────────────────────────────
+
+def create_cricket_compilation(
+    clips: list,
+    clip_infos: list,
+    output_path: Path,
+    temp_dir: Path,
+) -> Path:
+    """
+    Build a 'N Moments' compilation Short from multiple CC cricket clips.
+    Each segment gets a 'MOMENT N' counter overlay for its first 2 seconds.
+    Clips are separated by a brief black flash. Background music added.
+    """
+    from moviepy.editor import concatenate_videoclips, ColorClip as _CC
+
+    temp_dir.mkdir(parents=True, exist_ok=True)
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+
+    n = len(clips)
+    seg_duration = max(6.0, SHORT_DURATION / n)   # distribute time evenly
+    flash_duration = 0.3                           # black flash between moments
+
+    segments = []
+    for i, (clip_path, info) in enumerate(zip(clips, clip_infos)):
+        raw = VideoFileClip(str(clip_path), audio=False)
+        seg = _crop_portrait(raw)
+        # Trim to segment duration
+        if seg.duration > seg_duration:
+            seg = seg.subclip(0, seg_duration)
+        elif seg.duration < 3:
+            raw.close()
+            continue  # skip clips that are too short after crop
+
+        # "MOMENT N" label overlay for first 2 seconds
+        label_text = f"MOMENT {i + 1}"
+        label = _moment_label(label_text, min(2.0, seg.duration))
+        seg = CompositeVideoClip([seg, label], size=(VIDEO_WIDTH, VIDEO_HEIGHT))
+        segments.append(seg)
+        raw.close()
+
+    if not segments:
+        raise RuntimeError("No valid segments for cricket compilation")
+
+    # Black flash between segments
+    flash = _CC(color=(0, 0, 0), size=(VIDEO_WIDTH, VIDEO_HEIGHT), duration=flash_duration)
+    parts = []
+    for i, seg in enumerate(segments):
+        parts.append(seg)
+        if i < len(segments) - 1:
+            parts.append(flash)
+
+    video = concatenate_videoclips(parts, method="compose")
+    duration = video.duration
+
+    # Background music
+    log.info("Downloading background music for compilation...")
+    music_path = download_music(temp_dir / "music.mp3")
+    if music_path and music_path.exists():
+        try:
+            music = AudioFileClip(str(music_path))
+            if music.duration < duration:
+                loops = int(duration / music.duration) + 1
+                music = concatenate_audioclips([music] * loops)
+            music = music.subclip(0, duration).volumex(MUSIC_VOLUME)
+            video = video.set_audio(music)
+        except Exception as exc:
+            log.warning("Could not add music: %s", exc)
+
+    # Title overlay at the very top
+    count_title = f"{len(segments)} Cricket Moments \U0001f92f"
+    title = _title_overlay(count_title, min(4.0, duration))
+    final = CompositeVideoClip([video, title], size=(VIDEO_WIDTH, VIDEO_HEIGHT))
+
+    log.info("Rendering compilation -> %s", output_path)
+    final.write_videofile(
+        str(output_path),
+        fps=VIDEO_FPS,
+        codec="libx264",
+        audio_codec="aac",
+        temp_audiofile=str(temp_dir / "tmp_audio.m4a"),
+        remove_temp=True,
+        logger=None,
+        threads=4,
+        preset="fast",
+    )
+
+    final.close()
+    video.close()
+
+    log.info("Compilation done: %s (%.1f MB)", output_path, output_path.stat().st_size / 1e6)
+    return output_path
+
+
 # ── main entry ───────────────────────────────────────────────────────────────
 
 def create_video(

@@ -1,13 +1,14 @@
 """
 YouTube Shorts Cricket Highlights Bot
 ======================================
-Downloads a Creative Commons licensed cricket Short from YouTube,
-adds free background music, then uploads it to the channel.
+Downloads Creative Commons licensed cricket clips from YouTube,
+assembles them into a '3 Moments' compilation Short, then uploads it.
+Falls back to an AI-generated niche video if fewer than 2 CC clips found.
 
 Pipeline (4 steps):
-  1. Download a CC-licensed cricket Short via yt-dlp
+  1. Download CC-licensed cricket clips via yt-dlp
   2. Generate SEO metadata (title, description, tags) with Claude
-  3. Mix in background music (NCS / FreePD) — no voiceover
+  3. Build the compilation video (CC clips + music)
   4. Upload to YouTube
 
 Usage:
@@ -29,8 +30,8 @@ from agents.image_agent import generate_images
 from agents.script_agent import generate_niche_script
 from agents.seo_agent import generate_seo
 from agents.upload_agent import upload_video
-from agents.video_agent import create_ai_video, create_video
-from agents.yt_shorts_agent import download_cc_cricket_short
+from agents.video_agent import create_ai_video, create_cricket_compilation
+from agents.yt_shorts_agent import download_cc_cricket_clips
 from config import OUTPUT_DIR, POSTING_TIMES, YOUTUBE_CATEGORY_ID
 from utils.logger import get_logger
 
@@ -53,7 +54,6 @@ def _run_ai_pipeline(
     niche = FALLBACK_NICHES[(day_of_year + slot) % len(FALLBACK_NICHES)]
     log.info("No real footage found — switching to AI pipeline (niche=%s)", niche)
 
-    # Generate niche script
     log.info("[AI-1/4] Generating %s script...", niche)
     script_data = generate_niche_script(niche)
     _save_json(job_dir / "script.json", script_data)
@@ -61,7 +61,6 @@ def _run_ai_pipeline(
     images_dir = temp_dir / "images"
     vo_path = temp_dir / "voiceover.mp3"
 
-    # Generate 4 AI images
     log.info("[AI-2/4] Generating AI images...")
     images = generate_images(
         topic=script_data["topic"],
@@ -71,11 +70,9 @@ def _run_ai_pipeline(
     if not images:
         raise RuntimeError("AI image generation returned no images")
 
-    # Generate voiceover
     log.info("[AI-3/4] Generating voiceover...")
     generate_voiceover(script_data["script"], vo_path)
 
-    # Assemble AI video
     log.info("[AI-4/4] Assembling AI video...")
     video_path = create_ai_video(
         topic=script_data["topic"],
@@ -85,7 +82,6 @@ def _run_ai_pipeline(
         temp_dir=temp_dir,
     )
 
-    # Generate SEO
     log.info("[AI-SEO] Generating SEO metadata...")
     seo_data = generate_seo(
         topic=script_data["topic"],
@@ -95,7 +91,6 @@ def _run_ai_pipeline(
     _save_json(job_dir / "seo.json", seo_data)
     log.info("Title: %s", seo_data["title"])
 
-    # Upload to YouTube
     log.info("[AI-Upload] Uploading to YouTube...")
     video_id = upload_video(
         video_path=video_path,
@@ -111,7 +106,7 @@ def _run_ai_pipeline(
         "video_id": video_id,
         "url":      f"https://www.youtube.com/shorts/{video_id}",
         "title":    seo_data["title"],
-        "source":   f"AI ({niche})",
+        "source":   script_data["topic"],
         "niche":    niche,
     })
     _save_json(job_dir / "result.json", result)
@@ -124,7 +119,7 @@ def _run_ai_pipeline(
 
 
 def run_pipeline(slot: int = 0) -> dict:
-    """Run one full pipeline. Falls back to AI-generated content if no real footage found."""
+    """Run one full pipeline. Falls back to AI-generated content if fewer than 2 CC cricket clips found."""
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     job_id    = f"{timestamp}_slot{slot}"
     job_dir   = OUTPUT_DIR / job_id
@@ -139,36 +134,33 @@ def run_pipeline(slot: int = 0) -> dict:
     result = {"job_id": job_id, "status": "failed"}
 
     try:
-        # ── Step 1: Find the CC cricket/football Short ────────────────────────
-        log.info("[1/4] Searching for CC cricket Short on YouTube...")
-        cc_path, video_info = download_cc_cricket_short(temp_dir)
+        # ── Step 1: Download CC cricket clips for a compilation ───────────────
+        log.info("[1/4] Downloading CC cricket clips for compilation...")
+        clips, clip_infos = download_cc_cricket_clips(temp_dir, count=3)
 
-        if not cc_path:
-            # No real footage — run the AI fallback pipeline instead
+        if not clips:
+            # Not enough CC cricket footage — run AI niche pipeline instead
+            log.info("Insufficient CC cricket clips — switching to AI pipeline")
             return _run_ai_pipeline(slot=slot, job_dir=job_dir, temp_dir=temp_dir, result=result)
 
-        topic   = video_info.get("title", "Cricket Highlights")
-        channel = video_info.get("channel", "")
-        niche   = video_info.get("niche", "cricket")
-        log.info("Found: '%s' by %s (niche=%s)", topic, channel, niche)
-        _save_json(job_dir / "source.json", video_info)
-
-        # ── Step 2: Generate SEO metadata ────────────────────────────────────
+        # ── Step 2: Generate SEO for the compilation ──────────────────────────
+        n = len(clips)
+        topic = f"{n} Insane Cricket Moments"
+        channels = list({i["channel"] for i in clip_infos if i.get("channel")})
         log.info("[2/4] Generating SEO metadata...")
-        seo_data = generate_seo(topic=topic, hook=topic, niche=niche)
-        # Add attribution to description (CC BY requires credit)
-        if channel:
-            seo_data["description"] += f"\n\nOriginal footage by {channel} (CC BY licence)"
+        seo_data = generate_seo(topic=topic, hook=f"{n} cricket moments you won't believe", niche="cricket")
+        if channels:
+            seo_data["description"] += f"\n\nOriginal footage by: {', '.join(channels)} (CC BY licence)"
         _save_json(job_dir / "seo.json", seo_data)
         log.info("Title: %s", seo_data["title"])
 
-        # ── Step 3: Create video (CC Short + music) ───────────────────────────
-        log.info("[3/4] Creating final video with background music...")
-        video_path = create_video(
-            topic=topic,
+        # ── Step 3: Build the compilation video ───────────────────────────────
+        log.info("[3/4] Building cricket compilation video...")
+        video_path = create_cricket_compilation(
+            clips=clips,
+            clip_infos=clip_infos,
             output_path=job_dir / "final.mp4",
             temp_dir=temp_dir,
-            cc_path=cc_path,
         )
 
         # ── Step 4: Upload to YouTube ─────────────────────────────────────────
@@ -188,7 +180,8 @@ def run_pipeline(slot: int = 0) -> dict:
             "url":      f"https://www.youtube.com/shorts/{video_id}",
             "title":    seo_data["title"],
             "source":   topic,
-            "niche":    niche,
+            "niche":    "cricket",
+            "clips":    n,
         })
         _save_json(job_dir / "result.json", result)
 
