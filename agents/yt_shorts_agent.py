@@ -265,3 +265,62 @@ def download_cc_cricket_short(output_dir: Path) -> tuple[Path | None, dict]:
 
     log.warning("No CC football Short found — trying Pexels stock footage fallback...")
     return _download_pexels_fallback(output_dir)
+
+
+def download_cc_cricket_clips(output_dir: Path, count: int = 3) -> tuple[list, list]:
+    """
+    Download up to *count* CC-licensed cricket clips for a compilation video.
+    Returns (clip_paths, clip_infos). Returns ([], []) if fewer than 2 clips found
+    (caller should skip cricket and use AI pipeline instead).
+    """
+    output_dir.mkdir(parents=True, exist_ok=True)
+    clips: list = []
+    infos: list = []
+    seen_ids: set = set()
+
+    if not _ytdlp_available():
+        log.warning("yt-dlp not available — cannot build cricket compilation")
+        return [], []
+
+    for query in SEARCH_QUERIES:
+        if len(clips) >= count:
+            break
+        log.info("Searching YouTube for compilation clips: '%s'", query)
+        videos = _fetch_metadata(query, count=25)
+        cc_videos = [v for v in videos if _is_cc_licensed(v)]
+        log.info("Found %d CC results for '%s'", len(cc_videos), query)
+
+        for video in cc_videos:
+            if len(clips) >= count:
+                break
+            video_id = video.get("id") or video.get("webpage_url_basename", "")
+            if not video_id or video_id in seen_ids:
+                continue
+            duration = video.get("duration", 0) or 0
+            if duration > 180 or duration < 5:
+                continue
+
+            out_path = output_dir / f"clip_{len(clips):02d}_{video_id}.mp4"
+            if _download_video(video_id, out_path):
+                seen_ids.add(video_id)
+                clips.append(out_path)
+                infos.append({
+                    "title":    video.get("title", "Cricket Moment"),
+                    "channel":  video.get("uploader", ""),
+                    "video_id": video_id,
+                    "duration": duration,
+                    "license":  video.get("license", ""),
+                    "niche":    "cricket",
+                })
+                log.info("Clip %d/%d downloaded", len(clips), count)
+        time.sleep(2)
+
+    if len(clips) < 2:
+        log.warning(
+            "Only %d CC clip(s) found — need at least 2 for a compilation; skipping cricket",
+            len(clips),
+        )
+        return [], []
+
+    log.info("Cricket compilation: %d clips ready", len(clips))
+    return clips, infos
