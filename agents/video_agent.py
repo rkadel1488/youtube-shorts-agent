@@ -23,6 +23,7 @@ if not hasattr(Image, "ANTIALIAS"):
 from moviepy.editor import (
     AudioFileClip,
     ColorClip,
+    CompositeAudioClip,
     CompositeVideoClip,
     ImageClip,
     VideoFileClip,
@@ -152,11 +153,12 @@ def create_cricket_compilation(
     clip_infos: list,
     output_path: Path,
     temp_dir: Path,
+    voiceover_path: Path | None = None,
 ) -> Path:
     """
     Build a 'N Moments' compilation Short from multiple CC cricket clips.
     Each segment gets a 'MOMENT N' counter overlay for its first 2 seconds.
-    Clips are separated by a brief black flash. Background music added.
+    Clips are separated by a brief black flash. Voiceover + music mixed in.
     """
     from moviepy.editor import concatenate_videoclips, ColorClip as _CC
 
@@ -202,7 +204,28 @@ def create_cricket_compilation(
     # Background music
     log.info("Downloading background music for compilation...")
     music_path = download_music(temp_dir / "music.mp3")
-    if music_path and music_path.exists():
+
+    if voiceover_path and voiceover_path.exists():
+        try:
+            vo = AudioFileClip(str(voiceover_path)).volumex(0.9)
+            if music_path and music_path.exists():
+                try:
+                    music = AudioFileClip(str(music_path))
+                    if music.duration < duration:
+                        loops = int(duration / music.duration) + 1
+                        music = concatenate_audioclips([music] * loops)
+                    music = music.subclip(0, duration).volumex(0.15)
+                    video = video.set_audio(CompositeAudioClip([music, vo]))
+                    log.info("Voiceover + background music mixed")
+                except Exception as exc:
+                    log.warning("Music mix failed, using voiceover only: %s", exc)
+                    video = video.set_audio(vo)
+            else:
+                video = video.set_audio(vo)
+                log.info("Voiceover added as primary audio")
+        except Exception as exc:
+            log.warning("Voiceover mixing failed: %s", exc)
+    elif music_path and music_path.exists():
         try:
             music = AudioFileClip(str(music_path))
             if music.duration < duration:
@@ -245,6 +268,7 @@ def create_video(
     output_path: Path,
     temp_dir: Path,
     cc_path: Path | None = None,
+    voiceover_path: Path | None = None,
     **_kwargs,
 ) -> Path:
     """
@@ -278,7 +302,32 @@ def create_video(
     # 3. Download background music
     log.info("Downloading background music...")
     music_path = download_music(temp_dir / "music.mp3")
-    if music_path and music_path.exists():
+
+    # Mix audio: voiceover (primary) + background music (ambient)
+    if voiceover_path and voiceover_path.exists():
+        try:
+            vo = AudioFileClip(str(voiceover_path))
+            vo = vo.volumex(0.9)
+            if music_path and music_path.exists():
+                try:
+                    music = AudioFileClip(str(music_path))
+                    if music.duration < duration:
+                        loops = int(duration / music.duration) + 1
+                        music = concatenate_audioclips([music] * loops)
+                    music = music.subclip(0, duration).volumex(0.15)
+                    combined = CompositeAudioClip([music, vo])
+                    base = base.set_audio(combined)
+                    log.info("Voiceover + background music mixed")
+                except Exception as exc:
+                    log.warning("Music mix failed, using voiceover only: %s", exc)
+                    base = base.set_audio(vo)
+            else:
+                base = base.set_audio(vo)
+                log.info("Voiceover added as primary audio")
+        except Exception as exc:
+            log.warning("Voiceover mixing failed: %s", exc)
+    elif music_path and music_path.exists():
+        # Music-only path (existing code)
         try:
             music = AudioFileClip(str(music_path))
             if music.duration < duration:
@@ -346,10 +395,8 @@ def create_ai_video(
     if not image_paths:
         raise RuntimeError("No images provided for AI video")
 
-    # Load voiceover
     voiceover = AudioFileClip(str(voiceover_path))
     total_duration = max(voiceover.duration, 10.0)
-
     seg_duration = total_duration / len(image_paths)
     clips = []
 
@@ -359,7 +406,6 @@ def create_ai_video(
         )
         arr = np.array(img)
 
-        # Alternate zoom in / zoom out for Ken Burns effect
         zoom_in = (i % 2 == 0)
         start_scale = 1.0 if zoom_in else 1.12
         end_scale = 1.12 if zoom_in else 1.0

@@ -226,3 +226,77 @@ def generate_script(retries: int = 3) -> dict:
             time.sleep(2 ** attempt)
 
     raise RuntimeError(f"Script generation failed after {retries} attempts")
+
+
+TREND_SCRIPT_TEMPLATE = """\
+Here are the titles of the TOP-VIEWED cricket Short videos on YouTube right now:
+
+{top_hooks}
+
+Most common tags on these videos:
+{top_tags}
+
+Write a YouTube Shorts cricket highlight script that MATCHES the style, energy, and hook format of these top-performing videos.
+
+Rules:
+- Total spoken length: 20-27 seconds (~60-75 words)
+- Hook (first line, under 12 words): copy the EXACT style of the hooks above — make it feel like it belongs in that list
+- Body: short punchy sentences (max 10 words each), build tension, deliver the highlight
+- End with: "Follow for daily cricket highlights."
+- Write like a live commentator — present tense, energy, drama
+
+Return ONLY this JSON (no markdown):
+{{
+  "topic": "short punchy title matching the trending style",
+  "hook": "the opening hook line only",
+  "script": "full script including hook, body, and CTA",
+  "keywords": ["cricket", "highlights", "shorts", "cricket2025", "cricketlovers"]
+}}"""
+
+
+def generate_trend_script(trend_data: dict, retries: int = 3) -> dict:
+    """
+    Generate a cricket script that mimics the style of top-viewed cricket Shorts.
+    trend_data: output of trend_analyzer.analyze_top_videos()
+    """
+    hooks = trend_data.get("hooks", [])
+    tags  = trend_data.get("tags", [])
+
+    if not hooks:
+        log.info("No trend hooks available — falling back to generic script")
+        return generate_script(retries=retries)
+
+    top_hooks_str = "\n".join(f"  • {h}" for h in hooks[:5])
+    top_tags_str  = ", ".join(tags[:15]) if tags else "cricket, highlights, shorts"
+
+    prompt = TREND_SCRIPT_TEMPLATE.format(
+        top_hooks=top_hooks_str,
+        top_tags=top_tags_str,
+    )
+
+    client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
+
+    for attempt in range(1, retries + 1):
+        try:
+            log.info("Generating trend-based script (attempt %d)...", attempt)
+            message = client.messages.create(
+                model=CLAUDE_MODEL,
+                max_tokens=512,
+                system=SYSTEM_PROMPT,
+                messages=[{"role": "user", "content": prompt}],
+            )
+            raw = message.content[0].text.strip()
+            result = json.loads(raw)
+            for key in ("topic", "hook", "script", "keywords"):
+                if key not in result:
+                    raise ValueError(f"Missing key '{key}'")
+            log.info("Trend script generated: '%s'", result["topic"])
+            return result
+        except json.JSONDecodeError as exc:
+            log.warning("JSON parse error attempt %d: %s", attempt, exc)
+        except Exception as exc:
+            log.warning("Trend script error attempt %d: %s", attempt, exc)
+        if attempt < retries:
+            time.sleep(2 ** attempt)
+
+    return generate_script(retries=retries)

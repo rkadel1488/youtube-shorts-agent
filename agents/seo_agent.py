@@ -77,22 +77,28 @@ Return ONLY this JSON:
 }}"""
 
 
-def generate_seo(topic: str, hook: str, niche: str = "cricket", retries: int = 3) -> dict:
+def generate_seo(topic: str, hook: str, niche: str = "cricket", trend_data: dict = None, retries: int = 3) -> dict:
     """
     Fetch trending tags (cricket only) then call Claude to generate SEO metadata.
     For non-cricket niches, trending tag lookup is skipped.
     Returns a dict with keys: title, description, tags, hashtags.
+    trend_data: optional output of trend_analyzer.analyze_top_videos(); when
+    provided, tags/hashtags are taken directly from the most-viewed videos.
     """
-    # Step 1: pull real trending tags from top-viewed YouTube videos (cricket only)
-    if niche == "cricket":
+    # Step 1: determine trending tags source
+    if trend_data and trend_data.get("tags"):
+        trending_tags_str = ", ".join(trend_data["tags"][:20])
+        trending_hashtags_str = ", ".join(trend_data["hashtags"][:8])
+        log.info("Using trend_data tags from top-viewed videos")
+    elif niche == "cricket":
         log.info("Fetching trending tags from top cricket highlight videos...")
         trending = get_trending_tags(topic)
         trending_tags_str = ", ".join(trending["tags"]) if trending["tags"] else "cricket highlights, cricket match, cricket shorts, cricket 2025"
-        trending_hashtags_str = ", ".join(trending["hashtags"]) if trending["hashtags"] else "#Cricket, #Shorts, #CricketHighlights, #CricketLovers"
+        trending_hashtags_str = ", ".join(trending["hashtags"]) if trending["hashtags"] else "#Cricket, #Shorts, #CricketHighlights"
     else:
+        trending_tags_str = "shorts, viral, trending, youtube shorts, 2025"
+        trending_hashtags_str = "#Shorts, #Viral, #Trending"
         log.info("Skipping trending tags lookup for niche '%s'", niche)
-        trending_tags_str = ""
-        trending_hashtags_str = ""
 
     client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
     prompt = SEO_TEMPLATE.format(
