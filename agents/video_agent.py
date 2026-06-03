@@ -146,6 +146,45 @@ def _moment_label(text: str, duration: float) -> ImageClip:
     )
 
 
+def _hook_overlay(text: str, duration: float) -> ImageClip:
+    """Large centred text overlay for the opening hook — visible to silent viewers."""
+    font_size = 72
+    font = _load_font(font_size)
+    wrapped = textwrap.fill(text[:50], width=14)
+    lines = wrapped.split("\n")
+
+    dummy = Image.new("RGBA", (1, 1))
+    draw = ImageDraw.Draw(dummy)
+    bboxes = [draw.textbbox((0, 0), l, font=font) for l in lines]
+    line_h = max(b[3] - b[1] for b in bboxes) if bboxes else font_size
+    pad = 24
+    total_h = line_h * len(lines) + pad * (len(lines) - 1) + pad * 2
+    img_w = VIDEO_WIDTH
+    img_h = total_h + pad * 2
+
+    img = Image.new("RGBA", (img_w, img_h), (0, 0, 0, 0))
+    draw = ImageDraw.Draw(img)
+    # Semi-transparent black background strip
+    draw.rectangle([0, pad, img_w, img_h - pad], fill=(0, 0, 0, 180))
+    y_cur = pad * 2
+    for line, bbox in zip(lines, bboxes):
+        lw = bbox[2] - bbox[0]
+        lx = (img_w - lw) // 2
+        # Shadow
+        draw.text((lx + 3, y_cur + 3), line, font=font, fill=(0, 0, 0, 200))
+        # White text
+        draw.text((lx, y_cur), line, font=font, fill=(255, 255, 255, 255))
+        y_cur += line_h + pad
+
+    y_pos = int(VIDEO_HEIGHT * 0.38) - img_h // 2
+    return (
+        ImageClip(np.array(img), ismask=False)
+        .set_start(0)
+        .set_duration(min(3.5, duration))
+        .set_position(("center", max(0, y_pos)))
+    )
+
+
 # ── compilation entry ────────────────────────────────────────────────────────
 
 def create_cricket_compilation(
@@ -154,11 +193,13 @@ def create_cricket_compilation(
     output_path: Path,
     temp_dir: Path,
     voiceover_path: Path | None = None,
+    on_screen_hook: str | None = None,
 ) -> Path:
     """
     Build a 'N Moments' compilation Short from multiple CC cricket clips.
     Each segment gets a 'MOMENT N' counter overlay for its first 2 seconds.
     Clips are separated by a brief black flash. Voiceover + music mixed in.
+    on_screen_hook: large centred hook text shown for first 3.5s (for silent viewers).
     """
     from moviepy.editor import concatenate_videoclips, ColorClip as _CC
 
@@ -239,7 +280,10 @@ def create_cricket_compilation(
     # Title overlay at the very top
     count_title = f"{len(segments)} Cricket Moments \U0001f92f"
     title = _title_overlay(count_title, min(4.0, duration))
-    final = CompositeVideoClip([video, title], size=(VIDEO_WIDTH, VIDEO_HEIGHT))
+    layers = [video, title]
+    if on_screen_hook:
+        layers.append(_hook_overlay(on_screen_hook, duration))
+    final = CompositeVideoClip(layers, size=(VIDEO_WIDTH, VIDEO_HEIGHT))
 
     log.info("Rendering compilation -> %s", output_path)
     final.write_videofile(
@@ -382,6 +426,7 @@ def create_ai_video(
     voiceover_path: Path,
     output_path: Path,
     temp_dir: Path,
+    on_screen_hook: str | None = None,
 ) -> Path:
     """
     Assemble a YouTube Short from AI-generated images + voiceover.
@@ -430,7 +475,10 @@ def create_ai_video(
     video = video.set_audio(voiceover)
 
     title = _title_overlay(topic, min(6.0, total_duration))
-    final = CompositeVideoClip([video, title], size=(VIDEO_WIDTH, VIDEO_HEIGHT))
+    layers = [video, title]
+    if on_screen_hook:
+        layers.append(_hook_overlay(on_screen_hook, total_duration))
+    final = CompositeVideoClip(layers, size=(VIDEO_WIDTH, VIDEO_HEIGHT))
 
     log.info("Rendering AI video -> %s", output_path)
     final.write_videofile(

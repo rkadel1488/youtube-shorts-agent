@@ -88,6 +88,7 @@ def _run_ai_pipeline(
         voiceover_path=vo_path,
         output_path=raw_path,
         temp_dir=temp_dir,
+        on_screen_hook=script_data.get("on_screen_hook"),
     )
 
     log.info("[AI-4b] Enhancing with FFmpeg...")
@@ -211,6 +212,7 @@ def run_pipeline(slot: int = 0) -> dict:
             output_path=raw_path,
             temp_dir=temp_dir,
             voiceover_path=vo_path,
+            on_screen_hook=script_data.get("on_screen_hook"),
         )
 
         # ── Step 4b: FFmpeg enhancement (color grade + fades) ─────────────────

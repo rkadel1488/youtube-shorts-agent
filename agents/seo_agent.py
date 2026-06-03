@@ -24,56 +24,53 @@ from utils.logger import get_logger
 
 log = get_logger(__name__)
 
-SYSTEM_PROMPT = """You are a top YouTube Shorts SEO strategist in 2025 specialising in viral short-form video content.
-You write titles and descriptions that maximise click-through rate and watch time.
+SYSTEM_PROMPT = """You are a viral YouTube Shorts growth expert in 2025. You have studied the top 0.1% of Shorts channels and know exactly what titles, hooks, and tags drive algorithmic push and high CTR.
+Your titles must be so compelling that viewers stop scrolling immediately.
 Always respond with valid JSON only — no markdown fences, no extra commentary."""
 
-SEO_TEMPLATE = """Generate high-performing YouTube Shorts SEO metadata for this video.
+SEO_TEMPLATE = """Generate maximum-CTR YouTube Shorts metadata for this video.
 
 Topic: {topic}
 Hook (opening line): {hook}
 
-Here are the tags and hashtags currently used by the TOP-VIEWED videos on YouTube in this niche.
-Use these as your primary source — they are proven to rank:
+TOP-VIEWED videos in this niche use these tags and hashtags — copy their style:
+Trending tags: {trending_tags}
+Trending hashtags: {trending_hashtags}
 
-Trending tags from top videos:
-{trending_tags}
-
-Trending hashtags from top videos:
-{trending_hashtags}
-
-TITLE rules:
-- 50-60 characters max
-- Mention the key topic, player, or moment if known
-- Use a curiosity gap or bold claim (e.g. "Nobody saw this coming", "This changed everything")
-- You MAY use ONE emoji at the start or end for visual pop
-- No ALL-CAPS words
+TITLE rules (this is the #1 factor for views):
+- 45-58 characters max (shorter titles get more impressions on mobile)
+- PROVEN high-CTR formats — pick the best fit:
+    • "Nobody expected [player/team] to do THIS 😱"
+    • "[N] cricket moments that broke the internet 🤯"
+    • "The moment [player] changed cricket forever"
+    • "When [team] shocked the entire stadium"
+    • "This [shot/wicket/catch] is statistically impossible"
+    • "[Player] just did something no one has EVER done"
+- Use ONE emoji (😱 🤯 💥 🔥 👀) — at the END only
+- Start with a strong noun or verb — never start with "The" or "A"
+- Never use ALL-CAPS
 
 DESCRIPTION rules:
-- 4-5 sentences total
-- Sentence 1: restate the hook in different words to reinforce curiosity
-- Sentences 2-3: expand on why this moment is historic or dramatic
-- Sentence 4: soft CTA — "Follow for more."
-- End the description with: #Shorts
+- Line 1: restate the hook with more urgency (different words)
+- Lines 2-3: why this moment is historic — add a specific detail (score, year, player name)
+- Line 4: "Follow for daily cricket highlights."
+- End with: #Shorts
 
-TAGS rules (plain English, no #):
-- Return exactly 20 tags
-- PRIORITISE the trending tags listed above — include as many as are relevant
-- Add topic-specific tags for this exact match/moment
-- Mix broad with specific
+TAGS (plain English, no #, exactly 20):
+- Start with the 10 most relevant trending tags above
+- Add 10 specific to this exact moment/match/player
+- Mix: player name, team name, tournament, year, action type
 
-HASHTAGS rules:
-- Return exactly 5 hashtags (with #)
-- PRIORITISE the trending hashtags listed above
-- Always include #Shorts
-- Add 1-2 specific to this topic or moment
+HASHTAGS (with #, exactly 5):
+- Always include #Shorts and #Cricket
+- Use 3 from the trending hashtags list above
 
 Return ONLY this JSON:
 {{
   "title": "...",
   "description": "...",
   "tags": ["tag1", ...],
-  "hashtags": ["#Shorts", "#tag2", "#tag3", "#tag4", "#tag5"]
+  "hashtags": ["#Shorts", "#Cricket", "#tag3", "#tag4", "#tag5"]
 }}"""
 
 

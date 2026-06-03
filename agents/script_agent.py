@@ -8,6 +8,7 @@ Output schema (JSON):
 {
   "topic": "...",
   "hook": "...",
+  "on_screen_hook": "...",   # short caps version for on-screen display
   "script": "...",
   "keywords": ["word1", "word2", ...]
 }
@@ -24,47 +25,51 @@ from utils.logger import get_logger
 
 log = get_logger(__name__)
 
-SYSTEM_PROMPT = """You are an electrifying cricket highlights commentator for YouTube Shorts.
-Your scripts sound like the most exciting moment of a match — urgent, vivid, fast-paced.
+SYSTEM_PROMPT = """You are a viral cricket Shorts creator whose videos consistently hit 1M+ views.
+You know that 70% of Shorts viewers watch silently, so the HOOK must work as on-screen text too.
+Your hooks are short, visual, and create instant FOMO or disbelief.
 Always respond with valid JSON only — no markdown fences, no extra commentary."""
 
-SCRIPT_TEMPLATE = """Write a YouTube Shorts cricket highlight script based on this recent match data:
+SCRIPT_TEMPLATE = """Write a viral YouTube Shorts cricket highlight script based on this match data:
 
 {match_info}
 
-Rules:
-- Total spoken length: 20-27 seconds (~60-75 words)
-- Hook (first line, under 12 words): must grab attention instantly. Use one of:
-    • "This moment will be talked about for years."
-    • "[Player/Team] just did the impossible."
-    • "Nobody saw this coming in [match name]."
-    • "[Score/stat] — cricket has never seen anything like it."
-- Body: short punchy sentences (max 10 words). Build the tension, describe the key moment, deliver the result.
+CRITICAL RULES:
+- Total spoken length: 18-25 seconds (~50-70 words) — shorter = higher completion rate
+- Hook (first line, MAX 8 words): must work as BOTH spoken audio AND on-screen text.
+  Use shock/disbelief/FOMO — pick the best format:
+    • "[Player] just broke a [X]-year record."
+    • "Nobody expected [team] to do THIS."
+    • "[Score] in the final over. Unbelievable."
+    • "The [shot/ball/catch] that silenced [N] thousand fans."
+    • "This only happens once in [N] years."
+- Body: 3-4 punchy sentences max 8 words each. Present tense. Build to the climax.
 - End with: "Follow for daily cricket highlights."
-- Write like a live commentator — use present tense, energy, drama.
+- The "on_screen_hook" field is the EXACT text displayed as a large caption — keep it under 6 words, ALL CAPS.
 
 Return ONLY this JSON (no markdown):
 {{
-  "topic": "short punchy title for this highlight (e.g. 'India vs Australia — Final Over Thriller')",
-  "hook": "the opening hook line only",
+  "topic": "punchy title (e.g. 'India\\'s Last-Ball Six That Shocked the World')",
+  "hook": "the opening hook line (max 8 words)",
+  "on_screen_hook": "VERY SHORT ON-SCREEN TEXT (max 6 words, ALL CAPS)",
   "script": "full script including hook, body, and CTA",
   "keywords": ["cricket", "stadium", "batting", "bowling", "cricket match"]
 }}"""
 
-FALLBACK_TEMPLATE = """Write a YouTube Shorts script about one of the most dramatic moments \
-in recent international cricket — a match-winning six, a stunning wicket, or a record-breaking innings.
+FALLBACK_TEMPLATE = """Write a viral YouTube Shorts script about a jaw-dropping cricket moment — \
+a last-ball six, an unplayable delivery, or a world-record innings.
 
-Rules:
-- Total spoken length: 20-27 seconds (~60-75 words)
-- Hook (first line, under 12 words): instant attention-grabber about a cricket moment
-- Body: short punchy sentences (max 10 words each), build tension, deliver the highlight
+CRITICAL RULES:
+- Total spoken length: 18-25 seconds (~50-70 words) — shorter = higher completion rate
+- Hook (first line, MAX 8 words): creates instant shock or FOMO, works as on-screen text
+- Body: 3-4 punchy sentences max 8 words each, present tense, build to climax
 - End with: "Follow for daily cricket highlights."
-- Write with the energy of a live commentator.
 
 Return ONLY this JSON (no markdown):
 {{
-  "topic": "short punchy title for this highlight",
-  "hook": "the opening hook line only",
+  "topic": "punchy title that makes people stop scrolling",
+  "hook": "the opening hook line (max 8 words)",
+  "on_screen_hook": "VERY SHORT ON-SCREEN TEXT (max 6 words, ALL CAPS)",
   "script": "full script including hook, body, and CTA",
   "keywords": ["cricket", "stadium", "batting", "bowling", "cricket match"]
 }}"""
@@ -72,68 +77,71 @@ Return ONLY this JSON (no markdown):
 
 NICHE_PROMPTS = {
     "fun_facts": """\
-Write a mind-blowing fun fact Short script.
+Write a viral mind-blowing fun fact Short script.
 
-Rules:
-- Total spoken length: 20-27 seconds (~60-75 words)
-- Hook (first line, under 12 words): must make the viewer say "No way!"
-- Body: explains the fact in simple vivid terms, short punchy sentences (max 10 words each)
+CRITICAL RULES:
+- Total spoken length: 18-25 seconds (~50-70 words)
+- Hook (MAX 8 words): must make the viewer say "No way!" — works as on-screen text
+- Body: explains the fact in vivid terms, 3-4 punchy sentences max 8 words each
 - End with: "Follow for daily mind-blowing facts."
 
 Return ONLY this JSON (no markdown):
 {{
   "topic": "short punchy title",
-  "hook": "opening hook line",
+  "hook": "opening hook line (max 8 words)",
+  "on_screen_hook": "VERY SHORT ON-SCREEN VERSION (max 6 words, ALL CAPS)",
   "script": "full script including hook, body, and CTA",
   "keywords": ["facts", "mindblow", "didyouknow", "science", "amazing"]
 }}""",
 
     "horror_story": """\
-Write a short horror story Short script.
+Write a viral horror story Short script.
 
-Rules:
-- Total spoken length: 20-27 seconds (~60-75 words)
-- Hook (first line, under 12 words): must be a spine-chilling opening
-- Body: build dread fast with short punchy sentences (max 10 words each)
+CRITICAL RULES:
+- Total spoken length: 18-25 seconds (~50-70 words)
+- Hook (MAX 8 words): spine-chilling opening that works as on-screen text
+- Body: build dread fast with 3-4 punchy sentences max 8 words each
 - End with a twist or scare, then: "Follow for more horror stories."
 
 Return ONLY this JSON (no markdown):
 {{
   "topic": "short punchy title",
-  "hook": "opening hook line",
+  "hook": "opening hook line (max 8 words)",
+  "on_screen_hook": "VERY SHORT ON-SCREEN VERSION (max 6 words, ALL CAPS)",
   "script": "full script including hook, body, and CTA",
   "keywords": ["horror", "scary", "creepy", "thriller", "horrortok"]
 }}""",
 
     "football": """\
-Write a football (soccer) highlights Short script.
+Write a viral football (soccer) highlights Short script.
 
-Rules:
-- Total spoken length: 20-27 seconds (~60-75 words)
-- Hook (first line, under 12 words): about a dramatic goal, save, or moment
-- Body: build the tension in short punchy sentences (max 10 words each), deliver the result
+CRITICAL RULES:
+- Total spoken length: 18-25 seconds (~50-70 words)
+- Hook (MAX 8 words): about a dramatic goal, save, or moment — works as on-screen text
+- Body: build tension in 3-4 punchy sentences max 8 words each, deliver the result
 - End with: "Follow for daily football highlights."
-- Write like a live commentator — use present tense, energy, drama.
+- Present tense, live commentator energy.
 
 Return ONLY this JSON (no markdown):
 {{
   "topic": "short punchy title",
-  "hook": "opening hook line",
+  "hook": "opening hook line (max 8 words)",
+  "on_screen_hook": "VERY SHORT ON-SCREEN VERSION (max 6 words, ALL CAPS)",
   "script": "full script including hook, body, and CTA",
   "keywords": ["football", "soccer", "goals", "highlights", "footballshorts"]
 }}""",
 }
 
-NICHE_SYSTEM_PROMPT = """You are an electrifying short-form video scriptwriter for YouTube Shorts.
-Your scripts are urgent, vivid, fast-paced, and perfectly timed for 20-27 seconds.
+NICHE_SYSTEM_PROMPT = """You are a viral short-form video creator for YouTube Shorts with 1M+ view videos.
+Your scripts are under 25 seconds, have hooks that stop the scroll, and work for silent viewers.
 Always respond with valid JSON only — no markdown fences, no extra commentary."""
 
 
 def generate_niche_script(niche: str, retries: int = 3) -> dict:
     """
-    Generate a 20-27 second (~60-75 word) YouTube Shorts script for the given niche.
+    Generate an 18-25 second YouTube Shorts script for the given niche.
     Supported niches: 'fun_facts', 'horror_story', 'football'.
-    Returns a dict with keys: topic, hook, script, keywords.
+    Returns a dict with keys: topic, hook, on_screen_hook, script, keywords.
     """
     if niche not in NICHE_PROMPTS:
         raise ValueError(f"Unknown niche '{niche}'. Supported: {list(NICHE_PROMPTS)}")
@@ -157,6 +165,7 @@ def generate_niche_script(niche: str, retries: int = 3) -> dict:
                 if key not in result:
                     raise ValueError(f"Missing key '{key}' in Claude response")
 
+            result.setdefault("on_screen_hook", result["hook"][:40].upper())
             log.info("Niche script generated [%s]: '%s'", niche, result["topic"])
             return result
 
@@ -214,6 +223,7 @@ def generate_script(retries: int = 3) -> dict:
                 if key not in result:
                     raise ValueError(f"Missing key '{key}' in Claude response")
 
+            result.setdefault("on_screen_hook", result["hook"][:40].upper())
             log.info("Script generated: '%s'", result["topic"])
             return result
 
@@ -236,19 +246,20 @@ Here are the titles of the TOP-VIEWED cricket Short videos on YouTube right now:
 Most common tags on these videos:
 {top_tags}
 
-Write a YouTube Shorts cricket highlight script that MATCHES the style, energy, and hook format of these top-performing videos.
+Write a viral YouTube Shorts cricket highlight script that COPIES the hook style of these top videos.
 
-Rules:
-- Total spoken length: 20-27 seconds (~60-75 words)
-- Hook (first line, under 12 words): copy the EXACT style of the hooks above — make it feel like it belongs in that list
-- Body: short punchy sentences (max 10 words each), build tension, deliver the highlight
+CRITICAL RULES:
+- Total spoken length: 18-25 seconds (~50-70 words) — shorter = higher completion rate
+- Hook (MAX 8 words): copy the EXACT style of the top titles above — shock, disbelief, FOMO
+- The "on_screen_hook" is displayed as a large caption to silent viewers — max 6 words, ALL CAPS
+- Body: 3-4 punchy sentences max 8 words each, present tense, build to climax
 - End with: "Follow for daily cricket highlights."
-- Write like a live commentator — present tense, energy, drama
 
 Return ONLY this JSON (no markdown):
 {{
-  "topic": "short punchy title matching the trending style",
-  "hook": "the opening hook line only",
+  "topic": "punchy title matching the trending style",
+  "hook": "the opening hook line (max 8 words)",
+  "on_screen_hook": "VERY SHORT ON-SCREEN VERSION (max 6 words, ALL CAPS)",
   "script": "full script including hook, body, and CTA",
   "keywords": ["cricket", "highlights", "shorts", "cricket2025", "cricketlovers"]
 }}"""
@@ -290,6 +301,7 @@ def generate_trend_script(trend_data: dict, retries: int = 3) -> dict:
             for key in ("topic", "hook", "script", "keywords"):
                 if key not in result:
                     raise ValueError(f"Missing key '{key}'")
+            result.setdefault("on_screen_hook", result["hook"][:40].upper())
             log.info("Trend script generated: '%s'", result["topic"])
             return result
         except json.JSONDecodeError as exc:
