@@ -1,48 +1,52 @@
 """
-Generates 4 cinematic AI images per Short using Pollinations.ai (100% free, no API key).
-Uses the FLUX model with exact 1080x1920 (9:16) resolution for YouTube Shorts.
+Generates 4 cinematic images per Short by fetching keyword-matched stock photos
+from the Pexels Photo API (free, requires PEXELS_API_KEY).
 
-Each image matches a scene in the script: opening, build, reveal, close.
+Pollinations.ai's free image generation now requires payment (402 errors), so
+this agent uses real stock photography instead — reliable and no extra cost.
+
+Each image matches a scene/mood derived from the script topic and keywords.
 """
 import random
 import time
-import urllib.parse
 from pathlib import Path
 
 import requests
+from PIL import Image
 
-from config import VIDEO_HEIGHT, VIDEO_WIDTH
+from config import PEXELS_API_KEY, VIDEO_HEIGHT, VIDEO_WIDTH
 from utils.logger import get_logger
 
 log = get_logger(__name__)
 
-POLLINATIONS_URL = "https://image.pollinations.ai/prompt/{prompt}"
+PEXELS_PHOTO_URL = "https://api.pexels.com/v1/search"
 
-CINEMATIC_STYLE = (
-    "cinematic dramatic lighting, photorealistic, 8K, highly detailed, "
-    "epic composition, vivid colors, awe-inspiring atmosphere"
-)
-
-SCENE_TEMPLATES = [
-    "Wide establishing shot: {topic}, dramatic opening",
-    "Close-up: {topic}, intense focus, emotional depth",
-    "Reveal moment: {topic}, tension and discovery",
-    "Powerful closing image: {topic}, impactful final frame",
-]
+SCENE_MOODS = ["wide establishing", "close-up detail", "dramatic moment", "powerful finale"]
 
 
-def _build_prompts(topic: str, keywords: list[str]) -> list[str]:
-    """Build 4 FLUX prompts tailored to the topic."""
-    kw_str = ", ".join(k for k in keywords[:3] if k) if keywords else topic
-    prompts = []
-    for template in SCENE_TEMPLATES:
-        scene = template.format(topic=topic)
-        prompt = (
-            f"{scene}, {kw_str}, {CINEMATIC_STYLE}, "
-            f"vertical portrait format, no text, no watermarks, no logos"
-        )
-        prompts.append(prompt)
-    return prompts
+def _build_queries(topic: str, keywords: list[str]) -> list[str]:
+    """Build 4 search queries tailored to the topic/keywords for visual variety."""
+    base_terms = [k for k in (keywords or []) if k][:4] or [topic]
+    queries = []
+    for i in range(4):
+        term = base_terms[i % len(base_terms)]
+        queries.append(f"{term} {SCENE_MOODS[i]}")
+    return queries
+
+
+def _crop_portrait(img: Image.Image) -> Image.Image:
+    """Center-crop a PIL image to the 1080x1920 portrait aspect ratio."""
+    target_ratio = VIDEO_WIDTH / VIDEO_HEIGHT
+    w, h = img.size
+    if w / h > target_ratio:
+        new_w = int(h * target_ratio)
+        x0 = (w - new_w) // 2
+        img = img.crop((x0, 0, x0 + new_w, h))
+    else:
+        new_h = int(w / target_ratio)
+        y0 = (h - new_h) // 2
+        img = img.crop((0, y0, w, y0 + new_h))
+    return img.resize((VIDEO_WIDTH, VIDEO_HEIGHT), Image.LANCZOS)
 
 
 def generate_images(
@@ -53,41 +57,55 @@ def generate_images(
     **_kwargs,
 ) -> list[Path]:
     """
-    Generate 4 AI images using Pollinations.ai FLUX model (free, no API key).
+    Fetch 4 keyword-matched stock photos from Pexels, cropped to 1080x1920 portrait.
     Returns a list of saved JPEG image paths.
     """
     output_dir.mkdir(parents=True, exist_ok=True)
-    prompts = _build_prompts(topic, keywords)
+
+    if not PEXELS_API_KEY:
+        log.warning("PEXELS_API_KEY not set — cannot fetch stock images")
+        return []
+
+    queries = _build_queries(topic, keywords)
     paths: list[Path] = []
 
-    for i, prompt in enumerate(prompts):
+    for i, query in enumerate(queries):
         img_path = output_dir / f"scene_{i:02d}.jpg"
-        seed = random.randint(1, 999999)
-
-        url = POLLINATIONS_URL.format(prompt=urllib.parse.quote(prompt))
-        params = {
-            "width": VIDEO_WIDTH,
-            "height": VIDEO_HEIGHT,
-            "seed": seed,
-            "model": "flux",
-            "nologo": "true",
-            "enhance": "true",
-        }
 
         for attempt in range(1, retries + 1):
             try:
-                log.info("Generating image %d/%d via Pollinations (attempt %d)...", i + 1, len(prompts), attempt)
-                resp = requests.get(url, params=params, timeout=90)
+                log.info("Fetching image %d/%d for '%s' (attempt %d)...", i + 1, len(queries), query, attempt)
+                resp = requests.get(
+                    PEXELS_PHOTO_URL,
+                    headers={"Authorization": PEXELS_API_KEY},
+                    params={"query": query, "per_page": 15, "orientation": "portrait"},
+                    timeout=30,
+                )
                 resp.raise_for_status()
+                photos = resp.json().get("photos", [])
+                if not photos:
+                    raise ValueError(f"No Pexels photos found for '{query}'")
 
-                content_type = resp.headers.get("content-type", "")
-                if "image" not in content_type and len(resp.content) < 10_000:
-                    raise ValueError(f"Response doesn't look like an image: {content_type}")
+                random.shuffle(photos)
+                photo = photos[0]
+                src = photo.get("src", {})
+                url = src.get("large2x") or src.get("large") or src.get("original")
+                if not url:
+                    raise ValueError("Pexels photo has no usable source URL")
 
-                with open(img_path, "wb") as f:
-                    f.write(resp.content)
+                img_resp = requests.get(url, timeout=60, headers={"User-Agent": "Mozilla/5.0"})
+                img_resp.raise_for_status()
 
-                log.info("Image %d saved -> %s (%d KB)", i + 1, img_path, len(resp.content) // 1024)
+                tmp_path = output_dir / f"_raw_{i:02d}.jpg"
+                with open(tmp_path, "wb") as f:
+                    f.write(img_resp.content)
+
+                img = Image.open(tmp_path).convert("RGB")
+                img = _crop_portrait(img)
+                img.save(img_path, "JPEG", quality=90)
+                tmp_path.unlink(missing_ok=True)
+
+                log.info("Image %d saved -> %s", i + 1, img_path)
                 paths.append(img_path)
                 break
 
@@ -100,5 +118,5 @@ def generate_images(
 
         time.sleep(1)
 
-    log.info("Generated %d/%d images successfully", len(paths), len(prompts))
+    log.info("Generated %d/%d images successfully", len(paths), len(queries))
     return paths
