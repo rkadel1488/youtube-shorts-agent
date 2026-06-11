@@ -121,13 +121,19 @@ def generate_seo(topic: str, hook: str, niche: str = "cricket", trend_data: dict
                 if key not in result:
                     raise ValueError(f"Missing key '{key}' in SEO response")
 
-            # Enforce #Shorts always present
-            if "#Shorts" not in result["hashtags"]:
-                result["hashtags"].insert(0, "#Shorts")
+            # Always inject brand tags
+            for brand_tag in ("aaryankelvin", "aaryan kelvin"):
+                if brand_tag not in result["tags"]:
+                    result["tags"].append(brand_tag)
 
-            # Cap to safe limits
-            result["hashtags"] = result["hashtags"][:5]
-            result["tags"] = result["tags"][:20]
+            # Enforce #Shorts and brand hashtag always present
+            for brand_ht in ("#Shorts", "#aaryankelvin"):
+                if brand_ht not in result["hashtags"]:
+                    result["hashtags"].insert(0, brand_ht)
+
+            # Cap to safe limits (tags allow up to 500 chars total; keep 20 + 2 brand)
+            result["hashtags"] = result["hashtags"][:6]
+            result["tags"] = result["tags"][:22]
 
             log.info("SEO title: '%s'", result["title"])
             return result
