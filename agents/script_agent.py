@@ -137,7 +137,24 @@ Your scripts are under 25 seconds, have hooks that stop the scroll, and work for
 Always respond with valid JSON only — no markdown fences, no extra commentary."""
 
 
-def generate_niche_script(niche: str, retries: int = 3) -> dict:
+def _avoid_block(used_titles: list = None, used_topics: list = None) -> str:
+    """Build a prompt suffix telling Claude which titles/topics to avoid."""
+    parts = []
+    if used_titles:
+        recent = used_titles[-20:]
+        parts.append("ALREADY USED TITLES (do NOT repeat or closely paraphrase any of these):\n" +
+                      "\n".join(f"  - {t}" for t in recent))
+    if used_topics:
+        recent = used_topics[-20:]
+        parts.append("ALREADY USED TOPICS (choose a completely different subject):\n" +
+                      "\n".join(f"  - {t}" for t in recent))
+    if not parts:
+        return ""
+    return "\n\n" + "\n\n".join(parts)
+
+
+def generate_niche_script(niche: str, retries: int = 3,
+                          used_titles: list = None, used_topics: list = None) -> dict:
     """
     Generate an 18-25 second YouTube Shorts script for the given niche.
     Supported niches: 'fun_facts', 'horror_story', 'football'.
@@ -146,7 +163,8 @@ def generate_niche_script(niche: str, retries: int = 3) -> dict:
     if niche not in NICHE_PROMPTS:
         raise ValueError(f"Unknown niche '{niche}'. Supported: {list(NICHE_PROMPTS)}")
 
-    prompt = NICHE_PROMPTS[niche]
+    avoid_block = _avoid_block(used_titles, used_topics)
+    prompt = NICHE_PROMPTS[niche] + avoid_block
     client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
 
     for attempt in range(1, retries + 1):
@@ -180,7 +198,8 @@ def generate_niche_script(niche: str, retries: int = 3) -> dict:
     raise RuntimeError(f"Niche script generation failed after {retries} attempts")
 
 
-def generate_script(retries: int = 3) -> dict:
+def generate_script(retries: int = 3,
+                    used_titles: list = None, used_topics: list = None) -> dict:
     """
     Fetch recent cricket match data and generate a highlight script via Claude.
     Falls back to generic cricket highlight if no live data is available.
@@ -204,6 +223,8 @@ def generate_script(retries: int = 3) -> dict:
     else:
         prompt = FALLBACK_TEMPLATE
         log.info("No live data — generating generic cricket highlight script")
+
+    prompt += _avoid_block(used_titles, used_topics)
 
     client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
 
@@ -265,7 +286,8 @@ Return ONLY this JSON (no markdown):
 }}"""
 
 
-def generate_trend_script(trend_data: dict, retries: int = 3) -> dict:
+def generate_trend_script(trend_data: dict, retries: int = 3,
+                          used_titles: list = None, used_topics: list = None) -> dict:
     """
     Generate a cricket script that mimics the style of top-viewed cricket Shorts.
     trend_data: output of trend_analyzer.analyze_top_videos()
@@ -275,7 +297,7 @@ def generate_trend_script(trend_data: dict, retries: int = 3) -> dict:
 
     if not hooks:
         log.info("No trend hooks available — falling back to generic script")
-        return generate_script(retries=retries)
+        return generate_script(retries=retries, used_titles=used_titles, used_topics=used_topics)
 
     top_hooks_str = "\n".join(f"  • {h}" for h in hooks[:5])
     top_tags_str  = ", ".join(tags[:15]) if tags else "cricket, highlights, shorts"
@@ -283,7 +305,7 @@ def generate_trend_script(trend_data: dict, retries: int = 3) -> dict:
     prompt = TREND_SCRIPT_TEMPLATE.format(
         top_hooks=top_hooks_str,
         top_tags=top_tags_str,
-    )
+    ) + _avoid_block(used_titles, used_topics)
 
     client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
 

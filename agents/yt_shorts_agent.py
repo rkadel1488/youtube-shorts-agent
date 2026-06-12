@@ -267,16 +267,19 @@ def download_cc_cricket_short(output_dir: Path) -> tuple[Path | None, dict]:
     return _download_pexels_fallback(output_dir)
 
 
-def download_cc_cricket_clips(output_dir: Path, count: int = 3) -> tuple[list, list]:
+def download_cc_cricket_clips(output_dir: Path, count: int = 3,
+                             skip_ids: set = None) -> tuple[list, list]:
     """
     Download up to *count* CC-licensed cricket clips for a compilation video.
+    skip_ids: set of video IDs already used in previous runs — will be skipped.
     Returns (clip_paths, clip_infos). Returns ([], []) if fewer than 2 clips found
     (caller should skip cricket and use AI pipeline instead).
     """
     output_dir.mkdir(parents=True, exist_ok=True)
     clips: list = []
     infos: list = []
-    seen_ids: set = set()
+    seen_ids: set = set(skip_ids or [])
+    skipped_count = 0
 
     if not _ytdlp_available():
         log.warning("yt-dlp not available — cannot build cricket compilation")
@@ -294,7 +297,11 @@ def download_cc_cricket_clips(output_dir: Path, count: int = 3) -> tuple[list, l
             if len(clips) >= count:
                 break
             video_id = video.get("id") or video.get("webpage_url_basename", "")
-            if not video_id or video_id in seen_ids:
+            if not video_id:
+                continue
+            if video_id in seen_ids:
+                skipped_count += 1
+                log.debug("Skipping already-used video: %s", video_id)
                 continue
             duration = video.get("duration", 0) or 0
             if duration > 180 or duration < 5:
@@ -314,6 +321,9 @@ def download_cc_cricket_clips(output_dir: Path, count: int = 3) -> tuple[list, l
                 })
                 log.info("Clip %d/%d downloaded", len(clips), count)
         time.sleep(2)
+
+    if skipped_count:
+        log.info("Skipped %d already-used video(s) from history", skipped_count)
 
     if len(clips) < 2:
         log.warning(

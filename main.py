@@ -7,13 +7,15 @@ FFmpeg color grading, and trend-based SEO. Falls back to AI-generated
 niche video if fewer than 2 CC clips found.
 
 Pipeline:
-  0. Trend analysis — find top-viewed cricket Shorts, extract tags/hooks
-  1. Download CC-licensed cricket clips via yt-dlp
-  2. Generate trend-based script + Gemini TTS voiceover
-  3. Build compilation (CC clips + voiceover + music)
-  4. FFmpeg color grade + fade enhancement
-  5. Generate SEO using tags from top-viewed videos
-  6. Upload to YouTube
+  0. Load history (used titles/topics/video_ids) to avoid repeats
+  1. Trend analysis — find top-viewed cricket Shorts, extract tags/hooks
+  2. Download CC-licensed cricket clips via yt-dlp
+  3. Generate trend-based script + Gemini TTS voiceover
+  4. Build compilation (CC clips + voiceover + music)
+  5. FFmpeg color grade + fade enhancement
+  6. Generate SEO using tags from top-viewed videos
+  7. Upload to YouTube
+  8. Save updated history back to state/history.json
 
 Usage:
     python main.py               # Start scheduler (runs 3x daily)
@@ -44,25 +46,72 @@ from utils.logger import get_logger
 log = get_logger("main")
 
 FALLBACK_NICHES = ["fun_facts", "horror_story", "football"]
+HISTORY_PATH = Path(__file__).parent / "state" / "history.json"
+HISTORY_MAX = 150  # how many past entries to keep per field
 
+
+# ── history helpers ───────────────────────────────────────────────────────────
+
+def _load_history() -> dict:
+    try:
+        if HISTORY_PATH.exists():
+            with open(HISTORY_PATH, encoding="utf-8") as f:
+                h = json.load(f)
+            log.info("History: %d used titles, %d used video_ids",
+                     len(h.get("titles", [])), len(h.get("video_ids", [])))
+            return h
+    except Exception as exc:
+        log.warning("Could not load history: %s — starting fresh", exc)
+    return {"titles": [], "topics": [], "video_ids": []}
+
+
+def _save_history(history: dict):
+    HISTORY_PATH.parent.mkdir(parents=True, exist_ok=True)
+    # Trim old entries so the file doesn't grow unbounded
+    for key in ("titles", "topics", "video_ids"):
+        history[key] = history.get(key, [])[-HISTORY_MAX:]
+    with open(HISTORY_PATH, "w", encoding="utf-8") as f:
+        json.dump(history, f, indent=2, ensure_ascii=False)
+    log.info("History saved: %d titles, %d video_ids",
+             len(history["titles"]), len(history["video_ids"]))
+
+
+def _update_history(history: dict, title: str, topic: str, video_ids: list):
+    if title and title not in history["titles"]:
+        history["titles"].append(title)
+    if topic and topic not in history["topics"]:
+        history["topics"].append(topic)
+    for vid in video_ids:
+        if vid and vid not in history["video_ids"]:
+            history["video_ids"].append(vid)
+    _save_history(history)
+
+
+# ── AI fallback pipeline ──────────────────────────────────────────────────────
 
 def _run_ai_pipeline(
     slot: int,
     job_dir: Path,
     temp_dir: Path,
     result: dict,
+    history: dict,
     trend_data: dict = None,
 ) -> dict:
     """
     AI-generated fallback pipeline — used when no real footage is found.
     Generates a script, images, voiceover, and video for a rotating niche.
+    Skips niches whose recent topics are all used; cycles to the next fresh one.
     """
     day_of_year = datetime.now().timetuple().tm_yday
     niche = FALLBACK_NICHES[(day_of_year + slot) % len(FALLBACK_NICHES)]
     log.info("No real footage found — switching to AI pipeline (niche=%s)", niche)
 
     log.info("[AI-1/4] Generating %s script...", niche)
-    script_data = generate_niche_script(niche)
+    used_titles = history.get("titles", [])
+    used_topics = history.get("topics", [])
+    script_data = generate_niche_script(
+        niche, used_titles=used_titles, used_topics=used_topics
+    )
     _save_json(job_dir / "script.json", script_data)
 
     images_dir = temp_dir / "images"
@@ -106,6 +155,7 @@ def _run_ai_pipeline(
         hook=script_data["hook"],
         niche=niche,
         trend_data=trend_data,
+        used_titles=used_titles,
     )
     _save_json(job_dir / "seo.json", seo_data)
     log.info("Title: %s", seo_data["title"])
@@ -119,6 +169,8 @@ def _run_ai_pipeline(
         hashtags=seo_data["hashtags"],
         category_id=YOUTUBE_CATEGORY_ID,
     )
+
+    _update_history(history, seo_data["title"], script_data["topic"], [])
 
     result.update({
         "status":   "success",
@@ -137,6 +189,8 @@ def _run_ai_pipeline(
     return result
 
 
+# ── main pipeline ─────────────────────────────────────────────────────────────
+
 def run_pipeline(slot: int = 0) -> dict:
     """Run one full pipeline. Falls back to AI-generated content if fewer than 2 CC cricket clips found."""
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -150,7 +204,8 @@ def run_pipeline(slot: int = 0) -> dict:
     log.info("STARTING JOB: %s", job_id)
     log.info("=" * 60)
 
-    result = {"job_id": job_id, "status": "failed"}
+    result  = {"job_id": job_id, "status": "failed"}
+    history = _load_history()
 
     try:
         # ── Step 0: Trend analysis ────────────────────────────────────────────
@@ -163,14 +218,17 @@ def run_pipeline(slot: int = 0) -> dict:
         except Exception as exc:
             log.warning("Trend analysis failed: %s — continuing without trend data", exc)
 
-        # ── Step 1: Download CC cricket clips for a compilation ───────────────
+        # ── Step 1: Download CC cricket clips (skip already-used IDs) ─────────
         log.info("[1] Downloading CC cricket clips for compilation...")
-        clips, clip_infos = download_cc_cricket_clips(temp_dir, count=3)
+        used_video_ids = set(history.get("video_ids", []))
+        clips, clip_infos = download_cc_cricket_clips(
+            temp_dir, count=3, skip_ids=used_video_ids
+        )
 
         if not clips:
             log.info("Insufficient CC cricket clips — switching to AI pipeline")
             return _run_ai_pipeline(slot=slot, job_dir=job_dir, temp_dir=temp_dir,
-                                    result=result, trend_data=trend_data)
+                                    result=result, history=history, trend_data=trend_data)
 
         # ── Step 2: Generate trend-based script + voiceover ───────────────────
         n = len(clips)
@@ -181,7 +239,11 @@ def run_pipeline(slot: int = 0) -> dict:
         vo_path = None
         script_data = {}
         try:
-            script_data = generate_trend_script(trend_data)
+            script_data = generate_trend_script(
+                trend_data,
+                used_titles=history.get("titles", []),
+                used_topics=history.get("topics", []),
+            )
             _save_json(job_dir / "script.json", script_data)
             vo_path = temp_dir / "voiceover.mp3"
             log.info("[2b] Generating Gemini TTS voiceover...")
@@ -197,6 +259,7 @@ def run_pipeline(slot: int = 0) -> dict:
             hook=f"{n} cricket moments you won't believe",
             niche="cricket",
             trend_data=trend_data,
+            used_titles=history.get("titles", []),
         )
         if channels:
             seo_data["description"] += f"\n\nOriginal footage by: {', '.join(channels)} (CC BY licence)"
@@ -235,6 +298,9 @@ def run_pipeline(slot: int = 0) -> dict:
             hashtags=seo_data["hashtags"],
             category_id=YOUTUBE_CATEGORY_ID,
         )
+
+        used_clip_ids = [i.get("video_id", "") for i in clip_infos]
+        _update_history(history, seo_data["title"], topic, used_clip_ids)
 
         result.update({
             "status":   "success",

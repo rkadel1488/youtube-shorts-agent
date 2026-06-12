@@ -74,13 +74,15 @@ Return ONLY this JSON:
 }}"""
 
 
-def generate_seo(topic: str, hook: str, niche: str = "cricket", trend_data: dict = None, retries: int = 3) -> dict:
+def generate_seo(topic: str, hook: str, niche: str = "cricket", trend_data: dict = None,
+                 used_titles: list = None, retries: int = 3) -> dict:
     """
     Fetch trending tags (cricket only) then call Claude to generate SEO metadata.
     For non-cricket niches, trending tag lookup is skipped.
     Returns a dict with keys: title, description, tags, hashtags.
     trend_data: optional output of trend_analyzer.analyze_top_videos(); when
     provided, tags/hashtags are taken directly from the most-viewed videos.
+    used_titles: list of previously used titles Claude must not repeat.
     """
     # Step 1: determine trending tags source
     if trend_data and trend_data.get("tags"):
@@ -97,13 +99,23 @@ def generate_seo(topic: str, hook: str, niche: str = "cricket", trend_data: dict
         trending_hashtags_str = "#Shorts, #Viral, #Trending"
         log.info("Skipping trending tags lookup for niche '%s'", niche)
 
+    # Build avoid-duplicate instruction
+    avoid_str = ""
+    if used_titles:
+        recent = used_titles[-20:]
+        avoid_str = (
+            "\n\nIMPORTANT — do NOT use any of these previously posted titles "
+            "(or anything that sounds similar):\n" +
+            "\n".join(f"  - {t}" for t in recent)
+        )
+
     client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
     prompt = SEO_TEMPLATE.format(
         topic=topic,
         hook=hook,
         trending_tags=trending_tags_str,
         trending_hashtags=trending_hashtags_str,
-    )
+    ) + avoid_str
 
     for attempt in range(1, retries + 1):
         try:

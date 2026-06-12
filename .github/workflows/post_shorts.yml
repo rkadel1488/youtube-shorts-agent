@@ -68,6 +68,19 @@ jobs:
       - name: Run pipeline
         run: python main.py --run-now --slot ${{ steps.slot.outputs.slot }}
 
+      - name: Commit updated history
+        if: always()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add state/history.json
+          if git diff --cached --quiet; then
+            echo "No history changes to commit"
+          else
+            git commit -m "chore: update post history [skip ci]"
+            git push
+          fi
+
       - name: Upload result as artifact
         if: always()
         uses: actions/upload-artifact@v4
