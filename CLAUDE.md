@@ -13,7 +13,7 @@ python setup_youtube_auth.py
 
 # Run a single Short immediately (for testing)
 python main.py --run-now
-python main.py --run-now --slot 2   # slot 0=midnight, 1=early, 2=mid, 3=afternoon, 4=evening
+python main.py --run-now --slot 2   # slot 0=night, 1=morning, 2=afternoon, 3=evening
 
 # Start the scheduler (runs indefinitely, fires at POSTING_TIMES)
 python main.py
@@ -33,7 +33,7 @@ Copy `.env` (local) or set GitHub Actions secrets:
 | `YOUTUBE_CLIENT_SECRETS` | JSON contents of `client_secrets.json` (GitHub secret) |
 | `YOUTUBE_TOKEN` | JSON contents of `youtube_token.json` (GitHub secret) |
 | `GEMINI_TTS_VOICE` | Default `Charon`; options: Zephyr, Puck, Charon, Kore, Fenrir, Leda, Orus, Aoede |
-| `POSTING_TIMES` | Comma-separated HH:MM times, default `00:00,05:00,10:00,15:00,20:00` |
+| `POSTING_TIMES` | Comma-separated HH:MM times, default `02:00,08:00,14:00,20:00` (4 slots/day) |
 | `MADE_FOR_KIDS` | `true`/`false`, default `false` |
 
 ## Architecture
@@ -52,9 +52,9 @@ main.py::run_pipeline()
 
 Each agent function signature is simple and self-contained — they receive plain Python types and return a path or dict. All agents implement a `retries` loop with exponential backoff.
 
-**Niche rotation**: `config.py::NICHES` defines 4 niches. The active niche is selected by `_pick_niche(slot)` using `(day_of_year + slot) % len(NICHES)`, so the starting niche rotates every day.
+**Story topics**: `story_topics.py::STORY_TOPICS` is a fixed pool of 100 short-story concepts (id, category, title, premise) across 5 genres. `main.py::_next_story_topic()` consumes them round-robin via `state/topic_state.json` (`next_index`), 4 per day with no repeats. Once all 100 are used, the pipeline raises `RuntimeError` — add more topics to continue.
 
-**Output layout**: Each job writes to `output/<timestamp>_<niche>/` containing `script.json`, `seo.json`, `voiceover.mp3`, `final.mp4`, and `result.json`. A `temp/` subdirectory holds intermediate image files and is deleted after the job.
+**Output layout**: Each job writes to `output/<timestamp>_slot<N>/` containing `script.json`, `seo.json`, `final.mp4`, and `result.json`. A `temp/` subdirectory holds intermediate image/voiceover files and is deleted after the job.
 
 **Video rendering** (`video_agent.py`): Generates 4 AI images via Pollinations → applies Ken Burns zoom/pan effect alternating per image → builds word-chunk caption overlays with Pillow (no ImageMagick) → composites with MoviePy → muxes voiceover audio → exports 1080×1920 MP4 at 30fps.
 
