@@ -1,10 +1,6 @@
 """
 Generates YouTube SEO metadata (title, description, hashtags) using Claude.
 
-Pulls real tags and hashtags from the top-viewed cricket highlight videos on
-YouTube first, then passes them to Claude so the output matches what's already
-ranking — giving each upload the best possible SEO from day one.
-
 Output schema (JSON):
 {
   "title": "...",
@@ -18,7 +14,6 @@ import time
 
 import anthropic
 
-from agents.trending_tags_agent import get_trending_tags
 from config import ANTHROPIC_API_KEY, CLAUDE_MODEL
 from utils.logger import get_logger
 
@@ -33,36 +28,34 @@ SEO_TEMPLATE = """Generate maximum-CTR YouTube Shorts metadata for this video.
 Topic: {topic}
 Hook (opening line): {hook}
 
-TOP-VIEWED videos in this niche use these tags and hashtags — copy their style:
-Trending tags: {trending_tags}
-Trending hashtags: {trending_hashtags}
+Trending tags to draw style from: {trending_tags}
+Trending hashtags to draw style from: {trending_hashtags}
 
 TITLE rules (this is the #1 factor for views):
 - 45-58 characters max (shorter titles get more impressions on mobile)
 - PROVEN high-CTR formats — pick the best fit:
-    • "Nobody expected [player/team] to do THIS 😱"
-    • "[N] cricket moments that broke the internet 🤯"
-    • "The moment [player] changed cricket forever"
-    • "When [team] shocked the entire stadium"
-    • "This [shot/wicket/catch] is statistically impossible"
-    • "[Player] just did something no one has EVER done"
+    • "You won't believe what happens next 😱"
+    • "This story will haunt you tonight 👀"
+    • "Nobody saw this twist coming 🤯"
+    • "I can't stop thinking about this 💥"
+    • "POV: this actually happened to you"
 - Use ONE emoji (😱 🤯 💥 🔥 👀) — at the END only
 - Start with a strong noun or verb — never start with "The" or "A"
 - Never use ALL-CAPS
 
 DESCRIPTION rules:
 - Line 1: restate the hook with more urgency (different words)
-- Lines 2-3: why this moment is historic — add a specific detail (score, year, player name)
-- Line 4: "Follow for daily cricket highlights."
+- Lines 2-3: add a vivid detail that hooks readers in further
+- Line 4: "Follow for more stories like this."
 - End with: #Shorts
 
 TAGS (plain English, no #, exactly 20):
 - Start with the 10 most relevant trending tags above
-- Add 10 specific to this exact moment/match/player
-- Mix: player name, team name, tournament, year, action type
+- Add 10 specific to this exact story/twist
+- Mix: genre, mood, theme, character, setting
 
 HASHTAGS (with #, exactly 5):
-- Always include #Shorts and #Cricket
+- Always include #Shorts
 - Use 3 from the trending hashtags list above
 
 Return ONLY this JSON:
@@ -70,34 +63,24 @@ Return ONLY this JSON:
   "title": "...",
   "description": "...",
   "tags": ["tag1", ...],
-  "hashtags": ["#Shorts", "#Cricket", "#tag3", "#tag4", "#tag5"]
+  "hashtags": ["#Shorts", "#tag2", "#tag3", "#tag4", "#tag5"]
 }}"""
 
 
-def generate_seo(topic: str, hook: str, niche: str = "cricket", trend_data: dict = None,
+def generate_seo(topic: str, hook: str, niche: str = "story", trend_data: dict = None,
                  used_titles: list = None, retries: int = 3) -> dict:
     """
-    Fetch trending tags (cricket only) then call Claude to generate SEO metadata.
-    For non-cricket niches, trending tag lookup is skipped.
+    Call Claude to generate SEO metadata for a story Short.
     Returns a dict with keys: title, description, tags, hashtags.
-    trend_data: optional output of trend_analyzer.analyze_top_videos(); when
-    provided, tags/hashtags are taken directly from the most-viewed videos.
+    trend_data: optional dict with "tags"/"hashtags" lists to steer style.
     used_titles: list of previously used titles Claude must not repeat.
     """
-    # Step 1: determine trending tags source
     if trend_data and trend_data.get("tags"):
         trending_tags_str = ", ".join(trend_data["tags"][:20])
         trending_hashtags_str = ", ".join(trend_data["hashtags"][:8])
-        log.info("Using trend_data tags from top-viewed videos")
-    elif niche == "cricket":
-        log.info("Fetching trending tags from top cricket highlight videos...")
-        trending = get_trending_tags(topic)
-        trending_tags_str = ", ".join(trending["tags"]) if trending["tags"] else "cricket highlights, cricket match, cricket shorts, cricket 2025"
-        trending_hashtags_str = ", ".join(trending["hashtags"]) if trending["hashtags"] else "#Cricket, #Shorts, #CricketHighlights"
     else:
-        trending_tags_str = "shorts, viral, trending, youtube shorts, 2025"
-        trending_hashtags_str = "#Shorts, #Viral, #Trending"
-        log.info("Skipping trending tags lookup for niche '%s'", niche)
+        trending_tags_str = "shorts, viral, story, plot twist, trending, 2025"
+        trending_hashtags_str = "#Shorts, #Viral, #StoryTime"
 
     # Build avoid-duplicate instruction
     avoid_str = ""
@@ -143,7 +126,6 @@ def generate_seo(topic: str, hook: str, niche: str = "cricket", trend_data: dict
                 if brand_ht not in result["hashtags"]:
                     result["hashtags"].insert(0, brand_ht)
 
-            # Cap to safe limits (tags allow up to 500 chars total; keep 20 + 2 brand)
             result["hashtags"] = result["hashtags"][:6]
             result["tags"] = result["tags"][:22]
 
