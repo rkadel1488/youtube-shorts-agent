@@ -1,11 +1,11 @@
 {
-  "job_id": "20260705_160446_slot2",
+  "job_id": "20260705_204350_slot3",
   "status": "success",
-  "video_id": "0UcZ2meG1DM",
-  "url": "https://www.youtube.com/shorts/0UcZ2meG1DM",
-  "title": "iPhone 18 Pro is actually getting thicker 😳",
-  "source": "iPhone 17 Pro vs iPhone 18 Pro",
+  "video_id": "kSb_H9Zswgk",
+  "url": "https://www.youtube.com/shorts/kSb_H9Zswgk",
+  "title": "Fubo just raised prices while YouTube TV freezes 😳",
+  "source": "YouTube TV vs Fubo Price War",
   "topic_id": 0,
   "category": "trending",
-  "instagram": "failed: No Instagram professional account is linked to any Facebook page on this token. Pages found: none. Link your IG account to a page in Meta Business settings."
+  "instagram": "failed: Could not list Facebook pages: {'message': 'Error validating access token: Session has expired on Sunday, 05-Jul-26 11:00:00 PDT. The current time is Sunday, 05-Jul-26 13:47:48 PDT.', 'type': 'OAuthException', 'code': 190, 'error_subcode': 463, 'fbtrace_id': 'AlLgSE53_stkvf_WRvl6y0B'}"
 }
