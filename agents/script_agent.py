@@ -48,6 +48,8 @@ CRITICAL RULES:
 - Total spoken length: 35-50 seconds (~90-130 words)
 - Structure: HOOK (max 8 words, surprising) → 4-6 punchy sentences explaining what happened
   and why it matters → CLOSER (a payoff thought or open question, then "Follow for more.")
+- The single most concrete detail from the premise (a number, a name, a scale comparison)
+  must appear within the first two sentences — never bury the best fact
 - Use ONLY facts contained in the premise above. If the premise lacks a detail, do not invent it —
   speak in general terms instead. No made-up numbers, quotes, or names.
 - Present tense, conversational, 8th-grade reading level, no emojis, no stage directions

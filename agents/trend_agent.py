@@ -38,14 +38,22 @@ PICK_TEMPLATE = """Here are topics currently trending, with real news context wh
 Recently covered topics (do NOT pick these or near-duplicates):
 {recent}
 
-Pick the ONE best topic for a ~45-second factual YouTube Short, using these rules:
-- REJECT: deaths, tragedies, crime victims, active disasters, divisive politics, anything advertiser-unfriendly
-- REJECT: topics needing copyrighted footage to make sense (sports game highlights, movie/TV scenes, music videos)
-- PREFER: tech/AI, science, space, money/economy, records, discoveries, viral internet phenomena, surprising announcements
-- PREFER: topics whose provided headlines contain enough concrete detail to fill 45 seconds
-- Among topics that pass EVERY rule above, pick the one with the HIGHEST search_traffic value
-- NEVER pick anything in this EXCLUDED list (already rejected as duplicates): {excluded}
-- The premise must be a 2-4 sentence factual summary built ONLY from the provided headlines/snippets. Do not add numbers, names, or claims that are not in them.
+Pick the ONE best topic for a ~45-second factual YouTube Short.
+
+HARD REJECTIONS (never pick, regardless of traffic):
+- Deaths, tragedies, crime victims, active disasters, divisive politics, anything advertiser-unfriendly
+- Topics needing copyrighted footage to make sense (sports game highlights, movie/TV scenes, music videos)
+- Topics whose provided headlines are too thin to support 45 seconds of specific content (a topic with zero attached headlines is automatically too thin)
+- Anything in this EXCLUDED list (already rejected as duplicates): {excluded}
+
+CATEGORY VALUE TIERS (higher tier ALWAYS beats higher traffic):
+- TIER 1: AI/tech, science, space, money/economy/markets, world records, discoveries, big product launches
+- TIER 2: health breakthroughs, nature/animals, viral internet phenomena, gaming industry news
+- TIER 3: entertainment/celebrity — pick ONLY if no Tier 1 or Tier 2 candidate passes the rules
+
+SELECTION: take the highest tier that has a passing candidate; within that tier, take the HIGHEST search_traffic.
+
+PREMISE: a 2-4 sentence factual summary built ONLY from the provided headlines/snippets. Do not add numbers, names, or claims that are not in them.
 
 Return ONLY this JSON:
 {{

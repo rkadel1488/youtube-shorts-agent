@@ -19,11 +19,11 @@ from utils.logger import get_logger
 
 log = get_logger(__name__)
 
-SYSTEM_PROMPT = """You are a viral YouTube Shorts growth expert in 2025. You have studied the top 0.1% of Shorts channels and know exactly what titles, hooks, and tags drive algorithmic push and high CTR.
-Your titles must be so compelling that viewers stop scrolling immediately.
+SYSTEM_PROMPT = """You are a YouTube Shorts growth expert for factual news/tech/science channels. You have studied the top 0.1% of factual Shorts channels and know exactly what titles, hooks, and tags drive algorithmic push and high CTR while staying credible.
+Your titles create genuine curiosity about a real event — never vague clickbait that overpromises.
 Always respond with valid JSON only — no markdown fences, no extra commentary."""
 
-SEO_TEMPLATE = """Generate maximum-CTR YouTube Shorts metadata for this video.
+SEO_TEMPLATE = """Generate maximum-CTR YouTube Shorts metadata for this factual video about a trending topic.
 
 Topic: {topic}
 Hook (opening line): {hook}
@@ -33,30 +33,30 @@ Trending hashtags to draw style from: {trending_hashtags}
 
 TITLE rules (this is the #1 factor for views):
 - 45-58 characters max (shorter titles get more impressions on mobile)
-- PROVEN high-CTR formats — pick the best fit:
-    • "You won't believe what happens next 😱"
-    • "This story will haunt you tonight 👀"
-    • "Nobody saw this twist coming 🤯"
-    • "I can't stop thinking about this 💥"
-    • "POV: this actually happened to you"
-- Use ONE emoji (😱 🤯 💥 🔥 👀) — at the END only
-- Start with a strong noun or verb — never start with "The" or "A"
-- Never use ALL-CAPS
+- Must reference the ACTUAL subject (a name, thing, or number from the topic) — specific beats vague
+- PROVEN high-CTR formats for factual content — pick the best fit:
+    • "[Subject] just changed everything 🤯"
+    • "Why everyone is talking about [subject]"
+    • "[Number/scale fact] — and it's real 😳"
+    • "[Subject] just broke the internet"
+    • "The truth about [subject]"
+- Use at most ONE emoji (🤯 😳 🔥 🚨 👀) — at the END only
+- Start with a strong noun or verb — never start with "The" or "A" unless using "The truth about"
+- Never use ALL-CAPS, never promise what the video doesn't deliver
 
 DESCRIPTION rules:
 - Line 1: restate the hook with more urgency (different words)
-- Lines 2-3: add a vivid detail that hooks readers in further
-- Line 4: "Follow for more stories like this."
+- Lines 2-3: add one concrete detail from the topic that hooks readers further
+- Line 4: "Follow for more trending stories."
 - End with: #Shorts
 
 TAGS (plain English, no #, exactly 20):
 - Start with the 10 most relevant trending tags above
-- Add 10 specific to this exact story/twist
-- Mix: genre, mood, theme, character, setting
+- Add 10 specific to this exact topic: names, category, related terms people search
 
 HASHTAGS (with #, exactly 5):
 - Always include #Shorts
-- Use 3 from the trending hashtags list above
+- Prefer hashtags matching the topic's category (#Tech #AI #Science #Space #News #Money)
 
 Return ONLY this JSON:
 {{
@@ -67,7 +67,7 @@ Return ONLY this JSON:
 }}"""
 
 
-def generate_seo(topic: str, hook: str, niche: str = "story", trend_data: dict = None,
+def generate_seo(topic: str, hook: str, niche: str = "trending news", trend_data: dict = None,
                  used_titles: list = None, retries: int = 3) -> dict:
     """
     Call Claude to generate SEO metadata for a story Short.
@@ -79,8 +79,8 @@ def generate_seo(topic: str, hook: str, niche: str = "story", trend_data: dict =
         trending_tags_str = ", ".join(trend_data["tags"][:20])
         trending_hashtags_str = ", ".join(trend_data["hashtags"][:8])
     else:
-        trending_tags_str = "shorts, viral, story, plot twist, trending, 2025"
-        trending_hashtags_str = "#Shorts, #Viral, #StoryTime"
+        trending_tags_str = "shorts, viral, trending, news, breaking, tech, ai, science, 2026, explained"
+        trending_hashtags_str = "#Shorts, #Viral, #Trending, #News, #Tech"
 
     # Build avoid-duplicate instruction
     avoid_str = ""
