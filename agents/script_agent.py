@@ -24,6 +24,15 @@ from utils.logger import get_logger
 
 log = get_logger(__name__)
 
+
+def _avoid_block(used_titles: list = None) -> str:
+    """Build a prompt suffix telling Claude which titles to avoid closely paraphrasing."""
+    if not used_titles:
+        return ""
+    recent = used_titles[-20:]
+    return ("\n\nALREADY USED TITLES (do NOT repeat or closely paraphrase any of these):\n" +
+            "\n".join(f"  - {t}" for t in recent))
+
 TREND_SYSTEM_PROMPT = """You are a viral short-form video writer for factual, news-style YouTube Shorts.
 Your scripts are under 60 seconds, open with a scroll-stopping hook, and deliver real information fast.
 You NEVER invent facts — you only use information stated in the premise you are given.
