@@ -34,6 +34,39 @@ GH_TOKEN = os.getenv("GH_TOKEN", "")
 GH_REPO = os.getenv("GITHUB_REPOSITORY", "")
 
 
+# ── IG account resolution ─────────────────────────────────────────────────────
+
+def _resolve_ig_user_id() -> str:
+    """Find the IG professional account linked to the token's Facebook pages.
+
+    Uses IG_USER_ID env if provided; otherwise queries /me/accounts and takes
+    the first page with a linked instagram_business_account.
+    """
+    global IG_USER_ID
+    if IG_USER_ID:
+        return IG_USER_ID
+    r = requests.get(
+        f"{GRAPH}/me/accounts",
+        params={"fields": "id,name,instagram_business_account",
+                "access_token": IG_ACCESS_TOKEN},
+        timeout=30,
+    )
+    data = r.json()
+    if "data" not in data:
+        raise RuntimeError(f"Could not list Facebook pages: {data.get('error', data)}")
+    for page in data["data"]:
+        iba = page.get("instagram_business_account")
+        if iba:
+            log.info("Resolved IG account %s via page '%s' (page id %s)",
+                     iba["id"], page.get("name"), page.get("id"))
+            IG_USER_ID = iba["id"]
+            return IG_USER_ID
+    names = ", ".join(f"{p.get('name')} ({p.get('id')})" for p in data["data"]) or "none"
+    raise RuntimeError(
+        f"No Instagram professional account is linked to any Facebook page on this token. "
+        f"Pages found: {names}. Link your IG account to a page in Meta Business settings.")
+
+
 # ── temporary public hosting via GitHub release asset ─────────────────────────
 
 def _gh_headers() -> dict:
@@ -131,10 +164,12 @@ def post_reel(video_path: Path, caption: str) -> str:
 
     Returns the Instagram media ID.
     """
-    if not (IG_USER_ID and IG_ACCESS_TOKEN):
-        raise RuntimeError("Instagram not configured (IG_USER_ID / IG_ACCESS_TOKEN secrets missing)")
+    if not IG_ACCESS_TOKEN:
+        raise RuntimeError("Instagram not configured (IG_ACCESS_TOKEN secret missing)")
     if not (GH_TOKEN and GH_REPO):
         raise RuntimeError("GH_TOKEN / GITHUB_REPOSITORY missing — cannot host video for Instagram")
+
+    _resolve_ig_user_id()
 
     tag = f"reel-temp-{int(time.time())}"
     video_url, release_id = _host_on_github(Path(video_path), tag)
