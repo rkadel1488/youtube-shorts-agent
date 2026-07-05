@@ -26,6 +26,7 @@ Usage:
 """
 import argparse
 import json
+import os
 import shutil
 import sys
 import time
@@ -183,6 +184,19 @@ def run_pipeline(slot: int = 0) -> dict:
             "topic_id": topic.get("id", 0),
             "category": topic["category"],
         })
+
+        # [7] Cross-post to Instagram Reels (optional, never fatal)
+        if os.getenv("INSTAGRAM_ENABLED", "true").lower() == "true":
+            try:
+                from agents.instagram_agent import post_reel
+                log.info("[7] Cross-posting to Instagram Reels...")
+                caption = f"{seo_data['title']}\n\n" + " ".join(seo_data.get("hashtags", []))
+                result["instagram_id"] = post_reel(final_path, caption)
+                result["instagram"] = "posted"
+            except Exception as exc:
+                log.warning("Instagram cross-post skipped/failed (non-fatal): %s", exc)
+                result["instagram"] = f"failed: {exc}"
+
         _save_json(job_dir / "result.json", result)
 
         log.info("=" * 60)

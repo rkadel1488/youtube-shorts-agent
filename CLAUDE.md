@@ -69,3 +69,5 @@ Each agent function signature is simple and self-contained — they receive plai
 - `VIDEO_WIDTH/HEIGHT = 1080/1920` — YouTube Shorts portrait format
 - `VIDEO_FPS = 30`
 - Caption styling constants (`CAPTION_FONT_SIZE`, `CAPTION_Y_RATIO`, etc.) live at the top of `video_agent.py`
+
+**Instagram cross-posting**: `agents/instagram_agent.py` posts the same video to Instagram Reels after a successful YouTube upload (step [7], never fatal — failures are logged into result.json as `instagram`). Because the IG Graph API downloads videos from a URL rather than accepting uploads, the video is temporarily hosted as a GitHub release asset (via the Actions `GITHUB_TOKEN`) and the release is deleted after publishing. Requires secrets `IG_USER_ID` + `IG_ACCESS_TOKEN` (long-lived Instagram Graph token, professional account); skips gracefully when absent. Toggle with `INSTAGRAM_ENABLED`.

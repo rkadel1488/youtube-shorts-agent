@@ -31,6 +31,10 @@ jobs:
       MADE_FOR_KIDS: "false"
       GEMINI_TTS_VOICE: "Charon"
       TREND_REGION: "US"        # geo for Google Trends (US = biggest audience/CPM)
+      INSTAGRAM_ENABLED: "true"           # cross-post to IG Reels (skips gracefully if secrets absent)
+      IG_USER_ID: ${{ secrets.IG_USER_ID }}
+      IG_ACCESS_TOKEN: ${{ secrets.IG_ACCESS_TOKEN }}
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # temp video hosting for IG publish
 
     steps:
       - name: Checkout code
