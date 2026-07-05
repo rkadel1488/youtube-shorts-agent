@@ -1,81 +1,82 @@
-2026-07-05 15:12:00 | INFO     | main | ============================================================
-2026-07-05 15:12:00 | INFO     | main | STARTING JOB: 20260705_151200_slot2
-2026-07-05 15:12:00 | INFO     | main | ============================================================
-2026-07-05 15:12:00 | INFO     | main | History: 3 used titles
-2026-07-05 15:12:00 | INFO     | agents.trend_agent | Google Trends: 10 items (top traffic: 5000)
-2026-07-05 15:12:00 | WARNING  | agents.trend_agent | Reddit fetch failed: 403 Client Error: Blocked for url: https://www.reddit.com/r/popular/hot.json?limit=15
-2026-07-05 15:12:00 | INFO     | agents.trend_agent | Selecting trend topic via Claude (attempt 1)...
-2026-07-05 15:12:03 | INFO     | agents.trend_agent | Trend topic selected: Little House on the Prairie Netflix Remake (traffic-ranked)
-2026-07-05 15:12:03 | INFO     | main | [1] Generating script for 'Little House on the Prairie Netflix Remake' [trending]...
-2026-07-05 15:12:03 | INFO     | agents.script_agent | Generating trend script for 'Little House on the Prairie Netflix Remake' via Claude (attempt 1)...
-2026-07-05 15:12:09 | INFO     | agents.script_agent | Trend script generated: 'Little House on the Prairie Netflix Remake'
-2026-07-05 15:12:09 | INFO     | main | [2] Generating AI images...
-2026-07-05 15:12:09 | INFO     | agents.image_agent | Fetching image 1/4 for 'frontier prairie landscape wide establishing' (attempt 1)...
-2026-07-05 15:12:10 | INFO     | agents.image_agent | Image 1 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260705_151200_slot2/temp/images/scene_00.jpg
-2026-07-05 15:12:11 | INFO     | agents.image_agent | Fetching image 2/4 for 'vintage farmhouse at sunset close-up detail' (attempt 1)...
-2026-07-05 15:12:11 | INFO     | agents.image_agent | Image 2 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260705_151200_slot2/temp/images/scene_01.jpg
-2026-07-05 15:12:12 | INFO     | agents.image_agent | Fetching image 3/4 for 'old western homestead dramatic moment' (attempt 1)...
-2026-07-05 15:12:13 | INFO     | agents.image_agent | Image 3 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260705_151200_slot2/temp/images/scene_02.jpg
-2026-07-05 15:12:14 | INFO     | agents.image_agent | Fetching image 4/4 for 'dusty trail through tall grass powerful finale' (attempt 1)...
-2026-07-05 15:12:15 | INFO     | agents.image_agent | Image 4 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260705_151200_slot2/temp/images/scene_03.jpg
-2026-07-05 15:12:16 | INFO     | agents.image_agent | Generated 4/4 images successfully
-2026-07-05 15:12:16 | INFO     | main | [3] Generating voiceover...
-2026-07-05 15:12:16 | INFO     | agents.audio_agent | Generating voiceover with Gemini TTS (attempt 1)…
-2026-07-05 15:12:34 | INFO     | agents.audio_agent | Voiceover saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260705_151200_slot2/temp/voiceover.mp3 (331 KB)
-2026-07-05 15:12:34 | INFO     | main | [4] Assembling video...
-2026-07-05 15:12:35 | INFO     | agents.video_agent | Rendering AI video -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260705_151200_slot2/final_raw.mp4
-2026-07-05 15:14:57 | INFO     | agents.video_agent | AI video done: /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260705_151200_slot2/final_raw.mp4 (7.3 MB)
-2026-07-05 15:14:57 | INFO     | main | [4b] Enhancing with FFmpeg...
-2026-07-05 15:15:22 | INFO     | agents.video_editor | Color graded: graded_final_raw.mp4
-2026-07-05 15:15:48 | INFO     | agents.video_editor | Fade added: final.mp4
-2026-07-05 15:15:48 | INFO     | main | [5] Generating SEO metadata...
-2026-07-05 15:15:48 | INFO     | agents.seo_agent | Generating SEO metadata (attempt 1)...
-2026-07-05 15:15:52 | INFO     | agents.seo_agent | SEO title: 'The truth about Netflix's Little House remake 👀'
-2026-07-05 15:15:52 | INFO     | main | Title: The truth about Netflix's Little House remake 👀
-2026-07-05 15:15:52 | INFO     | main | [6] Uploading to YouTube...
-2026-07-05 15:15:52 | INFO     | agents.upload_agent | Refreshing YouTube token…
-2026-07-05 15:15:53 | INFO     | agents.upload_agent | Token saved -> youtube_token.json
-2026-07-05 15:15:53 | INFO     | agents.upload_agent | Uploading 'The truth about Netflix's Little House remake 👀' (attempt 1)…
-2026-07-05 15:15:53 | INFO     | agents.upload_agent | Upload progress: 2%
-2026-07-05 15:15:54 | INFO     | agents.upload_agent | Upload progress: 5%
-2026-07-05 15:15:54 | INFO     | agents.upload_agent | Upload progress: 8%
-2026-07-05 15:15:54 | INFO     | agents.upload_agent | Upload progress: 11%
-2026-07-05 15:15:54 | INFO     | agents.upload_agent | Upload progress: 14%
-2026-07-05 15:15:54 | INFO     | agents.upload_agent | Upload progress: 17%
-2026-07-05 15:15:54 | INFO     | agents.upload_agent | Upload progress: 19%
-2026-07-05 15:15:54 | INFO     | agents.upload_agent | Upload progress: 22%
-2026-07-05 15:15:54 | INFO     | agents.upload_agent | Upload progress: 25%
-2026-07-05 15:15:55 | INFO     | agents.upload_agent | Upload progress: 28%
-2026-07-05 15:15:55 | INFO     | agents.upload_agent | Upload progress: 31%
-2026-07-05 15:15:55 | INFO     | agents.upload_agent | Upload progress: 34%
-2026-07-05 15:15:55 | INFO     | agents.upload_agent | Upload progress: 36%
-2026-07-05 15:15:55 | INFO     | agents.upload_agent | Upload progress: 39%
-2026-07-05 15:15:55 | INFO     | agents.upload_agent | Upload progress: 42%
-2026-07-05 15:15:55 | INFO     | agents.upload_agent | Upload progress: 45%
-2026-07-05 15:15:55 | INFO     | agents.upload_agent | Upload progress: 48%
-2026-07-05 15:15:56 | INFO     | agents.upload_agent | Upload progress: 51%
-2026-07-05 15:15:56 | INFO     | agents.upload_agent | Upload progress: 53%
-2026-07-05 15:15:56 | INFO     | agents.upload_agent | Upload progress: 56%
-2026-07-05 15:15:56 | INFO     | agents.upload_agent | Upload progress: 59%
-2026-07-05 15:15:56 | INFO     | agents.upload_agent | Upload progress: 62%
-2026-07-05 15:15:56 | INFO     | agents.upload_agent | Upload progress: 65%
-2026-07-05 15:15:56 | INFO     | agents.upload_agent | Upload progress: 68%
-2026-07-05 15:15:56 | INFO     | agents.upload_agent | Upload progress: 70%
-2026-07-05 15:15:57 | INFO     | agents.upload_agent | Upload progress: 73%
-2026-07-05 15:15:57 | INFO     | agents.upload_agent | Upload progress: 76%
-2026-07-05 15:15:57 | INFO     | agents.upload_agent | Upload progress: 79%
-2026-07-05 15:15:57 | INFO     | agents.upload_agent | Upload progress: 82%
-2026-07-05 15:15:57 | INFO     | agents.upload_agent | Upload progress: 85%
-2026-07-05 15:15:57 | INFO     | agents.upload_agent | Upload progress: 88%
-2026-07-05 15:15:57 | INFO     | agents.upload_agent | Upload progress: 90%
-2026-07-05 15:15:57 | INFO     | agents.upload_agent | Upload progress: 93%
-2026-07-05 15:15:57 | INFO     | agents.upload_agent | Upload progress: 96%
-2026-07-05 15:15:57 | INFO     | agents.upload_agent | Upload progress: 99%
-2026-07-05 15:15:58 | INFO     | agents.upload_agent | Upload complete! Video ID: sDWPxu-DWmg
-2026-07-05 15:15:58 | INFO     | agents.upload_agent | URL: https://www.youtube.com/shorts/sDWPxu-DWmg
-2026-07-05 15:15:58 | INFO     | main | History saved: 4 titles
-2026-07-05 15:15:58 | INFO     | main | ============================================================
-2026-07-05 15:15:58 | INFO     | main | SUCCESS: https://www.youtube.com/shorts/sDWPxu-DWmg
-2026-07-05 15:15:58 | INFO     | main | ============================================================
+2026-07-05 16:04:46 | INFO     | main | ============================================================
+2026-07-05 16:04:46 | INFO     | main | STARTING JOB: 20260705_160446_slot2
+2026-07-05 16:04:46 | INFO     | main | ============================================================
+2026-07-05 16:04:46 | INFO     | main | History: 4 used titles
+2026-07-05 16:04:46 | INFO     | agents.trend_agent | Google Trends: 10 items (top traffic: 100000)
+2026-07-05 16:04:46 | WARNING  | agents.trend_agent | Reddit fetch failed: 403 Client Error: Blocked for url: https://www.reddit.com/r/popular/hot.json?limit=15
+2026-07-05 16:04:46 | INFO     | agents.trend_agent | Selecting trend topic via Claude (attempt 1)...
+2026-07-05 16:04:50 | INFO     | agents.trend_agent | Trend topic selected: iPhone 17 Pro vs iPhone 18 Pro (traffic-ranked)
+2026-07-05 16:04:50 | INFO     | main | [1] Generating script for 'iPhone 17 Pro vs iPhone 18 Pro' [trending]...
+2026-07-05 16:04:50 | INFO     | agents.script_agent | Generating trend script for 'iPhone 17 Pro vs iPhone 18 Pro' via Claude (attempt 1)...
+2026-07-05 16:04:56 | INFO     | agents.script_agent | Trend script generated: 'iPhone 17 Pro vs iPhone 18 Pro'
+2026-07-05 16:04:56 | INFO     | main | [2] Generating AI images...
+2026-07-05 16:04:56 | INFO     | agents.image_agent | Fetching image 1/4 for 'smartphone side by side comparison wide establishing' (attempt 1)...
+2026-07-05 16:04:57 | INFO     | agents.image_agent | Image 1 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260705_160446_slot2/temp/images/scene_00.jpg
+2026-07-05 16:04:58 | INFO     | agents.image_agent | Fetching image 2/4 for 'sleek phone on desk close-up detail' (attempt 1)...
+2026-07-05 16:04:59 | INFO     | agents.image_agent | Image 2 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260705_160446_slot2/temp/images/scene_01.jpg
+2026-07-05 16:05:00 | INFO     | agents.image_agent | Fetching image 3/4 for 'tech product reveal dramatic moment' (attempt 1)...
+2026-07-05 16:05:00 | INFO     | agents.image_agent | Image 3 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260705_160446_slot2/temp/images/scene_02.jpg
+2026-07-05 16:05:01 | INFO     | agents.image_agent | Fetching image 4/4 for 'Apple store interior powerful finale' (attempt 1)...
+2026-07-05 16:05:02 | INFO     | agents.image_agent | Image 4 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260705_160446_slot2/temp/images/scene_03.jpg
+2026-07-05 16:05:03 | INFO     | agents.image_agent | Generated 4/4 images successfully
+2026-07-05 16:05:03 | INFO     | main | [3] Generating voiceover...
+2026-07-05 16:05:03 | INFO     | agents.audio_agent | Generating voiceover with Gemini TTS (attempt 1)…
+2026-07-05 16:05:24 | INFO     | agents.audio_agent | Voiceover saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260705_160446_slot2/temp/voiceover.mp3 (390 KB)
+2026-07-05 16:05:24 | INFO     | main | [4] Assembling video...
+2026-07-05 16:05:25 | INFO     | agents.video_agent | Rendering AI video -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260705_160446_slot2/final_raw.mp4
+2026-07-05 16:09:23 | INFO     | agents.video_agent | AI video done: /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260705_160446_slot2/final_raw.mp4 (6.6 MB)
+2026-07-05 16:09:23 | INFO     | main | [4b] Enhancing with FFmpeg...
+2026-07-05 16:09:55 | INFO     | agents.video_editor | Color graded: graded_final_raw.mp4
+2026-07-05 16:10:26 | INFO     | agents.video_editor | Fade added: final.mp4
+2026-07-05 16:10:26 | INFO     | main | [5] Generating SEO metadata...
+2026-07-05 16:10:27 | INFO     | agents.seo_agent | Generating SEO metadata (attempt 1)...
+2026-07-05 16:10:31 | INFO     | agents.seo_agent | SEO title: 'iPhone 18 Pro is actually getting thicker 😳'
+2026-07-05 16:10:31 | INFO     | main | Title: iPhone 18 Pro is actually getting thicker 😳
+2026-07-05 16:10:31 | INFO     | main | [6] Uploading to YouTube...
+2026-07-05 16:10:31 | INFO     | agents.upload_agent | Refreshing YouTube token…
+2026-07-05 16:10:31 | INFO     | agents.upload_agent | Token saved -> youtube_token.json
+2026-07-05 16:10:31 | INFO     | agents.upload_agent | Uploading 'iPhone 18 Pro is actually getting thicker 😳' (attempt 1)…
+2026-07-05 16:10:32 | INFO     | agents.upload_agent | Upload progress: 2%
+2026-07-05 16:10:32 | INFO     | agents.upload_agent | Upload progress: 5%
+2026-07-05 16:10:33 | INFO     | agents.upload_agent | Upload progress: 8%
+2026-07-05 16:10:33 | INFO     | agents.upload_agent | Upload progress: 11%
+2026-07-05 16:10:33 | INFO     | agents.upload_agent | Upload progress: 14%
+2026-07-05 16:10:33 | INFO     | agents.upload_agent | Upload progress: 17%
+2026-07-05 16:10:33 | INFO     | agents.upload_agent | Upload progress: 20%
+2026-07-05 16:10:34 | INFO     | agents.upload_agent | Upload progress: 22%
+2026-07-05 16:10:34 | INFO     | agents.upload_agent | Upload progress: 25%
+2026-07-05 16:10:34 | INFO     | agents.upload_agent | Upload progress: 28%
+2026-07-05 16:10:34 | INFO     | agents.upload_agent | Upload progress: 31%
+2026-07-05 16:10:34 | INFO     | agents.upload_agent | Upload progress: 34%
+2026-07-05 16:10:34 | INFO     | agents.upload_agent | Upload progress: 37%
+2026-07-05 16:10:35 | INFO     | agents.upload_agent | Upload progress: 40%
+2026-07-05 16:10:35 | INFO     | agents.upload_agent | Upload progress: 42%
+2026-07-05 16:10:35 | INFO     | agents.upload_agent | Upload progress: 45%
+2026-07-05 16:10:35 | INFO     | agents.upload_agent | Upload progress: 48%
+2026-07-05 16:10:35 | INFO     | agents.upload_agent | Upload progress: 51%
+2026-07-05 16:10:36 | INFO     | agents.upload_agent | Upload progress: 54%
+2026-07-05 16:10:36 | INFO     | agents.upload_agent | Upload progress: 57%
+2026-07-05 16:10:36 | INFO     | agents.upload_agent | Upload progress: 60%
+2026-07-05 16:10:36 | INFO     | agents.upload_agent | Upload progress: 62%
+2026-07-05 16:10:36 | INFO     | agents.upload_agent | Upload progress: 65%
+2026-07-05 16:10:37 | INFO     | agents.upload_agent | Upload progress: 68%
+2026-07-05 16:10:37 | INFO     | agents.upload_agent | Upload progress: 71%
+2026-07-05 16:10:37 | INFO     | agents.upload_agent | Upload progress: 74%
+2026-07-05 16:10:37 | INFO     | agents.upload_agent | Upload progress: 77%
+2026-07-05 16:10:37 | INFO     | agents.upload_agent | Upload progress: 80%
+2026-07-05 16:10:37 | INFO     | agents.upload_agent | Upload progress: 83%
+2026-07-05 16:10:38 | INFO     | agents.upload_agent | Upload progress: 85%
+2026-07-05 16:10:38 | INFO     | agents.upload_agent | Upload progress: 88%
+2026-07-05 16:10:38 | INFO     | agents.upload_agent | Upload progress: 91%
+2026-07-05 16:10:38 | INFO     | agents.upload_agent | Upload progress: 94%
+2026-07-05 16:10:38 | INFO     | agents.upload_agent | Upload progress: 97%
+2026-07-05 16:10:39 | INFO     | agents.upload_agent | Upload complete! Video ID: 0UcZ2meG1DM
+2026-07-05 16:10:39 | INFO     | agents.upload_agent | URL: https://www.youtube.com/shorts/0UcZ2meG1DM
+2026-07-05 16:10:39 | INFO     | main | History saved: 5 titles
+2026-07-05 16:10:39 | INFO     | main | [7] Cross-posting to Instagram Reels...
+2026-07-05 16:10:40 | WARNING  | main | Instagram cross-post skipped/failed (non-fatal): No Instagram professional account is linked to any Facebook page on this token. Pages found: none. Link your IG account to a page in Meta Business settings.
+2026-07-05 16:10:40 | INFO     | main | ============================================================
+2026-07-05 16:10:40 | INFO     | main | SUCCESS: https://www.youtube.com/shorts/0UcZ2meG1DM
+2026-07-05 16:10:40 | INFO     | main | ============================================================
 
-Done! Watch at: https://www.youtube.com/shorts/sDWPxu-DWmg
+Done! Watch at: https://www.youtube.com/shorts/0UcZ2meG1DM
