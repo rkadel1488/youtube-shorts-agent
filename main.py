@@ -25,6 +25,7 @@ Usage:
 """
 import argparse
 import json
+import os
 import shutil
 import sys
 import time
@@ -34,7 +35,8 @@ import schedule
 
 from agents.audio_agent import generate_voiceover
 from agents.image_agent import generate_images
-from agents.script_agent import generate_story_script
+from agents.script_agent import generate_story_script, generate_trend_script
+from agents.trend_agent import get_trend_topic
 from agents.seo_agent import generate_seo
 from agents.upload_agent import upload_video
 from agents.video_agent import create_ai_video
@@ -113,6 +115,20 @@ def _next_story_topic() -> dict:
     return topic
 
 
+# TOPIC_MODE: "trends" (default) = live trending topics; "story" = fixed pool
+TOPIC_MODE = os.getenv("TOPIC_MODE", "trends").lower()
+
+
+def _next_topic(history: dict) -> dict:
+    """Pick the next topic: live trends by default, story pool as fallback."""
+    if TOPIC_MODE == "trends":
+        try:
+            return get_trend_topic(recent_topics=history.get("topics", []))
+        except Exception as exc:
+            log.warning("Trend topic failed (%s) — falling back to story pool", exc)
+    return _next_story_topic()
+
+
 # ── main pipeline ─────────────────────────────────────────────────────────────
 
 def run_pipeline(slot: int = 0) -> dict:
@@ -132,10 +148,15 @@ def run_pipeline(slot: int = 0) -> dict:
     history = _load_history()
 
     try:
-        topic = _next_story_topic()
+        topic = _next_topic(history)
+        is_trend = topic.get("category") == "trending"
 
-        log.info("[1] Generating story script for '%s'...", topic["title"])
-        script_data = generate_story_script(topic, used_titles=history.get("titles", []))
+        log.info("[1] Generating %s script for '%s'...",
+                 "trend" if is_trend else "story", topic["title"])
+        if is_trend:
+            script_data = generate_trend_script(topic, used_titles=history.get("titles", []))
+        else:
+            script_data = generate_story_script(topic, used_titles=history.get("titles", []))
         _save_json(job_dir / "script.json", script_data)
 
         images_dir = temp_dir / "images"
@@ -176,7 +197,7 @@ def run_pipeline(slot: int = 0) -> dict:
         seo_data = generate_seo(
             topic=script_data["topic"],
             hook=script_data["hook"],
-            niche="story",
+            niche="trending news" if is_trend else "story",
             used_titles=history.get("titles", []),
         )
         _save_json(job_dir / "seo.json", seo_data)

@@ -52,6 +52,8 @@ main.py::run_pipeline()
 
 Each agent function signature is simple and self-contained — they receive plain Python types and return a path or dict. All agents implement a `retries` loop with exponential backoff.
 
+**Topic modes** (`TOPIC_MODE` env, default `trends`): In `trends` mode, `agents/trend_agent.py` fetches live trending topics from the Google Trends daily RSS (including attached real news headlines/snippets) and Reddit r/popular (both keyless), then Claude picks the safest/strongest candidate and writes a factual premise grounded ONLY in those headlines. `main.py::_next_topic()` routes trend topics to `script_agent.generate_trend_script()` (factual explainer template — never fiction about real events) and dedupes against `state/history.json` topics. If all trend sources or selection fail, it automatically falls back to the story pool below. Set `TOPIC_MODE=story` to use only the fixed pool. `TREND_REGION` (default `US`) sets the Google Trends geo.
+
 **Story topics**: `story_topics.py::STORY_TOPICS` is a fixed pool of 100 short-story concepts (id, category, title, premise) across 5 genres. `main.py::_next_story_topic()` consumes them round-robin via `state/topic_state.json` (`next_index`), 4 per day with no repeats. Once all 100 are used, the pipeline raises `RuntimeError` — add more topics to continue.
 
 **Output layout**: Each job writes to `output/<timestamp>_slot<N>/` containing `script.json`, `seo.json`, `final.mp4`, and `result.json`. A `temp/` subdirectory holds intermediate image/voiceover files and is deleted after the job.
