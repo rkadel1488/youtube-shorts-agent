@@ -1,18 +1,19 @@
 """
-YouTube Shorts Story Agent
+YouTube Shorts Trend Agent
 ===========================
-Turns a fixed pool of 100 short-story concepts (story_topics.py) into
-AI-narrated YouTube Shorts: script → AI images → Gemini TTS voiceover →
+Turns live trending topics into AI-narrated YouTube Shorts:
+trends → factual script → AI images → Gemini TTS voiceover →
 MoviePy video → FFmpeg enhancement → SEO → upload.
 
-Topics are consumed round-robin, 4 per day, with no repeats — once all
-100 have been posted the pipeline raises an error so more topics can be
-added.
+Topics come from Google Trends (with real news headlines) and Reddit,
+deduped against state/history.json. If all trend sources fail, an
+evergreen well-established-facts topic is generated instead, so a
+scheduled run never fails for lack of a topic.
 
 Pipeline:
-  0. Load history (used titles) + topic queue position
-  1. Pick the next unused story topic
-  2. Generate script via Claude + Gemini TTS voiceover
+  0. Load history (used titles/topics)
+  1. Pick a trending topic (evergreen fallback)
+  2. Generate factual script via Claude + Gemini TTS voiceover
   3. Generate AI images + assemble video
   4. FFmpeg color grade + fade enhancement
   5. Generate SEO metadata
@@ -25,7 +26,6 @@ Usage:
 """
 import argparse
 import json
-import os
 import shutil
 import sys
 import time
@@ -35,20 +35,18 @@ import schedule
 
 from agents.audio_agent import generate_voiceover
 from agents.image_agent import generate_images
-from agents.script_agent import generate_story_script, generate_trend_script
-from agents.trend_agent import get_trend_topic
+from agents.script_agent import generate_trend_script
+from agents.trend_agent import get_evergreen_topic, get_trend_topic
 from agents.seo_agent import generate_seo
 from agents.upload_agent import upload_video
 from agents.video_agent import create_ai_video
 from agents.video_editor import enhance_video
 from config import OUTPUT_DIR, POSTING_TIMES, YOUTUBE_CATEGORY_ID
-from story_topics import STORY_TOPICS
 from utils.logger import get_logger
 
 log = get_logger("main")
 
 HISTORY_PATH = Path(__file__).parent / "state" / "history.json"
-TOPIC_STATE_PATH = Path(__file__).parent / "state" / "topic_state.json"
 HISTORY_MAX = 150  # how many past entries to keep per field
 
 
@@ -83,50 +81,16 @@ def _update_history(history: dict, title: str, topic: str):
     _save_history(history)
 
 
-# ── topic queue helpers ────────────────────────────────────────────────────────
-
-def _load_next_topic_index() -> int:
-    try:
-        if TOPIC_STATE_PATH.exists():
-            with open(TOPIC_STATE_PATH, encoding="utf-8") as f:
-                return json.load(f).get("next_index", 0)
-    except Exception as exc:
-        log.warning("Could not load topic state: %s — starting from 0", exc)
-    return 0
-
-
-def _save_next_topic_index(next_index: int):
-    TOPIC_STATE_PATH.parent.mkdir(parents=True, exist_ok=True)
-    with open(TOPIC_STATE_PATH, "w", encoding="utf-8") as f:
-        json.dump({"next_index": next_index}, f, indent=2)
-
-
-def _next_story_topic() -> dict:
-    """Pop the next unused topic from the fixed 100-topic pool. Raises once exhausted."""
-    next_index = _load_next_topic_index()
-    if next_index >= len(STORY_TOPICS):
-        raise RuntimeError(
-            f"All {len(STORY_TOPICS)} story topics have been used — add more topics "
-            f"to story_topics.STORY_TOPICS before the pipeline can continue."
-        )
-    topic = STORY_TOPICS[next_index]
-    _save_next_topic_index(next_index + 1)
-    log.info("Selected topic #%d/%d: %s", topic["id"], len(STORY_TOPICS), topic["title"])
-    return topic
-
-
-# TOPIC_MODE: "trends" (default) = live trending topics; "story" = fixed pool
-TOPIC_MODE = os.getenv("TOPIC_MODE", "trends").lower()
-
+# ── topic selection ───────────────────────────────────────────────────────────
 
 def _next_topic(history: dict) -> dict:
-    """Pick the next topic: live trends by default, story pool as fallback."""
-    if TOPIC_MODE == "trends":
-        try:
-            return get_trend_topic(recent_topics=history.get("topics", []))
-        except Exception as exc:
-            log.warning("Trend topic failed (%s) — falling back to story pool", exc)
-    return _next_story_topic()
+    """Live trending topic; evergreen established-facts topic as fallback."""
+    recent = history.get("topics", [])
+    try:
+        return get_trend_topic(recent_topics=recent)
+    except Exception as exc:
+        log.warning("Trend topic failed (%s) — generating evergreen topic", exc)
+    return get_evergreen_topic(recent_topics=recent)
 
 
 # ── main pipeline ─────────────────────────────────────────────────────────────
@@ -149,14 +113,9 @@ def run_pipeline(slot: int = 0) -> dict:
 
     try:
         topic = _next_topic(history)
-        is_trend = topic.get("category") == "trending"
 
-        log.info("[1] Generating %s script for '%s'...",
-                 "trend" if is_trend else "story", topic["title"])
-        if is_trend:
-            script_data = generate_trend_script(topic, used_titles=history.get("titles", []))
-        else:
-            script_data = generate_story_script(topic, used_titles=history.get("titles", []))
+        log.info("[1] Generating script for '%s' [%s]...", topic["title"], topic["category"])
+        script_data = generate_trend_script(topic, used_titles=history.get("titles", []))
         _save_json(job_dir / "script.json", script_data)
 
         images_dir = temp_dir / "images"
@@ -197,7 +156,7 @@ def run_pipeline(slot: int = 0) -> dict:
         seo_data = generate_seo(
             topic=script_data["topic"],
             hook=script_data["hook"],
-            niche="trending news" if is_trend else "story",
+            niche="trending news",
             used_titles=history.get("titles", []),
         )
         _save_json(job_dir / "seo.json", seo_data)
@@ -221,7 +180,7 @@ def run_pipeline(slot: int = 0) -> dict:
             "url":      f"https://www.youtube.com/shorts/{video_id}",
             "title":    seo_data["title"],
             "source":   script_data["topic"],
-            "topic_id": topic["id"],
+            "topic_id": topic.get("id", 0),
             "category": topic["category"],
         })
         _save_json(job_dir / "result.json", result)
@@ -265,7 +224,7 @@ def _save_json(path: Path, data: dict):
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="YouTube Shorts Story Bot")
+    parser = argparse.ArgumentParser(description="YouTube Shorts Trend Bot")
     parser.add_argument("--run-now", action="store_true",
                         help="Run one Short immediately and exit")
     parser.add_argument("--slot", type=int, default=0, choices=[0, 1, 2, 3],

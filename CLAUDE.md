@@ -42,6 +42,7 @@ The system is a linear 5-step pipeline orchestrated by `main.py::run_pipeline()`
 
 ```
 main.py::run_pipeline()
+  ├─ agents/trend_agent.py   → trends/evergreen → {title, premise, hook_angle}
   ├─ agents/script_agent.py  → Claude API → {topic, hook, script, keywords}
   ├─ agents/seo_agent.py     → Claude API → {title, description, tags, hashtags}
   ├─ agents/audio_agent.py   → Gemini TTS → voiceover.mp3
@@ -52,9 +53,7 @@ main.py::run_pipeline()
 
 Each agent function signature is simple and self-contained — they receive plain Python types and return a path or dict. All agents implement a `retries` loop with exponential backoff.
 
-**Topic modes** (`TOPIC_MODE` env, default `trends`): In `trends` mode, `agents/trend_agent.py` fetches live trending topics from the Google Trends daily RSS (including attached real news headlines/snippets) and Reddit r/popular (both keyless), then Claude picks the safest/strongest candidate and writes a factual premise grounded ONLY in those headlines. `main.py::_next_topic()` routes trend topics to `script_agent.generate_trend_script()` (factual explainer template — never fiction about real events) and dedupes against `state/history.json` topics. If all trend sources or selection fail, it automatically falls back to the story pool below. Set `TOPIC_MODE=story` to use only the fixed pool. `TREND_REGION` (default `US`) sets the Google Trends geo.
-
-**Story topics**: `story_topics.py::STORY_TOPICS` is a fixed pool of 100 short-story concepts (id, category, title, premise) across 5 genres. `main.py::_next_story_topic()` consumes them round-robin via `state/topic_state.json` (`next_index`), 4 per day with no repeats. Once all 100 are used, the pipeline raises `RuntimeError` — add more topics to continue.
+**Topics**: `agents/trend_agent.py::get_trend_topic()` fetches live trending topics from the Google Trends daily RSS (including attached real news headlines/snippets) and Reddit r/popular (both keyless), then Claude picks the safest/strongest candidate and writes a factual premise grounded ONLY in those headlines. Topics are deduped against `state/history.json`. If all trend sources fail, `get_evergreen_topic()` generates a well-established-facts topic instead, so a scheduled run never fails for lack of a topic. Scripts always go through `script_agent.generate_trend_script()` — a factual explainer template that forbids inventing facts beyond the premise. `TREND_REGION` (default `US`) sets the Google Trends geo.
 
 **Output layout**: Each job writes to `output/<timestamp>_slot<N>/` containing `script.json`, `seo.json`, `final.mp4`, and `result.json`. A `temp/` subdirectory holds intermediate image/voiceover files and is deleted after the job.
 

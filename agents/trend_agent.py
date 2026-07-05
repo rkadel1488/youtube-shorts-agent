@@ -151,3 +151,66 @@ def get_trend_topic(recent_topics: list = None, retries: int = 3) -> dict:
             time.sleep(2 ** attempt)
 
     raise RuntimeError(f"Trend topic selection failed after {retries} attempts")
+
+
+# ── evergreen fallback (used when all trend sources are down) ─────────────────
+
+EVERGREEN_SYSTEM_PROMPT = """You generate topics for factual YouTube Shorts about well-established, widely documented facts.
+You only use facts that are thoroughly verified and part of common documented knowledge (science, space,
+technology, nature, records, how things work). Nothing speculative, nothing recent, nothing contested.
+Always respond with valid JSON only — no markdown fences, no extra commentary."""
+
+EVERGREEN_TEMPLATE = """Generate ONE surprising factual topic for a ~45-second YouTube Short.
+
+Rules:
+- Must be a well-established, easily verifiable fact (science, space, tech, nature, human body, records)
+- Must have a genuine "wait, really?" quality
+- Must NOT be similar to any of these recently covered topics:
+{recent}
+
+Return ONLY this JSON:
+{{
+  "title": "short topic name",
+  "premise": "3-4 sentence summary of the established facts",
+  "category": "evergreen",
+  "hook_angle": "one sentence: the most surprising angle to open with"
+}}"""
+
+
+def get_evergreen_topic(recent_topics: list = None, retries: int = 3) -> dict:
+    """Fallback topic from established facts when trend sources are unavailable."""
+    prompt = EVERGREEN_TEMPLATE.format(
+        recent=json.dumps((recent_topics or [])[-30:], ensure_ascii=False),
+    )
+    client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
+
+    for attempt in range(1, retries + 1):
+        try:
+            log.info("Generating evergreen fallback topic (attempt %d)...", attempt)
+            message = client.messages.create(
+                model=CLAUDE_MODEL,
+                max_tokens=512,
+                system=EVERGREEN_SYSTEM_PROMPT,
+                messages=[{"role": "user", "content": prompt}],
+            )
+            result = json.loads(message.content[0].text.strip())
+            for key in ("title", "premise"):
+                if not result.get(key):
+                    raise ValueError(f"Missing '{key}' in Claude response")
+            topic = {
+                "id": 0,
+                "category": "evergreen",
+                "title": result["title"],
+                "premise": result["premise"],
+                "hook_angle": result.get("hook_angle", ""),
+            }
+            log.info("Evergreen topic: %s", topic["title"])
+            return topic
+        except json.JSONDecodeError as exc:
+            log.warning("JSON parse error on attempt %d: %s", attempt, exc)
+        except Exception as exc:
+            log.warning("Evergreen topic error on attempt %d: %s", attempt, exc)
+        if attempt < retries:
+            time.sleep(2 ** attempt)
+
+    raise RuntimeError(f"Evergreen topic generation failed after {retries} attempts")

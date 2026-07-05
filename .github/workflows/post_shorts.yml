@@ -28,7 +28,6 @@ jobs:
       POSTING_TIMES: "02:00,08:00,14:00,20:00"
       MADE_FOR_KIDS: "false"
       GEMINI_TTS_VOICE: "Charon"
-      TOPIC_MODE: "trends"      # "trends" = live trending topics, "story" = fixed pool
       TREND_REGION: "US"        # geo for Google Trends (US = biggest audience/CPM)
 
     steps:
