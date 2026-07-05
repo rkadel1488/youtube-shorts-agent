@@ -70,7 +70,16 @@ jobs:
           fi
 
       - name: Run pipeline
-        run: python main.py --run-now --slot ${{ steps.slot.outputs.slot }}
+        run: |
+          set -o pipefail
+          python main.py --run-now --slot ${{ steps.slot.outputs.slot }} 2>&1 | tee pipeline.log
+
+      - name: Save debug info to state
+        if: always()
+        run: |
+          mkdir -p state
+          tail -n 120 pipeline.log > state/last_run_log.txt || true
+          cp output/*/result.json state/last_result.json 2>/dev/null || true
 
       - name: Commit updated history
         if: always()
