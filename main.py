@@ -47,7 +47,7 @@ from utils.logger import get_logger
 log = get_logger("main")
 
 HISTORY_PATH = Path(__file__).parent / "state" / "history.json"
-HISTORY_MAX = 150  # how many past entries to keep per field
+HISTORY_MAX = 400  # ~100 days of topics at 4/day — dedupe memory
 
 
 # ── history helpers ───────────────────────────────────────────────────────────

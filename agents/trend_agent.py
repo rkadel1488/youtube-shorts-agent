@@ -43,6 +43,8 @@ Pick the ONE best topic for a ~45-second factual YouTube Short, using these rule
 - REJECT: topics needing copyrighted footage to make sense (sports game highlights, movie/TV scenes, music videos)
 - PREFER: tech/AI, science, space, money/economy, records, discoveries, viral internet phenomena, surprising announcements
 - PREFER: topics whose provided headlines contain enough concrete detail to fill 45 seconds
+- Among topics that pass EVERY rule above, pick the one with the HIGHEST search_traffic value
+- NEVER pick anything in this EXCLUDED list (already rejected as duplicates): {excluded}
 - The premise must be a 2-4 sentence factual summary built ONLY from the provided headlines/snippets. Do not add numbers, names, or claims that are not in them.
 
 Return ONLY this JSON:
@@ -52,6 +54,44 @@ Return ONLY this JSON:
   "category": "trending",
   "hook_angle": "one sentence: the most surprising angle to open with"
 }}"""
+
+
+# ── helpers ──────────────────────────────────────────────────────────────────
+
+def _parse_traffic(text: str) -> int:
+    """'200,000+' -> 200000; '1M+' -> 1000000."""
+    t = text.strip().replace(",", "").replace("+", "").upper()
+    try:
+        if t.endswith("M"):
+            return int(float(t[:-1]) * 1_000_000)
+        if t.endswith("K"):
+            return int(float(t[:-1]) * 1_000)
+        return int(t)
+    except ValueError:
+        return 0
+
+
+_STOPWORDS = {"the", "a", "an", "of", "in", "on", "for", "to", "and", "is", "at", "vs", "new"}
+
+
+def _norm_tokens(text: str) -> set:
+    words = "".join(c.lower() if c.isalnum() or c.isspace() else " " for c in text).split()
+    return {w for w in words if w not in _STOPWORDS}
+
+
+def is_duplicate(title: str, recent_topics: list) -> bool:
+    """True if title is the same as / highly overlapping with any recent topic."""
+    a = _norm_tokens(title)
+    if not a:
+        return False
+    for prev in recent_topics or []:
+        b = _norm_tokens(prev)
+        if not b:
+            continue
+        overlap = len(a & b) / min(len(a), len(b))
+        if overlap >= 0.6:
+            return True
+    return False
 
 
 # ── trend sources ─────────────────────────────────────────────────────────────
@@ -67,20 +107,24 @@ def fetch_google_trends(max_items: int = 12) -> list[dict]:
         root = ET.fromstring(r.content)
         items = []
         for item in root.iter("item"):
-            entry = {"trend": "", "news": []}
+            entry = {"trend": "", "search_traffic": 0, "news": []}
             for el in item.iter():
                 tag = el.tag.split("}")[-1]
                 if tag == "title" and not entry["trend"]:
                     entry["trend"] = (el.text or "").strip()
+                elif tag == "approx_traffic" and el.text:
+                    entry["search_traffic"] = _parse_traffic(el.text)
                 elif tag == "news_item_title" and el.text:
                     entry["news"].append({"headline": el.text.strip()})
                 elif tag == "news_item_snippet" and el.text and entry["news"]:
                     entry["news"][-1]["snippet"] = el.text.strip()
             if entry["trend"]:
                 items.append(entry)
-            if len(items) >= max_items:
-                break
-        log.info("Google Trends: %d items", len(items))
+        # highest search traffic first
+        items.sort(key=lambda e: e["search_traffic"], reverse=True)
+        items = items[:max_items]
+        log.info("Google Trends: %d items (top traffic: %s)",
+                 len(items), items[0]["search_traffic"] if items else 0)
         return items
     except Exception as exc:
         log.warning("Google Trends fetch failed: %s", exc)
@@ -109,20 +153,22 @@ def fetch_reddit_hot(max_items: int = 15) -> list[dict]:
 
 # ── topic selection ───────────────────────────────────────────────────────────
 
-def get_trend_topic(recent_topics: list = None, retries: int = 3) -> dict:
+def get_trend_topic(recent_topics: list = None, retries: int = 5) -> dict:
     """Fetch trends and have Claude pick one + write a grounded premise."""
     candidates = fetch_google_trends() + fetch_reddit_hot()
     if not candidates:
         raise RuntimeError("All trend sources failed")
 
-    prompt = PICK_TEMPLATE.format(
-        candidates=json.dumps(candidates, indent=1, ensure_ascii=False),
-        recent=json.dumps((recent_topics or [])[-30:], ensure_ascii=False),
-    )
     client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
+    excluded: list = []
 
     for attempt in range(1, retries + 1):
         try:
+            prompt = PICK_TEMPLATE.format(
+                candidates=json.dumps(candidates, indent=1, ensure_ascii=False),
+                recent=json.dumps((recent_topics or [])[-40:], ensure_ascii=False),
+                excluded=json.dumps(excluded, ensure_ascii=False),
+            )
             log.info("Selecting trend topic via Claude (attempt %d)...", attempt)
             message = client.messages.create(
                 model=CLAUDE_MODEL,
@@ -134,6 +180,11 @@ def get_trend_topic(recent_topics: list = None, retries: int = 3) -> dict:
             for key in ("title", "premise"):
                 if not result.get(key):
                     raise ValueError(f"Missing '{key}' in Claude response")
+            # HARD dedupe: never allow a repeat, even if Claude ignores the prompt
+            if is_duplicate(result["title"], (recent_topics or []) + excluded):
+                log.warning("Duplicate topic '%s' — excluding and retrying", result["title"])
+                excluded.append(result["title"])
+                continue
             topic = {
                 "id": 0,
                 "category": "trending",
@@ -141,7 +192,7 @@ def get_trend_topic(recent_topics: list = None, retries: int = 3) -> dict:
                 "premise": result["premise"],
                 "hook_angle": result.get("hook_angle", ""),
             }
-            log.info("Trend topic selected: %s", topic["title"])
+            log.info("Trend topic selected: %s (traffic-ranked)", topic["title"])
             return topic
         except json.JSONDecodeError as exc:
             log.warning("JSON parse error on attempt %d: %s", attempt, exc)
@@ -197,6 +248,9 @@ def get_evergreen_topic(recent_topics: list = None, retries: int = 3) -> dict:
             for key in ("title", "premise"):
                 if not result.get(key):
                     raise ValueError(f"Missing '{key}' in Claude response")
+            if is_duplicate(result["title"], recent_topics or []):
+                log.warning("Duplicate evergreen topic '%s' — retrying", result["title"])
+                continue
             topic = {
                 "id": 0,
                 "category": "evergreen",
