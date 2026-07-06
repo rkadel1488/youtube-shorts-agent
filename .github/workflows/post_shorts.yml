@@ -33,6 +33,7 @@ jobs:
       TREND_REGION: "US"        # geo for Google Trends (US = biggest audience/CPM)
       INSTAGRAM_ENABLED: "true"           # cross-post to IG Reels (skips gracefully if secrets absent)
       FACEBOOK_ENABLED: "true"            # also post the video to the Facebook Page
+      IG_THUMB_OFFSET_MS: "2000"          # Reels cover frame (ms) — skips fade-in from black
       IG_USER_ID: ${{ secrets.IG_USER_ID }}
       IG_ACCESS_TOKEN: ${{ secrets.IG_ACCESS_TOKEN }}
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # temp video hosting for IG publish

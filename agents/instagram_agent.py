@@ -122,10 +122,13 @@ def _cleanup_github(release_id: int, tag: str) -> None:
 # ── Instagram Graph API publish flow ──────────────────────────────────────────
 
 def _create_container(video_url: str, caption: str) -> str:
+    # cover frame: skip the fade-in from black (ms into the video)
+    thumb_offset = os.getenv("IG_THUMB_OFFSET_MS", "2000")
     r = requests.post(
         f"{GRAPH}/{IG_USER_ID}/media",
         data={"media_type": "REELS", "video_url": video_url,
               "caption": caption[:2200], "share_to_feed": "true",
+              "thumb_offset": thumb_offset,
               "access_token": IG_ACCESS_TOKEN},
         timeout=60,
     )
