@@ -17,10 +17,12 @@ If IG secrets are missing, post_reel() raises with a clear message; the
 caller treats Instagram as optional/non-fatal.
 """
 import os
+import subprocess
 import time
 from pathlib import Path
 
 import requests
+from imageio_ffmpeg import get_ffmpeg_exe
 
 from utils.logger import get_logger
 
@@ -72,6 +74,20 @@ def _resolve_ig_user_id() -> str:
     raise RuntimeError(
         f"No Instagram professional account is linked to any Facebook page on this token. "
         f"Pages found: {names}. Link your IG account to a page in Meta Business settings.")
+
+
+# ── thumbnail extraction (Facebook needs an actual image, unlike IG's thumb_offset) ─
+
+def _extract_thumbnail(video_path: Path, offset_ms: int) -> Path:
+    """Grab a JPEG frame at offset_ms into the video, for use as Facebook's cover."""
+    out = video_path.with_suffix(".thumb.jpg")
+    ffmpeg = get_ffmpeg_exe()
+    subprocess.run(
+        [ffmpeg, "-y", "-ss", f"{offset_ms / 1000:.2f}", "-i", str(video_path),
+         "-frames:v", "1", "-q:v", "2", str(out)],
+        capture_output=True, check=True,
+    )
+    return out
 
 
 # ── temporary public hosting via GitHub release asset ─────────────────────────
@@ -178,18 +194,29 @@ def _post_instagram(video_url: str, caption: str) -> str:
     return media_id
 
 
-def _post_facebook(video_url: str, description: str) -> str:
-    """Post the video to the Facebook Page (shows as a Reel/video on the page)."""
+def _post_facebook(video_url: str, description: str, thumb_path: Path = None) -> str:
+    """Post the video to the Facebook Page (shows as a Reel/video on the page).
+
+    Facebook doesn't support IG-style thumb_offset — it needs an actual image
+    file uploaded as `thumb` (multipart), otherwise it defaults to frame 0
+    (often black on a fade-in intro).
+    """
     if not (PAGE_ID and PAGE_TOKEN):
         raise RuntimeError(
             "No page access token — regenerate the system-user token with "
             "pages_manage_posts + publish_video permissions")
-    r = requests.post(
-        f"{GRAPH}/{PAGE_ID}/videos",
-        data={"file_url": video_url, "description": description[:5000],
-              "access_token": PAGE_TOKEN},
-        timeout=120,
-    )
+
+    data = {"file_url": video_url, "description": description[:5000],
+            "access_token": PAGE_TOKEN}
+
+    if thumb_path and Path(thumb_path).exists():
+        with open(thumb_path, "rb") as f:
+            r = requests.post(f"{GRAPH}/{PAGE_ID}/videos", data=data,
+                              files={"thumb": ("cover.jpg", f, "image/jpeg")},
+                              timeout=120)
+    else:
+        r = requests.post(f"{GRAPH}/{PAGE_ID}/videos", data=data, timeout=120)
+
     data = r.json()
     if "id" not in data:
         raise RuntimeError(f"Facebook video post failed: {data.get('error', data)}")
@@ -212,7 +239,16 @@ def crosspost(video_path: Path, caption: str) -> dict:
     _resolve_ig_user_id()
     results: dict = {}
     tag = f"reel-temp-{int(time.time())}"
-    video_url, release_id = _host_on_github(Path(video_path), tag)
+    video_path = Path(video_path)
+    video_url, release_id = _host_on_github(video_path, tag)
+
+    thumb_offset = int(os.getenv("IG_THUMB_OFFSET_MS", "2000"))
+    thumb_path = None
+    try:
+        thumb_path = _extract_thumbnail(video_path, thumb_offset)
+    except Exception as exc:
+        log.warning("Thumbnail extraction failed (Facebook will use frame 0): %s", exc)
+
     try:
         if os.getenv("INSTAGRAM_ENABLED", "true").lower() == "true":
             try:
@@ -223,11 +259,13 @@ def crosspost(video_path: Path, caption: str) -> dict:
                 results["instagram"] = f"failed: {exc}"
         if os.getenv("FACEBOOK_ENABLED", "true").lower() == "true":
             try:
-                results["facebook_id"] = _post_facebook(video_url, caption)
+                results["facebook_id"] = _post_facebook(video_url, caption, thumb_path)
                 results["facebook"] = "posted"
             except Exception as exc:
                 log.warning("Facebook post failed (non-fatal): %s", exc)
                 results["facebook"] = f"failed: {exc}"
     finally:
         _cleanup_github(release_id, tag)
+        if thumb_path and Path(thumb_path).exists():
+            Path(thumb_path).unlink(missing_ok=True)
     return results
