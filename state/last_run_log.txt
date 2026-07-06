@@ -1,75 +1,90 @@
-2026-07-05 20:43:50 | INFO     | main | ============================================================
-2026-07-05 20:43:50 | INFO     | main | STARTING JOB: 20260705_204350_slot3
-2026-07-05 20:43:50 | INFO     | main | ============================================================
-2026-07-05 20:43:50 | INFO     | main | History: 5 used titles
-2026-07-05 20:43:50 | INFO     | agents.trend_agent | Google Trends: 10 items (top traffic: 500000)
-2026-07-05 20:43:50 | WARNING  | agents.trend_agent | Reddit fetch failed: 403 Client Error: Blocked for url: https://www.reddit.com/r/popular/hot.json?limit=15
-2026-07-05 20:43:50 | INFO     | agents.trend_agent | Selecting trend topic via Claude (attempt 1)...
-2026-07-05 20:43:55 | INFO     | agents.trend_agent | Trend topic selected: YouTube TV vs Fubo Price War (traffic-ranked)
-2026-07-05 20:43:55 | INFO     | main | [1] Generating script for 'YouTube TV vs Fubo Price War' [trending]...
-2026-07-05 20:43:55 | INFO     | agents.script_agent | Generating trend script for 'YouTube TV vs Fubo Price War' via Claude (attempt 1)...
-2026-07-05 20:44:00 | INFO     | agents.script_agent | Trend script generated: 'YouTube TV vs Fubo Price War'
-2026-07-05 20:44:00 | INFO     | main | [2] Generating AI images...
-2026-07-05 20:44:00 | INFO     | agents.image_agent | Fetching image 1/4 for 'streaming service price comparison chart wide establishing' (attempt 1)...
-2026-07-05 20:44:01 | INFO     | agents.image_agent | Image 1 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260705_204350_slot3/temp/images/scene_00.jpg
-2026-07-05 20:44:02 | INFO     | agents.image_agent | Fetching image 2/4 for 'television remote control on couch close-up detail' (attempt 1)...
-2026-07-05 20:44:02 | INFO     | agents.image_agent | Image 2 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260705_204350_slot3/temp/images/scene_01.jpg
-2026-07-05 20:44:03 | INFO     | agents.image_agent | Fetching image 3/4 for 'laptop showing live TV interface dramatic moment' (attempt 1)...
-2026-07-05 20:44:04 | INFO     | agents.image_agent | Image 3 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260705_204350_slot3/temp/images/scene_02.jpg
-2026-07-05 20:44:05 | INFO     | agents.image_agent | Fetching image 4/4 for 'frustrated person looking at phone bill powerful finale' (attempt 1)...
-2026-07-05 20:44:05 | INFO     | agents.image_agent | Image 4 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260705_204350_slot3/temp/images/scene_03.jpg
-2026-07-05 20:44:06 | INFO     | agents.image_agent | Generated 4/4 images successfully
-2026-07-05 20:44:06 | INFO     | main | [3] Generating voiceover...
-2026-07-05 20:44:06 | INFO     | agents.audio_agent | Generating voiceover with Gemini TTS (attempt 1)…
-2026-07-05 20:44:25 | INFO     | agents.audio_agent | Voiceover saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260705_204350_slot3/temp/voiceover.mp3 (331 KB)
-2026-07-05 20:44:25 | INFO     | main | [4] Assembling video...
-2026-07-05 20:44:26 | INFO     | agents.video_agent | Rendering AI video -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260705_204350_slot3/final_raw.mp4
-2026-07-05 20:46:41 | INFO     | agents.video_agent | AI video done: /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260705_204350_slot3/final_raw.mp4 (5.3 MB)
-2026-07-05 20:46:41 | INFO     | main | [4b] Enhancing with FFmpeg...
-2026-07-05 20:47:05 | INFO     | agents.video_editor | Color graded: graded_final_raw.mp4
-2026-07-05 20:47:29 | INFO     | agents.video_editor | Fade added: final.mp4
-2026-07-05 20:47:29 | INFO     | main | [5] Generating SEO metadata...
-2026-07-05 20:47:29 | INFO     | agents.seo_agent | Generating SEO metadata (attempt 1)...
-2026-07-05 20:47:34 | INFO     | agents.seo_agent | SEO title: 'Fubo just raised prices while YouTube TV freezes 😳'
-2026-07-05 20:47:34 | INFO     | main | Title: Fubo just raised prices while YouTube TV freezes 😳
-2026-07-05 20:47:34 | INFO     | main | [6] Uploading to YouTube...
-2026-07-05 20:47:34 | INFO     | agents.upload_agent | Refreshing YouTube token…
-2026-07-05 20:47:34 | INFO     | agents.upload_agent | Token saved -> youtube_token.json
-2026-07-05 20:47:34 | INFO     | agents.upload_agent | Uploading 'Fubo just raised prices while YouTube TV freezes 😳' (attempt 1)…
-2026-07-05 20:47:35 | INFO     | agents.upload_agent | Upload progress: 3%
-2026-07-05 20:47:35 | INFO     | agents.upload_agent | Upload progress: 7%
-2026-07-05 20:47:36 | INFO     | agents.upload_agent | Upload progress: 11%
-2026-07-05 20:47:37 | INFO     | agents.upload_agent | Upload progress: 14%
-2026-07-05 20:47:37 | INFO     | agents.upload_agent | Upload progress: 18%
-2026-07-05 20:47:37 | INFO     | agents.upload_agent | Upload progress: 22%
-2026-07-05 20:47:39 | INFO     | agents.upload_agent | Upload progress: 25%
-2026-07-05 20:47:39 | INFO     | agents.upload_agent | Upload progress: 29%
-2026-07-05 20:47:39 | INFO     | agents.upload_agent | Upload progress: 33%
-2026-07-05 20:47:39 | INFO     | agents.upload_agent | Upload progress: 36%
-2026-07-05 20:47:40 | INFO     | agents.upload_agent | Upload progress: 40%
-2026-07-05 20:47:41 | INFO     | agents.upload_agent | Upload progress: 44%
-2026-07-05 20:47:41 | INFO     | agents.upload_agent | Upload progress: 47%
-2026-07-05 20:47:42 | INFO     | agents.upload_agent | Upload progress: 51%
-2026-07-05 20:47:42 | INFO     | agents.upload_agent | Upload progress: 55%
-2026-07-05 20:47:42 | INFO     | agents.upload_agent | Upload progress: 58%
-2026-07-05 20:47:42 | INFO     | agents.upload_agent | Upload progress: 62%
-2026-07-05 20:47:43 | INFO     | agents.upload_agent | Upload progress: 66%
-2026-07-05 20:47:43 | INFO     | agents.upload_agent | Upload progress: 69%
-2026-07-05 20:47:44 | INFO     | agents.upload_agent | Upload progress: 73%
-2026-07-05 20:47:44 | INFO     | agents.upload_agent | Upload progress: 77%
-2026-07-05 20:47:45 | INFO     | agents.upload_agent | Upload progress: 81%
-2026-07-05 20:47:46 | INFO     | agents.upload_agent | Upload progress: 84%
-2026-07-05 20:47:46 | INFO     | agents.upload_agent | Upload progress: 88%
-2026-07-05 20:47:46 | INFO     | agents.upload_agent | Upload progress: 92%
-2026-07-05 20:47:46 | INFO     | agents.upload_agent | Upload progress: 95%
-2026-07-05 20:47:47 | INFO     | agents.upload_agent | Upload progress: 99%
-2026-07-05 20:47:48 | INFO     | agents.upload_agent | Upload complete! Video ID: kSb_H9Zswgk
-2026-07-05 20:47:48 | INFO     | agents.upload_agent | URL: https://www.youtube.com/shorts/kSb_H9Zswgk
-2026-07-05 20:47:48 | INFO     | main | History saved: 6 titles
-2026-07-05 20:47:48 | INFO     | main | [7] Cross-posting to Instagram Reels...
-2026-07-05 20:47:48 | WARNING  | main | Instagram cross-post skipped/failed (non-fatal): Could not list Facebook pages: {'message': 'Error validating access token: Session has expired on Sunday, 05-Jul-26 11:00:00 PDT. The current time is Sunday, 05-Jul-26 13:47:48 PDT.', 'type': 'OAuthException', 'code': 190, 'error_subcode': 463, 'fbtrace_id': 'AlLgSE53_stkvf_WRvl6y0B'}
-2026-07-05 20:47:48 | INFO     | main | ============================================================
-2026-07-05 20:47:48 | INFO     | main | SUCCESS: https://www.youtube.com/shorts/kSb_H9Zswgk
-2026-07-05 20:47:48 | INFO     | main | ============================================================
+2026-07-06 04:01:53 | INFO     | main | ============================================================
+2026-07-06 04:01:53 | INFO     | main | STARTING JOB: 20260706_040153_slot3
+2026-07-06 04:01:53 | INFO     | main | ============================================================
+2026-07-06 04:01:53 | INFO     | main | History: 6 used titles
+2026-07-06 04:01:53 | INFO     | agents.trend_agent | Google Trends: 10 items (top traffic: 20000)
+2026-07-06 04:01:53 | WARNING  | agents.trend_agent | Reddit fetch failed: 403 Client Error: Blocked for url: https://www.reddit.com/r/popular/hot.json?limit=15
+2026-07-06 04:01:53 | INFO     | agents.trend_agent | Selecting trend topic via Claude (attempt 1)...
+2026-07-06 04:01:57 | INFO     | agents.trend_agent | Trend topic selected: 16 Teams Left in the 2026 World Cup (traffic-ranked)
+2026-07-06 04:01:57 | INFO     | main | [1] Generating script for '16 Teams Left in the 2026 World Cup' [trending]...
+2026-07-06 04:01:57 | INFO     | agents.script_agent | Generating trend script for '16 Teams Left in the 2026 World Cup' via Claude (attempt 1)...
+2026-07-06 04:02:02 | INFO     | agents.script_agent | Trend script generated: '16 Teams Left in the 2026 World Cup'
+2026-07-06 04:02:02 | INFO     | main | [2] Generating AI images...
+2026-07-06 04:02:02 | INFO     | agents.image_agent | Fetching image 1/4 for 'world cup stadium crowd wide establishing' (attempt 1)...
+2026-07-06 04:02:03 | INFO     | agents.image_agent | Image 1 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260706_040153_slot3/temp/images/scene_00.jpg
+2026-07-06 04:02:04 | INFO     | agents.image_agent | Fetching image 2/4 for 'soccer trophy closeup close-up detail' (attempt 1)...
+2026-07-06 04:02:04 | INFO     | agents.image_agent | Image 2 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260706_040153_slot3/temp/images/scene_01.jpg
+2026-07-06 04:02:05 | INFO     | agents.image_agent | Fetching image 3/4 for 'football match celebration dramatic moment' (attempt 1)...
+2026-07-06 04:02:06 | INFO     | agents.image_agent | Image 3 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260706_040153_slot3/temp/images/scene_02.jpg
+2026-07-06 04:02:07 | INFO     | agents.image_agent | Fetching image 4/4 for 'tournament bracket scoreboard powerful finale' (attempt 1)...
+2026-07-06 04:02:07 | INFO     | agents.image_agent | Image 4 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260706_040153_slot3/temp/images/scene_03.jpg
+2026-07-06 04:02:08 | INFO     | agents.image_agent | Generated 4/4 images successfully
+2026-07-06 04:02:08 | INFO     | main | [3] Generating voiceover...
+2026-07-06 04:02:08 | INFO     | agents.audio_agent | Generating voiceover with Gemini TTS (attempt 1)…
+2026-07-06 04:02:23 | INFO     | agents.audio_agent | Voiceover saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260706_040153_slot3/temp/voiceover.mp3 (319 KB)
+2026-07-06 04:02:23 | INFO     | main | [4] Assembling video...
+2026-07-06 04:02:24 | INFO     | agents.video_agent | Rendering AI video -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260706_040153_slot3/final_raw.mp4
+2026-07-06 04:04:48 | INFO     | agents.video_agent | AI video done: /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260706_040153_slot3/final_raw.mp4 (7.0 MB)
+2026-07-06 04:04:48 | INFO     | main | [4b] Enhancing with FFmpeg...
+2026-07-06 04:05:13 | INFO     | agents.video_editor | Color graded: graded_final_raw.mp4
+2026-07-06 04:05:39 | INFO     | agents.video_editor | Fade added: final.mp4
+2026-07-06 04:05:39 | INFO     | main | [5] Generating SEO metadata...
+2026-07-06 04:05:39 | INFO     | agents.seo_agent | Generating SEO metadata (attempt 1)...
+2026-07-06 04:05:43 | INFO     | agents.seo_agent | SEO title: 'All Asian teams are out of the 2026 World Cup 🚨'
+2026-07-06 04:05:43 | INFO     | main | Title: All Asian teams are out of the 2026 World Cup 🚨
+2026-07-06 04:05:43 | INFO     | main | [6] Uploading to YouTube...
+2026-07-06 04:05:43 | INFO     | agents.upload_agent | Refreshing YouTube token…
+2026-07-06 04:05:43 | INFO     | agents.upload_agent | Token saved -> youtube_token.json
+2026-07-06 04:05:43 | INFO     | agents.upload_agent | Uploading 'All Asian teams are out of the 2026 World Cup 🚨' (attempt 1)…
+2026-07-06 04:05:45 | INFO     | agents.upload_agent | Upload progress: 2%
+2026-07-06 04:05:45 | INFO     | agents.upload_agent | Upload progress: 5%
+2026-07-06 04:05:45 | INFO     | agents.upload_agent | Upload progress: 8%
+2026-07-06 04:05:46 | INFO     | agents.upload_agent | Upload progress: 11%
+2026-07-06 04:05:47 | INFO     | agents.upload_agent | Upload progress: 14%
+2026-07-06 04:05:47 | INFO     | agents.upload_agent | Upload progress: 17%
+2026-07-06 04:05:47 | INFO     | agents.upload_agent | Upload progress: 19%
+2026-07-06 04:05:48 | INFO     | agents.upload_agent | Upload progress: 22%
+2026-07-06 04:05:49 | INFO     | agents.upload_agent | Upload progress: 25%
+2026-07-06 04:05:49 | INFO     | agents.upload_agent | Upload progress: 28%
+2026-07-06 04:05:50 | INFO     | agents.upload_agent | Upload progress: 31%
+2026-07-06 04:05:50 | INFO     | agents.upload_agent | Upload progress: 34%
+2026-07-06 04:05:50 | INFO     | agents.upload_agent | Upload progress: 37%
+2026-07-06 04:05:50 | INFO     | agents.upload_agent | Upload progress: 39%
+2026-07-06 04:05:51 | INFO     | agents.upload_agent | Upload progress: 42%
+2026-07-06 04:05:52 | INFO     | agents.upload_agent | Upload progress: 45%
+2026-07-06 04:05:53 | INFO     | agents.upload_agent | Upload progress: 48%
+2026-07-06 04:05:53 | INFO     | agents.upload_agent | Upload progress: 51%
+2026-07-06 04:05:53 | INFO     | agents.upload_agent | Upload progress: 54%
+2026-07-06 04:05:54 | INFO     | agents.upload_agent | Upload progress: 57%
+2026-07-06 04:05:55 | INFO     | agents.upload_agent | Upload progress: 59%
+2026-07-06 04:05:55 | INFO     | agents.upload_agent | Upload progress: 62%
+2026-07-06 04:05:55 | INFO     | agents.upload_agent | Upload progress: 65%
+2026-07-06 04:05:55 | INFO     | agents.upload_agent | Upload progress: 68%
+2026-07-06 04:05:56 | INFO     | agents.upload_agent | Upload progress: 71%
+2026-07-06 04:05:56 | INFO     | agents.upload_agent | Upload progress: 74%
+2026-07-06 04:05:56 | INFO     | agents.upload_agent | Upload progress: 76%
+2026-07-06 04:05:57 | INFO     | agents.upload_agent | Upload progress: 79%
+2026-07-06 04:05:57 | INFO     | agents.upload_agent | Upload progress: 82%
+2026-07-06 04:05:58 | INFO     | agents.upload_agent | Upload progress: 85%
+2026-07-06 04:05:58 | INFO     | agents.upload_agent | Upload progress: 88%
+2026-07-06 04:05:59 | INFO     | agents.upload_agent | Upload progress: 91%
+2026-07-06 04:06:00 | INFO     | agents.upload_agent | Upload progress: 94%
+2026-07-06 04:06:01 | INFO     | agents.upload_agent | Upload progress: 96%
+2026-07-06 04:06:01 | INFO     | agents.upload_agent | Upload progress: 99%
+2026-07-06 04:06:02 | INFO     | agents.upload_agent | Upload complete! Video ID: OsjIu1by9gw
+2026-07-06 04:06:02 | INFO     | agents.upload_agent | URL: https://www.youtube.com/shorts/OsjIu1by9gw
+2026-07-06 04:06:02 | INFO     | main | History saved: 7 titles
+2026-07-06 04:06:02 | INFO     | main | [7] Cross-posting to Instagram Reels...
+2026-07-06 04:06:03 | INFO     | agents.instagram_agent | Resolved IG account 17841414363117627 via page 'Unique Podcast' (page id 1262973056889436)
+2026-07-06 04:06:04 | INFO     | agents.instagram_agent | Video temporarily hosted: https://github.com/rkadel1488/youtube-shorts-agent/releases/download/reel-temp-1783310763/reel.mp4
+2026-07-06 04:06:04 | INFO     | agents.instagram_agent | Creating IG media container...
+2026-07-06 04:06:05 | INFO     | agents.instagram_agent | IG processing... (IN_PROGRESS)
+2026-07-06 04:06:16 | INFO     | agents.instagram_agent | IG processing... (IN_PROGRESS)
+2026-07-06 04:06:26 | INFO     | agents.instagram_agent | IG processing... (IN_PROGRESS)
+2026-07-06 04:06:47 | INFO     | agents.instagram_agent | Instagram Reel published: media id 18098503616240165
+2026-07-06 04:06:48 | INFO     | agents.instagram_agent | Temporary release cleaned up
+2026-07-06 04:06:48 | INFO     | main | ============================================================
+2026-07-06 04:06:48 | INFO     | main | SUCCESS: https://www.youtube.com/shorts/OsjIu1by9gw
+2026-07-06 04:06:48 | INFO     | main | ============================================================
 
-Done! Watch at: https://www.youtube.com/shorts/kSb_H9Zswgk
+Done! Watch at: https://www.youtube.com/shorts/OsjIu1by9gw
