@@ -185,17 +185,17 @@ def run_pipeline(slot: int = 0) -> dict:
             "category": topic["category"],
         })
 
-        # [7] Cross-post to Instagram Reels (optional, never fatal)
-        if os.getenv("INSTAGRAM_ENABLED", "true").lower() == "true":
+        # [7] Cross-post to Instagram + Facebook (optional, never fatal)
+        if (os.getenv("INSTAGRAM_ENABLED", "true").lower() == "true"
+                or os.getenv("FACEBOOK_ENABLED", "true").lower() == "true"):
             try:
-                from agents.instagram_agent import post_reel
-                log.info("[7] Cross-posting to Instagram Reels...")
+                from agents.instagram_agent import crosspost
+                log.info("[7] Cross-posting to Instagram/Facebook...")
                 caption = f"{seo_data['title']}\n\n" + " ".join(seo_data.get("hashtags", []))
-                result["instagram_id"] = post_reel(final_path, caption)
-                result["instagram"] = "posted"
+                result.update(crosspost(final_path, caption))
             except Exception as exc:
-                log.warning("Instagram cross-post skipped/failed (non-fatal): %s", exc)
-                result["instagram"] = f"failed: {exc}"
+                log.warning("Meta cross-post skipped/failed (non-fatal): %s", exc)
+                result["meta_crosspost"] = f"failed: {exc}"
 
         _save_json(job_dir / "result.json", result)
 

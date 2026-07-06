@@ -1,5 +1,6 @@
 """
-Cross-posts the rendered video to Instagram Reels via the Instagram Graph API.
+Cross-posts the rendered video to Instagram Reels and the Facebook Page
+via the Meta Graph API.
 
 Instagram cannot accept file uploads — it downloads the video from a public
 URL. This agent temporarily hosts the video as a GitHub release asset (using
@@ -33,6 +34,9 @@ IG_ACCESS_TOKEN = os.getenv("IG_ACCESS_TOKEN", "")
 GH_TOKEN = os.getenv("GH_TOKEN", "")
 GH_REPO = os.getenv("GITHUB_REPOSITORY", "")
 
+PAGE_ID = ""
+PAGE_TOKEN = ""
+
 
 # ── IG account resolution ─────────────────────────────────────────────────────
 
@@ -42,12 +46,12 @@ def _resolve_ig_user_id() -> str:
     Uses IG_USER_ID env if provided; otherwise queries /me/accounts and takes
     the first page with a linked instagram_business_account.
     """
-    global IG_USER_ID
+    global IG_USER_ID, PAGE_ID, PAGE_TOKEN
     if IG_USER_ID:
         return IG_USER_ID
     r = requests.get(
         f"{GRAPH}/me/accounts",
-        params={"fields": "id,name,instagram_business_account",
+        params={"fields": "id,name,access_token,instagram_business_account",
                 "access_token": IG_ACCESS_TOKEN},
         timeout=30,
     )
@@ -55,11 +59,14 @@ def _resolve_ig_user_id() -> str:
     if "data" not in data:
         raise RuntimeError(f"Could not list Facebook pages: {data.get('error', data)}")
     for page in data["data"]:
+        if not PAGE_ID:  # remember first page for Facebook posting
+            PAGE_ID, PAGE_TOKEN = page.get("id", ""), page.get("access_token", "")
         iba = page.get("instagram_business_account")
         if iba:
             log.info("Resolved IG account %s via page '%s' (page id %s)",
                      iba["id"], page.get("name"), page.get("id"))
             IG_USER_ID = iba["id"]
+            PAGE_ID, PAGE_TOKEN = page.get("id", ""), page.get("access_token", "")
             return IG_USER_ID
     names = ", ".join(f"{p.get('name')} ({p.get('id')})" for p in data["data"]) or "none"
     raise RuntimeError(
@@ -159,26 +166,65 @@ def _publish(container_id: str) -> str:
     return data["id"]
 
 
-def post_reel(video_path: Path, caption: str) -> str:
-    """Full flow: host video publicly → create container → wait → publish → cleanup.
+def _post_instagram(video_url: str, caption: str) -> str:
+    log.info("Creating IG media container...")
+    container = _create_container(video_url, caption)
+    _wait_until_ready(container)
+    media_id = _publish(container)
+    log.info("Instagram Reel published: media id %s", media_id)
+    return media_id
 
-    Returns the Instagram media ID.
+
+def _post_facebook(video_url: str, description: str) -> str:
+    """Post the video to the Facebook Page (shows as a Reel/video on the page)."""
+    if not (PAGE_ID and PAGE_TOKEN):
+        raise RuntimeError(
+            "No page access token — regenerate the system-user token with "
+            "pages_manage_posts + publish_video permissions")
+    r = requests.post(
+        f"{GRAPH}/{PAGE_ID}/videos",
+        data={"file_url": video_url, "description": description[:5000],
+              "access_token": PAGE_TOKEN},
+        timeout=120,
+    )
+    data = r.json()
+    if "id" not in data:
+        raise RuntimeError(f"Facebook video post failed: {data.get('error', data)}")
+    log.info("Facebook Page video published: id %s", data["id"])
+    return data["id"]
+
+
+def crosspost(video_path: Path, caption: str) -> dict:
+    """Host the video once, then publish to Instagram and Facebook independently.
+
+    Returns e.g. {"instagram": "posted", "instagram_id": "...",
+                  "facebook": "failed: ...", ...} — one platform failing
+    never blocks the other.
     """
     if not IG_ACCESS_TOKEN:
-        raise RuntimeError("Instagram not configured (IG_ACCESS_TOKEN secret missing)")
+        raise RuntimeError("Meta not configured (IG_ACCESS_TOKEN secret missing)")
     if not (GH_TOKEN and GH_REPO):
-        raise RuntimeError("GH_TOKEN / GITHUB_REPOSITORY missing — cannot host video for Instagram")
+        raise RuntimeError("GH_TOKEN / GITHUB_REPOSITORY missing — cannot host video")
 
     _resolve_ig_user_id()
-
+    results: dict = {}
     tag = f"reel-temp-{int(time.time())}"
     video_url, release_id = _host_on_github(Path(video_path), tag)
     try:
-        log.info("Creating IG media container...")
-        container = _create_container(video_url, caption)
-        _wait_until_ready(container)
-        media_id = _publish(container)
-        log.info("Instagram Reel published: media id %s", media_id)
-        return media_id
+        if os.getenv("INSTAGRAM_ENABLED", "true").lower() == "true":
+            try:
+                results["instagram_id"] = _post_instagram(video_url, caption)
+                results["instagram"] = "posted"
+            except Exception as exc:
+                log.warning("Instagram post failed (non-fatal): %s", exc)
+                results["instagram"] = f"failed: {exc}"
+        if os.getenv("FACEBOOK_ENABLED", "true").lower() == "true":
+            try:
+                results["facebook_id"] = _post_facebook(video_url, caption)
+                results["facebook"] = "posted"
+            except Exception as exc:
+                log.warning("Facebook post failed (non-fatal): %s", exc)
+                results["facebook"] = f"failed: {exc}"
     finally:
         _cleanup_github(release_id, tag)
+    return results
