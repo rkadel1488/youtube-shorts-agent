@@ -1,90 +1,92 @@
-2026-07-07 10:47:43 | INFO     | main | ============================================================
-2026-07-07 10:47:43 | INFO     | main | STARTING JOB: 20260707_104743_slot1
-2026-07-07 10:47:43 | INFO     | main | ============================================================
-2026-07-07 10:47:43 | INFO     | main | History: 13 used titles
-2026-07-07 10:47:43 | INFO     | agents.trend_agent | Google Trends: 10 items (top traffic: 2000)
-2026-07-07 10:47:43 | WARNING  | agents.trend_agent | Reddit fetch failed: 403 Client Error: Blocked for url: https://www.reddit.com/r/popular/hot.json?limit=15
-2026-07-07 10:47:43 | INFO     | agents.trend_agent | Selecting trend topic via Claude (attempt 1)...
-2026-07-07 10:47:47 | INFO     | agents.trend_agent | Trend topic selected: Allegiant & Sun Country Airline Merger (traffic-ranked)
-2026-07-07 10:47:47 | INFO     | main | [1] Generating script for 'Allegiant & Sun Country Airline Merger' [trending]...
-2026-07-07 10:47:47 | INFO     | agents.script_agent | Generating trend script for 'Allegiant & Sun Country Airline Merger' via Claude (attempt 1)...
-2026-07-07 10:47:52 | INFO     | agents.script_agent | Trend script generated: 'Allegiant & Sun Country Airline Merger'
-2026-07-07 10:47:52 | INFO     | main | [2] Generating AI images...
-2026-07-07 10:47:52 | INFO     | agents.image_agent | Fetching image 1/4 for 'airplane on airport tarmac wide establishing' (attempt 1)...
-2026-07-07 10:47:52 | INFO     | agents.image_agent | Image 1 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260707_104743_slot1/temp/images/scene_00.jpg
-2026-07-07 10:47:53 | INFO     | agents.image_agent | Fetching image 2/4 for 'budget airline terminal close-up detail' (attempt 1)...
-2026-07-07 10:47:54 | INFO     | agents.image_agent | Image 2 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260707_104743_slot1/temp/images/scene_01.jpg
-2026-07-07 10:47:55 | INFO     | agents.image_agent | Fetching image 3/4 for 'merger business deal concept dramatic moment' (attempt 1)...
-2026-07-07 10:47:55 | INFO     | agents.image_agent | Image 3 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260707_104743_slot1/temp/images/scene_02.jpg
-2026-07-07 10:47:56 | INFO     | agents.image_agent | Fetching image 4/4 for 'flight booking on laptop powerful finale' (attempt 1)...
-2026-07-07 10:47:57 | INFO     | agents.image_agent | Image 4 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260707_104743_slot1/temp/images/scene_03.jpg
-2026-07-07 10:47:58 | INFO     | agents.image_agent | Generated 4/4 images successfully
-2026-07-07 10:47:58 | INFO     | main | [3] Generating voiceover...
-2026-07-07 10:47:58 | INFO     | agents.audio_agent | Generating voiceover with Gemini TTS (attempt 1)…
-2026-07-07 10:48:16 | INFO     | agents.audio_agent | Voiceover saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260707_104743_slot1/temp/voiceover.mp3 (377 KB)
-2026-07-07 10:48:16 | INFO     | main | [4] Assembling video...
-2026-07-07 10:48:16 | INFO     | agents.video_agent | Rendering AI video -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260707_104743_slot1/final_raw.mp4
-2026-07-07 10:51:07 | INFO     | agents.video_agent | AI video done: /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260707_104743_slot1/final_raw.mp4 (5.5 MB)
-2026-07-07 10:51:07 | INFO     | main | [4b] Enhancing with FFmpeg...
-2026-07-07 10:51:35 | INFO     | agents.video_editor | Color graded: graded_final_raw.mp4
-2026-07-07 10:52:02 | INFO     | agents.video_editor | Fade added: final.mp4
-2026-07-07 10:52:02 | INFO     | main | [5] Generating SEO metadata...
-2026-07-07 10:52:02 | INFO     | agents.seo_agent | Generating SEO metadata (attempt 1)...
-2026-07-07 10:52:07 | INFO     | agents.seo_agent | SEO title: 'Allegiant & Sun Country just merged for $1.5B 🤯'
-2026-07-07 10:52:07 | INFO     | main | Title: Allegiant & Sun Country just merged for $1.5B 🤯
-2026-07-07 10:52:07 | INFO     | main | [6] Uploading to YouTube...
-2026-07-07 10:52:07 | INFO     | agents.upload_agent | Refreshing YouTube token…
-2026-07-07 10:52:07 | INFO     | agents.upload_agent | Token saved -> youtube_token.json
-2026-07-07 10:52:07 | INFO     | agents.upload_agent | Uploading 'Allegiant & Sun Country just merged for $1.5B 🤯' (attempt 1)…
-2026-07-07 10:52:09 | INFO     | agents.upload_agent | Upload progress: 3%
-2026-07-07 10:52:09 | INFO     | agents.upload_agent | Upload progress: 7%
-2026-07-07 10:52:09 | INFO     | agents.upload_agent | Upload progress: 10%
-2026-07-07 10:52:09 | INFO     | agents.upload_agent | Upload progress: 14%
-2026-07-07 10:52:09 | INFO     | agents.upload_agent | Upload progress: 17%
-2026-07-07 10:52:09 | INFO     | agents.upload_agent | Upload progress: 21%
-2026-07-07 10:52:09 | INFO     | agents.upload_agent | Upload progress: 24%
-2026-07-07 10:52:09 | INFO     | agents.upload_agent | Upload progress: 28%
-2026-07-07 10:52:09 | INFO     | agents.upload_agent | Upload progress: 31%
-2026-07-07 10:52:10 | INFO     | agents.upload_agent | Upload progress: 35%
-2026-07-07 10:52:10 | INFO     | agents.upload_agent | Upload progress: 38%
-2026-07-07 10:52:10 | INFO     | agents.upload_agent | Upload progress: 42%
-2026-07-07 10:52:10 | INFO     | agents.upload_agent | Upload progress: 45%
-2026-07-07 10:52:10 | INFO     | agents.upload_agent | Upload progress: 49%
-2026-07-07 10:52:10 | INFO     | agents.upload_agent | Upload progress: 52%
-2026-07-07 10:52:10 | INFO     | agents.upload_agent | Upload progress: 56%
-2026-07-07 10:52:11 | INFO     | agents.upload_agent | Upload progress: 59%
-2026-07-07 10:52:11 | INFO     | agents.upload_agent | Upload progress: 63%
-2026-07-07 10:52:11 | INFO     | agents.upload_agent | Upload progress: 66%
-2026-07-07 10:52:11 | INFO     | agents.upload_agent | Upload progress: 70%
-2026-07-07 10:52:11 | INFO     | agents.upload_agent | Upload progress: 73%
-2026-07-07 10:52:11 | INFO     | agents.upload_agent | Upload progress: 77%
-2026-07-07 10:52:11 | INFO     | agents.upload_agent | Upload progress: 80%
-2026-07-07 10:52:11 | INFO     | agents.upload_agent | Upload progress: 84%
-2026-07-07 10:52:11 | INFO     | agents.upload_agent | Upload progress: 87%
-2026-07-07 10:52:11 | INFO     | agents.upload_agent | Upload progress: 91%
-2026-07-07 10:52:12 | INFO     | agents.upload_agent | Upload progress: 94%
-2026-07-07 10:52:12 | INFO     | agents.upload_agent | Upload progress: 98%
-2026-07-07 10:52:12 | INFO     | agents.upload_agent | Upload complete! Video ID: bnsHKUnqSFA
-2026-07-07 10:52:12 | INFO     | agents.upload_agent | URL: https://www.youtube.com/shorts/bnsHKUnqSFA
-2026-07-07 10:52:12 | INFO     | main | History saved: 14 titles
-2026-07-07 10:52:12 | INFO     | main | [7] Cross-posting to Instagram/Facebook...
-2026-07-07 10:52:14 | INFO     | agents.instagram_agent | Resolved IG account 17841414363117627 via page 'Unique Podcast' (page id 1262973056889436)
-2026-07-07 10:52:15 | INFO     | agents.instagram_agent | Video temporarily hosted: https://github.com/rkadel1488/youtube-shorts-agent/releases/download/reel-temp-1783421534/reel.mp4
-2026-07-07 10:52:15 | INFO     | agents.instagram_agent | Creating IG media container...
-2026-07-07 10:52:16 | INFO     | agents.instagram_agent | IG processing... (IN_PROGRESS)
-2026-07-07 10:52:27 | INFO     | agents.instagram_agent | IG processing... (IN_PROGRESS)
-2026-07-07 10:52:37 | INFO     | agents.instagram_agent | IG processing... (IN_PROGRESS)
-2026-07-07 10:52:47 | INFO     | agents.instagram_agent | IG processing... (IN_PROGRESS)
-2026-07-07 10:52:58 | INFO     | agents.instagram_agent | IG processing... (IN_PROGRESS)
-2026-07-07 10:53:08 | INFO     | agents.instagram_agent | IG processing... (IN_PROGRESS)
-2026-07-07 10:53:18 | INFO     | agents.instagram_agent | IG processing... (IN_PROGRESS)
-2026-07-07 10:53:28 | INFO     | agents.instagram_agent | IG processing... (IN_PROGRESS)
-2026-07-07 10:53:39 | INFO     | agents.instagram_agent | IG processing... (IN_PROGRESS)
-2026-07-07 10:53:57 | INFO     | agents.instagram_agent | Instagram Reel published: media id 18156233950483555
-2026-07-07 10:54:03 | INFO     | agents.instagram_agent | Facebook Page video published: id 1024598976969396
-2026-07-07 10:54:04 | INFO     | agents.instagram_agent | Temporary release cleaned up
-2026-07-07 10:54:04 | INFO     | main | ============================================================
-2026-07-07 10:54:04 | INFO     | main | SUCCESS: https://www.youtube.com/shorts/bnsHKUnqSFA
-2026-07-07 10:54:04 | INFO     | main | ============================================================
+2026-07-07 15:25:27 | INFO     | main | ============================================================
+2026-07-07 15:25:27 | INFO     | main | STARTING JOB: 20260707_152527_slot1
+2026-07-07 15:25:27 | INFO     | main | ============================================================
+2026-07-07 15:25:27 | INFO     | main | History: 14 used titles
+2026-07-07 15:25:27 | INFO     | agents.trend_agent | Google Trends: 10 items (top traffic: 20000)
+2026-07-07 15:25:28 | WARNING  | agents.trend_agent | Reddit fetch failed: 403 Client Error: Blocked for url: https://www.reddit.com/r/popular/hot.json?limit=15
+2026-07-07 15:25:28 | INFO     | agents.trend_agent | Selecting trend topic via Claude (attempt 1)...
+2026-07-07 15:25:31 | INFO     | agents.trend_agent | Trend topic selected: Mount Etna Eruption (traffic-ranked)
+2026-07-07 15:25:31 | INFO     | main | [1] Generating script for 'Mount Etna Eruption' [trending]...
+2026-07-07 15:25:31 | INFO     | agents.script_agent | Generating trend script for 'Mount Etna Eruption' via Claude (attempt 1)...
+2026-07-07 15:25:37 | INFO     | agents.script_agent | Trend script generated: 'Mount Etna Eruption'
+2026-07-07 15:25:37 | INFO     | main | [2] Generating AI images...
+2026-07-07 15:25:37 | INFO     | agents.image_agent | Fetching image 1/4 for 'volcanic eruption night sky wide establishing' (attempt 1)...
+2026-07-07 15:25:38 | INFO     | agents.image_agent | Image 1 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260707_152527_slot1/temp/images/scene_00.jpg
+2026-07-07 15:25:39 | INFO     | agents.image_agent | Fetching image 2/4 for 'orange lava flow close-up detail' (attempt 1)...
+2026-07-07 15:25:39 | INFO     | agents.image_agent | Image 2 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260707_152527_slot1/temp/images/scene_01.jpg
+2026-07-07 15:25:40 | INFO     | agents.image_agent | Fetching image 3/4 for 'active volcano Sicily dramatic moment' (attempt 1)...
+2026-07-07 15:25:41 | INFO     | agents.image_agent | Image 3 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260707_152527_slot1/temp/images/scene_02.jpg
+2026-07-07 15:25:42 | INFO     | agents.image_agent | Fetching image 4/4 for 'glowing lava trail powerful finale' (attempt 1)...
+2026-07-07 15:25:42 | INFO     | agents.image_agent | Image 4 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260707_152527_slot1/temp/images/scene_03.jpg
+2026-07-07 15:25:43 | INFO     | agents.image_agent | Generated 4/4 images successfully
+2026-07-07 15:25:43 | INFO     | main | [3] Generating voiceover...
+2026-07-07 15:25:43 | INFO     | agents.audio_agent | Generating voiceover with Gemini TTS (attempt 1)…
+2026-07-07 15:25:59 | INFO     | agents.audio_agent | Voiceover saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260707_152527_slot1/temp/voiceover.mp3 (350 KB)
+2026-07-07 15:25:59 | INFO     | main | [4] Assembling video...
+2026-07-07 15:26:00 | INFO     | agents.video_agent | Rendering AI video -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260707_152527_slot1/final_raw.mp4
+2026-07-07 15:28:31 | INFO     | agents.video_agent | AI video done: /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260707_152527_slot1/final_raw.mp4 (7.1 MB)
+2026-07-07 15:28:31 | INFO     | main | [4b] Enhancing with FFmpeg...
+2026-07-07 15:28:58 | INFO     | agents.video_editor | Color graded: graded_final_raw.mp4
+2026-07-07 15:29:24 | INFO     | agents.video_editor | Fade added: final.mp4
+2026-07-07 15:29:24 | INFO     | main | [5] Generating SEO metadata...
+2026-07-07 15:29:24 | INFO     | agents.seo_agent | Generating SEO metadata (attempt 1)...
+2026-07-07 15:29:29 | INFO     | agents.seo_agent | SEO title: 'Mount Etna just set the sky on fire 🔥'
+2026-07-07 15:29:29 | INFO     | main | Title: Mount Etna just set the sky on fire 🔥
+2026-07-07 15:29:29 | INFO     | main | [6] Uploading to YouTube...
+2026-07-07 15:29:29 | INFO     | agents.upload_agent | Refreshing YouTube token…
+2026-07-07 15:29:29 | INFO     | agents.upload_agent | Token saved -> youtube_token.json
+2026-07-07 15:29:29 | INFO     | agents.upload_agent | Uploading 'Mount Etna just set the sky on fire 🔥' (attempt 1)…
+2026-07-07 15:29:30 | INFO     | agents.upload_agent | Upload progress: 2%
+2026-07-07 15:29:30 | INFO     | agents.upload_agent | Upload progress: 5%
+2026-07-07 15:29:30 | INFO     | agents.upload_agent | Upload progress: 8%
+2026-07-07 15:29:30 | INFO     | agents.upload_agent | Upload progress: 10%
+2026-07-07 15:29:30 | INFO     | agents.upload_agent | Upload progress: 13%
+2026-07-07 15:29:31 | INFO     | agents.upload_agent | Upload progress: 16%
+2026-07-07 15:29:31 | INFO     | agents.upload_agent | Upload progress: 19%
+2026-07-07 15:29:31 | INFO     | agents.upload_agent | Upload progress: 21%
+2026-07-07 15:29:31 | INFO     | agents.upload_agent | Upload progress: 24%
+2026-07-07 15:29:31 | INFO     | agents.upload_agent | Upload progress: 27%
+2026-07-07 15:29:31 | INFO     | agents.upload_agent | Upload progress: 30%
+2026-07-07 15:29:31 | INFO     | agents.upload_agent | Upload progress: 32%
+2026-07-07 15:29:31 | INFO     | agents.upload_agent | Upload progress: 35%
+2026-07-07 15:29:31 | INFO     | agents.upload_agent | Upload progress: 38%
+2026-07-07 15:29:32 | INFO     | agents.upload_agent | Upload progress: 41%
+2026-07-07 15:29:32 | INFO     | agents.upload_agent | Upload progress: 43%
+2026-07-07 15:29:32 | INFO     | agents.upload_agent | Upload progress: 46%
+2026-07-07 15:29:32 | INFO     | agents.upload_agent | Upload progress: 49%
+2026-07-07 15:29:32 | INFO     | agents.upload_agent | Upload progress: 52%
+2026-07-07 15:29:32 | INFO     | agents.upload_agent | Upload progress: 54%
+2026-07-07 15:29:32 | INFO     | agents.upload_agent | Upload progress: 57%
+2026-07-07 15:29:32 | INFO     | agents.upload_agent | Upload progress: 60%
+2026-07-07 15:29:32 | INFO     | agents.upload_agent | Upload progress: 63%
+2026-07-07 15:29:32 | INFO     | agents.upload_agent | Upload progress: 65%
+2026-07-07 15:29:33 | INFO     | agents.upload_agent | Upload progress: 68%
+2026-07-07 15:29:33 | INFO     | agents.upload_agent | Upload progress: 71%
+2026-07-07 15:29:33 | INFO     | agents.upload_agent | Upload progress: 74%
+2026-07-07 15:29:33 | INFO     | agents.upload_agent | Upload progress: 76%
+2026-07-07 15:29:33 | INFO     | agents.upload_agent | Upload progress: 79%
+2026-07-07 15:29:33 | INFO     | agents.upload_agent | Upload progress: 82%
+2026-07-07 15:29:33 | INFO     | agents.upload_agent | Upload progress: 85%
+2026-07-07 15:29:33 | INFO     | agents.upload_agent | Upload progress: 87%
+2026-07-07 15:29:33 | INFO     | agents.upload_agent | Upload progress: 90%
+2026-07-07 15:29:34 | INFO     | agents.upload_agent | Upload progress: 93%
+2026-07-07 15:29:34 | INFO     | agents.upload_agent | Upload progress: 96%
+2026-07-07 15:29:34 | INFO     | agents.upload_agent | Upload progress: 98%
+2026-07-07 15:29:34 | INFO     | agents.upload_agent | Upload complete! Video ID: gqLIiW4pxVQ
+2026-07-07 15:29:34 | INFO     | agents.upload_agent | URL: https://www.youtube.com/shorts/gqLIiW4pxVQ
+2026-07-07 15:29:34 | INFO     | main | History saved: 15 titles
+2026-07-07 15:29:34 | INFO     | main | [7] Cross-posting to Instagram/Facebook...
+2026-07-07 15:29:36 | INFO     | agents.instagram_agent | Resolved IG account 17841414363117627 via page 'Unique Podcast' (page id 1262973056889436)
+2026-07-07 15:29:38 | INFO     | agents.instagram_agent | Video temporarily hosted: https://github.com/rkadel1488/youtube-shorts-agent/releases/download/reel-temp-1783438176/reel.mp4
+2026-07-07 15:29:38 | INFO     | agents.instagram_agent | Creating IG media container...
+2026-07-07 15:29:39 | INFO     | agents.instagram_agent | IG processing... (IN_PROGRESS)
+2026-07-07 15:29:50 | INFO     | agents.instagram_agent | IG processing... (IN_PROGRESS)
+2026-07-07 15:30:00 | INFO     | agents.instagram_agent | IG processing... (IN_PROGRESS)
+2026-07-07 15:30:22 | INFO     | agents.instagram_agent | Instagram Reel published: media id 17935336557324068
+2026-07-07 15:30:33 | INFO     | agents.instagram_agent | Facebook Reel published (native Reels feed): video id 3980138985452385
+2026-07-07 15:30:35 | INFO     | agents.instagram_agent | Temporary release cleaned up
+2026-07-07 15:30:35 | INFO     | main | ============================================================
+2026-07-07 15:30:35 | INFO     | main | SUCCESS: https://www.youtube.com/shorts/gqLIiW4pxVQ
+2026-07-07 15:30:35 | INFO     | main | ============================================================
 
-Done! Watch at: https://www.youtube.com/shorts/bnsHKUnqSFA
+Done! Watch at: https://www.youtube.com/shorts/gqLIiW4pxVQ
