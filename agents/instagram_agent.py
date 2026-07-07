@@ -194,34 +194,59 @@ def _post_instagram(video_url: str, caption: str) -> str:
     return media_id
 
 
-def _post_facebook(video_url: str, description: str, thumb_path: Path = None) -> str:
-    """Post the video to the Facebook Page (shows as a Reel/video on the page).
+def _post_facebook(video_path: Path, description: str) -> str:
+    """Publish a genuine Facebook Reel via the dedicated video_reels endpoint.
 
-    Facebook doesn't support IG-style thumb_offset — it needs an actual image
-    file uploaded as `thumb` (multipart), otherwise it defaults to frame 0
-    (often black on a fade-in intro).
+    IMPORTANT: /{page-id}/videos creates a regular Video post — Facebook may
+    display it as "Reel" in the content library, but it is NOT placed into
+    the actual Reels algorithmic feed, so it gets near-zero organic reach
+    (this was the root cause of near-0-view posts). /{page-id}/video_reels
+    is the real Reels publishing API and routes into that surface.
+
+    Three-phase resumable upload: start -> upload bytes -> finish/publish.
     """
     if not (PAGE_ID and PAGE_TOKEN):
         raise RuntimeError(
             "No page access token — regenerate the system-user token with "
             "pages_manage_posts + publish_video permissions")
 
-    data = {"file_url": video_url, "description": description[:5000],
-            "access_token": PAGE_TOKEN}
+    video_path = Path(video_path)
 
-    if thumb_path and Path(thumb_path).exists():
-        with open(thumb_path, "rb") as f:
-            r = requests.post(f"{GRAPH}/{PAGE_ID}/videos", data=data,
-                              files={"thumb": ("cover.jpg", f, "image/jpeg")},
-                              timeout=120)
-    else:
-        r = requests.post(f"{GRAPH}/{PAGE_ID}/videos", data=data, timeout=120)
+    # Phase 1: start upload session
+    r = requests.post(f"{GRAPH}/{PAGE_ID}/video_reels",
+                      data={"upload_phase": "start", "access_token": PAGE_TOKEN},
+                      timeout=30)
+    start = r.json()
+    if "video_id" not in start:
+        raise RuntimeError(f"Reel upload start failed: {start.get('error', start)}")
+    video_id, upload_url = start["video_id"], start["upload_url"]
 
-    data = r.json()
-    if "id" not in data:
-        raise RuntimeError(f"Facebook video post failed: {data.get('error', data)}")
-    log.info("Facebook Page video published: id %s", data["id"])
-    return data["id"]
+    # Phase 2: upload the raw video bytes to the resumable upload endpoint
+    file_size = video_path.stat().st_size
+    with open(video_path, "rb") as f:
+        r = requests.post(
+            upload_url,
+            headers={"Authorization": f"OAuth {PAGE_TOKEN}",
+                     "offset": "0", "file_size": str(file_size)},
+            data=f.read(),
+            timeout=300,
+        )
+    if not r.ok:
+        raise RuntimeError(f"Reel video upload failed: {r.status_code} {r.text[:300]}")
+
+    # Phase 3: finish -> publish
+    r = requests.post(
+        f"{GRAPH}/{PAGE_ID}/video_reels",
+        data={"upload_phase": "finish", "video_id": video_id,
+              "video_state": "PUBLISHED", "description": description[:5000],
+              "access_token": PAGE_TOKEN},
+        timeout=60,
+    )
+    finish = r.json()
+    if finish.get("success") is False or "error" in finish:
+        raise RuntimeError(f"Reel publish failed: {finish.get('error', finish)}")
+    log.info("Facebook Reel published (native Reels feed): video id %s", video_id)
+    return video_id
 
 
 def crosspost(video_path: Path, caption: str) -> dict:
@@ -240,14 +265,7 @@ def crosspost(video_path: Path, caption: str) -> dict:
     results: dict = {}
     tag = f"reel-temp-{int(time.time())}"
     video_path = Path(video_path)
-    video_url, release_id = _host_on_github(video_path, tag)
-
-    thumb_offset = int(os.getenv("IG_THUMB_OFFSET_MS", "2000"))
-    thumb_path = None
-    try:
-        thumb_path = _extract_thumbnail(video_path, thumb_offset)
-    except Exception as exc:
-        log.warning("Thumbnail extraction failed (Facebook will use frame 0): %s", exc)
+    video_url, release_id = _host_on_github(video_path, tag)  # IG still needs a public URL
 
     try:
         if os.getenv("INSTAGRAM_ENABLED", "true").lower() == "true":
@@ -259,13 +277,11 @@ def crosspost(video_path: Path, caption: str) -> dict:
                 results["instagram"] = f"failed: {exc}"
         if os.getenv("FACEBOOK_ENABLED", "true").lower() == "true":
             try:
-                results["facebook_id"] = _post_facebook(video_url, caption, thumb_path)
+                results["facebook_id"] = _post_facebook(video_path, caption)
                 results["facebook"] = "posted"
             except Exception as exc:
                 log.warning("Facebook post failed (non-fatal): %s", exc)
                 results["facebook"] = f"failed: {exc}"
     finally:
         _cleanup_github(release_id, tag)
-        if thumb_path and Path(thumb_path).exists():
-            Path(thumb_path).unlink(missing_ok=True)
     return results
