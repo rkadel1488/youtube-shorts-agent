@@ -1,28 +1,23 @@
 """
-Cross-posts the rendered video to Instagram Reels and the Facebook Page
-via the Meta Graph API.
+Cross-posts a rendered video to Instagram Reels and a Facebook Page via the
+Meta Graph API.
+
+Stateless / per-call: every function takes the target account's access_token
+explicitly and resolves its IG user id + Page id fresh each call. This is
+required for multi-account support — a module-level cache (the old design)
+would leak account A's resolved IDs into account B's requests.
 
 Instagram cannot accept file uploads — it downloads the video from a public
-URL. This agent temporarily hosts the video as a GitHub release asset (using
-the Actions-provided GH_TOKEN), tells Instagram to fetch it, waits for
-processing, publishes, then deletes the release.
-
-Required env / secrets:
-  IG_USER_ID       — Instagram professional account's IG User ID (numeric)
-  IG_ACCESS_TOKEN  — long-lived Instagram Graph API access token
-  GH_TOKEN         — GitHub token with contents:write (Actions provides this)
-  GITHUB_REPOSITORY — owner/repo (auto-set by GitHub Actions)
-
-If IG secrets are missing, post_reel() raises with a clear message; the
-caller treats Instagram as optional/non-fatal.
+URL. This agent temporarily hosts the video as a GitHub release asset on the
+DASHBOARD'S OWN repo (GH_TOKEN/GH_REPO — infra-level, not per-target-account),
+tells Instagram to fetch it, waits for processing, publishes, then deletes
+the release. Facebook Reels upload the local file directly (no hosting needed).
 """
 import os
-import subprocess
 import time
 from pathlib import Path
 
 import requests
-from imageio_ffmpeg import get_ffmpeg_exe
 
 from utils.logger import get_logger
 
@@ -31,66 +26,48 @@ log = get_logger(__name__)
 GRAPH = "https://graph.facebook.com/v21.0"
 GH_API = "https://api.github.com"
 
-IG_USER_ID = os.getenv("IG_USER_ID", "")
-IG_ACCESS_TOKEN = os.getenv("IG_ACCESS_TOKEN", "")
 GH_TOKEN = os.getenv("GH_TOKEN", "")
 GH_REPO = os.getenv("GITHUB_REPOSITORY", "")
 
-PAGE_ID = ""
-PAGE_TOKEN = ""
 
+# ── account resolution (stateless — no caching across accounts) ──────────────
 
-# ── IG account resolution ─────────────────────────────────────────────────────
+def resolve_meta_account(access_token: str) -> dict:
+    """Find the Page + linked IG business account for this specific token.
 
-def _resolve_ig_user_id() -> str:
-    """Find the IG professional account linked to the token's Facebook pages.
-
-    Uses IG_USER_ID env if provided; otherwise queries /me/accounts and takes
-    the first page with a linked instagram_business_account.
+    Returns {"ig_user_id": str|None, "page_id": str|None, "page_token": str|None}.
+    Raises if the token can't list any pages at all.
     """
-    global IG_USER_ID, PAGE_ID, PAGE_TOKEN
-    if IG_USER_ID:
-        return IG_USER_ID
     r = requests.get(
         f"{GRAPH}/me/accounts",
         params={"fields": "id,name,access_token,instagram_business_account",
-                "access_token": IG_ACCESS_TOKEN},
+                "access_token": access_token},
         timeout=30,
     )
     data = r.json()
     if "data" not in data:
         raise RuntimeError(f"Could not list Facebook pages: {data.get('error', data)}")
+
+    result = {"ig_user_id": None, "page_id": None, "page_token": None}
     for page in data["data"]:
-        if not PAGE_ID:  # remember first page for Facebook posting
-            PAGE_ID, PAGE_TOKEN = page.get("id", ""), page.get("access_token", "")
+        if result["page_id"] is None:
+            result["page_id"] = page.get("id", "")
+            result["page_token"] = page.get("access_token", "")
         iba = page.get("instagram_business_account")
         if iba:
+            result["ig_user_id"] = iba["id"]
+            result["page_id"] = page.get("id", "")
+            result["page_token"] = page.get("access_token", "")
             log.info("Resolved IG account %s via page '%s' (page id %s)",
                      iba["id"], page.get("name"), page.get("id"))
-            IG_USER_ID = iba["id"]
-            PAGE_ID, PAGE_TOKEN = page.get("id", ""), page.get("access_token", "")
-            return IG_USER_ID
-    names = ", ".join(f"{p.get('name')} ({p.get('id')})" for p in data["data"]) or "none"
-    raise RuntimeError(
-        f"No Instagram professional account is linked to any Facebook page on this token. "
-        f"Pages found: {names}. Link your IG account to a page in Meta Business settings.")
+            break
+    if not result["page_id"]:
+        names = ", ".join(f"{p.get('name')} ({p.get('id')})" for p in data["data"]) or "none"
+        raise RuntimeError(f"No Facebook pages found on this token. Pages: {names}")
+    return result
 
 
-# ── thumbnail extraction (Facebook needs an actual image, unlike IG's thumb_offset) ─
-
-def _extract_thumbnail(video_path: Path, offset_ms: int) -> Path:
-    """Grab a JPEG frame at offset_ms into the video, for use as Facebook's cover."""
-    out = video_path.with_suffix(".thumb.jpg")
-    ffmpeg = get_ffmpeg_exe()
-    subprocess.run(
-        [ffmpeg, "-y", "-ss", f"{offset_ms / 1000:.2f}", "-i", str(video_path),
-         "-frames:v", "1", "-q:v", "2", str(out)],
-        capture_output=True, check=True,
-    )
-    return out
-
-
-# ── temporary public hosting via GitHub release asset ─────────────────────────
+# ── temporary public hosting via GitHub release asset (for Instagram only) ───
 
 def _gh_headers() -> dict:
     return {"Authorization": f"token {GH_TOKEN}",
@@ -98,7 +75,6 @@ def _gh_headers() -> dict:
 
 
 def _host_on_github(video_path: Path, tag: str) -> tuple[str, int]:
-    """Create a prerelease with the video as asset; return (public_url, release_id)."""
     r = requests.post(
         f"{GH_API}/repos/{GH_REPO}/releases",
         headers=_gh_headers(),
@@ -131,21 +107,19 @@ def _cleanup_github(release_id: int, tag: str) -> None:
         requests.delete(f"{GH_API}/repos/{GH_REPO}/git/refs/tags/{tag}",
                         headers=_gh_headers(), timeout=30)
         log.info("Temporary release cleaned up")
-    except Exception as exc:  # cleanup best-effort
+    except Exception as exc:
         log.warning("Release cleanup failed (harmless): %s", exc)
 
 
 # ── Instagram Graph API publish flow ──────────────────────────────────────────
 
-def _create_container(video_url: str, caption: str) -> str:
-    # cover frame: skip the fade-in from black (ms into the video)
+def _create_container(ig_user_id: str, access_token: str, video_url: str, caption: str) -> str:
     thumb_offset = os.getenv("IG_THUMB_OFFSET_MS", "2000")
     r = requests.post(
-        f"{GRAPH}/{IG_USER_ID}/media",
+        f"{GRAPH}/{ig_user_id}/media",
         data={"media_type": "REELS", "video_url": video_url,
               "caption": caption[:2200], "share_to_feed": "true",
-              "thumb_offset": thumb_offset,
-              "access_token": IG_ACCESS_TOKEN},
+              "thumb_offset": thumb_offset, "access_token": access_token},
         timeout=60,
     )
     data = r.json()
@@ -154,12 +128,12 @@ def _create_container(video_url: str, caption: str) -> str:
     return data["id"]
 
 
-def _wait_until_ready(container_id: str, timeout_s: int = 300) -> None:
+def _wait_until_ready(container_id: str, access_token: str, timeout_s: int = 300) -> None:
     deadline = time.time() + timeout_s
     while time.time() < deadline:
         r = requests.get(
             f"{GRAPH}/{container_id}",
-            params={"fields": "status_code,status", "access_token": IG_ACCESS_TOKEN},
+            params={"fields": "status_code,status", "access_token": access_token},
             timeout=30,
         )
         data = r.json()
@@ -173,10 +147,10 @@ def _wait_until_ready(container_id: str, timeout_s: int = 300) -> None:
     raise RuntimeError("IG processing timed out")
 
 
-def _publish(container_id: str) -> str:
+def _publish(ig_user_id: str, access_token: str, container_id: str) -> str:
     r = requests.post(
-        f"{GRAPH}/{IG_USER_ID}/media_publish",
-        data={"creation_id": container_id, "access_token": IG_ACCESS_TOKEN},
+        f"{GRAPH}/{ig_user_id}/media_publish",
+        data={"creation_id": container_id, "access_token": access_token},
         timeout=60,
     )
     data = r.json()
@@ -185,48 +159,38 @@ def _publish(container_id: str) -> str:
     return data["id"]
 
 
-def _post_instagram(video_url: str, caption: str) -> str:
+def post_instagram(access_token: str, ig_user_id: str, video_url: str, caption: str) -> str:
     log.info("Creating IG media container...")
-    container = _create_container(video_url, caption)
-    _wait_until_ready(container)
-    media_id = _publish(container)
+    container = _create_container(ig_user_id, access_token, video_url, caption)
+    _wait_until_ready(container, access_token)
+    media_id = _publish(ig_user_id, access_token, container)
     log.info("Instagram Reel published: media id %s", media_id)
     return media_id
 
 
-def _post_facebook(video_path: Path, description: str) -> str:
+def post_facebook(page_id: str, page_token: str, video_path: Path, description: str) -> str:
     """Publish a genuine Facebook Reel via the dedicated video_reels endpoint.
 
-    IMPORTANT: /{page-id}/videos creates a regular Video post — Facebook may
-    display it as "Reel" in the content library, but it is NOT placed into
-    the actual Reels algorithmic feed, so it gets near-zero organic reach
-    (this was the root cause of near-0-view posts). /{page-id}/video_reels
-    is the real Reels publishing API and routes into that surface.
-
-    Three-phase resumable upload: start -> upload bytes -> finish/publish.
+    /{page-id}/videos creates a regular Video post that Facebook may LABEL
+    "Reel" in the library UI without placing it in the actual Reels
+    algorithmic feed (near-zero organic reach). /{page-id}/video_reels is
+    the real Reels publishing API. Three-phase resumable upload.
     """
-    if not (PAGE_ID and PAGE_TOKEN):
-        raise RuntimeError(
-            "No page access token — regenerate the system-user token with "
-            "pages_manage_posts + publish_video permissions")
-
     video_path = Path(video_path)
 
-    # Phase 1: start upload session
-    r = requests.post(f"{GRAPH}/{PAGE_ID}/video_reels",
-                      data={"upload_phase": "start", "access_token": PAGE_TOKEN},
+    r = requests.post(f"{GRAPH}/{page_id}/video_reels",
+                      data={"upload_phase": "start", "access_token": page_token},
                       timeout=30)
     start = r.json()
     if "video_id" not in start:
         raise RuntimeError(f"Reel upload start failed: {start.get('error', start)}")
     video_id, upload_url = start["video_id"], start["upload_url"]
 
-    # Phase 2: upload the raw video bytes to the resumable upload endpoint
     file_size = video_path.stat().st_size
     with open(video_path, "rb") as f:
         r = requests.post(
             upload_url,
-            headers={"Authorization": f"OAuth {PAGE_TOKEN}",
+            headers={"Authorization": f"OAuth {page_token}",
                      "offset": "0", "file_size": str(file_size)},
             data=f.read(),
             timeout=300,
@@ -234,12 +198,11 @@ def _post_facebook(video_path: Path, description: str) -> str:
     if not r.ok:
         raise RuntimeError(f"Reel video upload failed: {r.status_code} {r.text[:300]}")
 
-    # Phase 3: finish -> publish
     r = requests.post(
-        f"{GRAPH}/{PAGE_ID}/video_reels",
+        f"{GRAPH}/{page_id}/video_reels",
         data={"upload_phase": "finish", "video_id": video_id,
               "video_state": "PUBLISHED", "description": description[:5000],
-              "access_token": PAGE_TOKEN},
+              "access_token": page_token},
         timeout=60,
     )
     finish = r.json()
@@ -249,39 +212,48 @@ def _post_facebook(video_path: Path, description: str) -> str:
     return video_id
 
 
-def crosspost(video_path: Path, caption: str) -> dict:
-    """Host the video once, then publish to Instagram and Facebook independently.
+def crosspost(video_path: Path, caption: str, access_token: str,
+              post_to_instagram: bool = True, post_to_facebook: bool = True) -> dict:
+    """Resolve this account's Page/IG ids fresh, then publish independently.
 
     Returns e.g. {"instagram": "posted", "instagram_id": "...",
                   "facebook": "failed: ...", ...} — one platform failing
-    never blocks the other.
+    never blocks the other. Safe to call concurrently for different accounts
+    (no shared mutable state).
     """
-    if not IG_ACCESS_TOKEN:
-        raise RuntimeError("Meta not configured (IG_ACCESS_TOKEN secret missing)")
+    if not access_token:
+        raise RuntimeError("Meta access_token missing for this account")
     if not (GH_TOKEN and GH_REPO):
-        raise RuntimeError("GH_TOKEN / GITHUB_REPOSITORY missing — cannot host video")
+        raise RuntimeError("GH_TOKEN / GITHUB_REPOSITORY missing — cannot host video for IG")
 
-    _resolve_ig_user_id()
+    account = resolve_meta_account(access_token)
     results: dict = {}
-    tag = f"reel-temp-{int(time.time())}"
     video_path = Path(video_path)
-    video_url, release_id = _host_on_github(video_path, tag)  # IG still needs a public URL
 
+    release_id = tag = video_url = None
     try:
-        if os.getenv("INSTAGRAM_ENABLED", "true").lower() == "true":
+        if post_to_instagram and account["ig_user_id"]:
+            tag = f"reel-temp-{int(time.time())}"
+            video_url, release_id = _host_on_github(video_path, tag)
             try:
-                results["instagram_id"] = _post_instagram(video_url, caption)
+                results["instagram_id"] = post_instagram(
+                    access_token, account["ig_user_id"], video_url, caption)
                 results["instagram"] = "posted"
             except Exception as exc:
                 log.warning("Instagram post failed (non-fatal): %s", exc)
                 results["instagram"] = f"failed: {exc}"
-        if os.getenv("FACEBOOK_ENABLED", "true").lower() == "true":
+        elif post_to_instagram:
+            results["instagram"] = "failed: no Instagram account linked to this Page"
+
+        if post_to_facebook and account["page_id"]:
             try:
-                results["facebook_id"] = _post_facebook(video_path, caption)
+                results["facebook_id"] = post_facebook(
+                    account["page_id"], account["page_token"], video_path, caption)
                 results["facebook"] = "posted"
             except Exception as exc:
                 log.warning("Facebook post failed (non-fatal): %s", exc)
                 results["facebook"] = f"failed: {exc}"
     finally:
-        _cleanup_github(release_id, tag)
+        if release_id:
+            _cleanup_github(release_id, tag)
     return results

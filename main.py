@@ -39,10 +39,10 @@ from agents.image_agent import generate_images
 from agents.script_agent import generate_trend_script
 from agents.trend_agent import get_evergreen_topic, get_trend_topic
 from agents.seo_agent import generate_seo
-from agents.upload_agent import upload_video
+from agents.upload_agent import upload_video_from_files
 from agents.video_agent import create_ai_video
 from agents.video_editor import enhance_video
-from config import OUTPUT_DIR, POSTING_TIMES, YOUTUBE_CATEGORY_ID
+from config import OUTPUT_DIR, POSTING_TIMES, YOUTUBE_CATEGORY_ID, YOUTUBE_TOKEN_FILE
 from utils.logger import get_logger
 
 log = get_logger("main")
@@ -164,13 +164,14 @@ def run_pipeline() -> dict:
         log.info("Title: %s", seo_data["title"])
 
         log.info("[6] Uploading to YouTube...")
-        video_id = upload_video(
+        video_id = upload_video_from_files(
             video_path=final_path,
             title=seo_data["title"],
             description=seo_data["description"],
             tags=seo_data["tags"],
             hashtags=seo_data["hashtags"],
             category_id=YOUTUBE_CATEGORY_ID,
+            token_file=YOUTUBE_TOKEN_FILE,
         )
 
         _update_history(history, seo_data["title"], script_data["topic"])
@@ -192,7 +193,8 @@ def run_pipeline() -> dict:
                 from agents.instagram_agent import crosspost
                 log.info("[7] Cross-posting to Instagram/Facebook...")
                 caption = f"{seo_data['title']}\n\n" + " ".join(seo_data.get("hashtags", []))
-                result.update(crosspost(final_path, caption))
+                result.update(crosspost(final_path, caption,
+                                        access_token=os.getenv("IG_ACCESS_TOKEN", "")))
             except Exception as exc:
                 log.warning("Meta cross-post skipped/failed (non-fatal): %s", exc)
                 result["meta_crosspost"] = f"failed: {exc}"

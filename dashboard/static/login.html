@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login — Shorts Automation</title>
+<script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex items-center justify-center">
+  <form method="POST" action="/login" class="bg-slate-900 border border-slate-800 rounded-xl p-8 w-full max-w-sm space-y-4">
+    <h1 class="text-xl font-semibold">Shorts Automation</h1>
+    <p class="text-sm text-slate-400">Enter the admin password to continue.</p>
+    <input type="password" name="password" placeholder="Password" autofocus
+           class="w-full rounded-lg bg-slate-800 border border-slate-700 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+    <div id="error" class="text-red-400 text-sm hidden">Incorrect password.</div>
+    <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-500 rounded-lg py-2 font-medium">Log in</button>
+  </form>
+  <script>
+    if (new URLSearchParams(location.search).get("error")) {
+      document.getElementById("error").classList.remove("hidden");
+    }
+  </script>
+</body>
+</html>

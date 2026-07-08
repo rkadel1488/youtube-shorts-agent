@@ -1,8 +1,11 @@
 """
 Uploads a video to YouTube via the YouTube Data API v3.
 
-Authentication uses OAuth 2.0. Run setup_youtube_auth.py once to create
-the token file; this module refreshes it automatically on every run.
+Credential-parameterized: pass the OAuth token JSON (dict) for the target
+account directly, so multiple YouTube accounts can be uploaded to from one
+process without one account's token leaking into another's request. A
+thin CLI-compatible wrapper (upload_video_from_files) still reads the
+config file paths for local/manual use.
 """
 import json
 import time
@@ -10,17 +13,11 @@ from pathlib import Path
 
 from google.oauth2.credentials import Credentials
 from google.auth.transport.requests import Request
-from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 from googleapiclient.http import MediaFileUpload
 
-from config import (
-    MADE_FOR_KIDS,
-    YOUTUBE_CLIENT_SECRETS_FILE,
-    YOUTUBE_SCOPES,
-    YOUTUBE_TOKEN_FILE,
-)
+from config import MADE_FOR_KIDS, YOUTUBE_SCOPES
 from utils.logger import get_logger
 
 log = get_logger(__name__)
@@ -30,31 +27,22 @@ MAX_RETRIES = 5
 RETRIABLE_STATUS_CODES = {500, 502, 503, 504}
 
 
-def _get_credentials() -> Credentials:
-    """Load or refresh OAuth2 credentials. Opens browser on first run."""
-    token_path = Path(YOUTUBE_TOKEN_FILE)
-    creds = None
+def _credentials_from_token_info(token_info: dict) -> tuple[Credentials, dict]:
+    """Build Credentials from an authorized-user token dict, refreshing if needed.
 
-    if token_path.exists():
-        with open(token_path) as f:
-            creds = Credentials.from_authorized_user_info(json.load(f), YOUTUBE_SCOPES)
-
-    if not creds or not creds.valid:
-        if creds and creds.expired and creds.refresh_token:
-            log.info("Refreshing YouTube token…")
+    Returns (creds, possibly_updated_token_info) so the caller can persist a
+    refreshed token back to storage (e.g. the dashboard's encrypted DB row).
+    """
+    creds = Credentials.from_authorized_user_info(token_info, YOUTUBE_SCOPES)
+    if not creds.valid:
+        if creds.expired and creds.refresh_token:
+            log.info("Refreshing YouTube token...")
             creds.refresh(Request())
         else:
-            log.info("Starting YouTube OAuth flow — browser will open…")
-            flow = InstalledAppFlow.from_client_secrets_file(
-                YOUTUBE_CLIENT_SECRETS_FILE, YOUTUBE_SCOPES
-            )
-            creds = flow.run_local_server(port=0)
-
-        with open(token_path, "w") as f:
-            f.write(creds.to_json())
-        log.info("Token saved -> %s", token_path)
-
-    return creds
+            raise RuntimeError(
+                "YouTube token is invalid and has no refresh_token — "
+                "re-run the OAuth setup for this account and paste a fresh token.")
+    return creds, json.loads(creds.to_json())
 
 
 def _build_body(
@@ -88,13 +76,15 @@ def upload_video(
     tags: list[str],
     hashtags: list[str],
     category_id: str,
+    token_info: dict,
     retries: int = MAX_RETRIES,
-) -> str:
+) -> tuple[str, dict]:
     """
-    Upload *video_path* to YouTube with the supplied metadata.
-    Returns the YouTube video ID on success.
+    Upload *video_path* to YouTube using the given account's token_info dict.
+    Returns (video_id, refreshed_token_info) — persist refreshed_token_info
+    if it differs from what was passed in (access tokens rotate).
     """
-    creds = _get_credentials()
+    creds, refreshed_token_info = _credentials_from_token_info(token_info)
     youtube = build("youtube", "v3", credentials=creds)
 
     body = _build_body(title, description, tags, hashtags, category_id)
@@ -111,10 +101,9 @@ def upload_video(
         media_body=media,
     )
 
-    video_id = None
     for attempt in range(1, retries + 1):
         try:
-            log.info("Uploading '%s' (attempt %d)…", title, attempt)
+            log.info("Uploading '%s' (attempt %d)...", title, attempt)
             response = None
             while response is None:
                 status, response = request.next_chunk()
@@ -125,7 +114,7 @@ def upload_video(
             video_id = response["id"]
             log.info("Upload complete! Video ID: %s", video_id)
             log.info("URL: https://www.youtube.com/shorts/%s", video_id)
-            return video_id
+            return video_id, refreshed_token_info
 
         except HttpError as exc:
             if exc.resp.status in RETRIABLE_STATUS_CODES:
@@ -140,3 +129,25 @@ def upload_video(
                 time.sleep(2 ** attempt)
 
     raise RuntimeError(f"Upload failed after {retries} attempts")
+
+
+def upload_video_from_files(
+    video_path: Path,
+    title: str,
+    description: str,
+    tags: list[str],
+    hashtags: list[str],
+    category_id: str,
+    token_file: str,
+    retries: int = MAX_RETRIES,
+) -> str:
+    """CLI/local-use wrapper: reads token_file, uploads, writes back any refresh."""
+    with open(token_file) as f:
+        token_info = json.load(f)
+    video_id, refreshed = upload_video(
+        video_path, title, description, tags, hashtags, category_id,
+        token_info, retries=retries)
+    if refreshed != token_info:
+        with open(token_file, "w") as f:
+            json.dump(refreshed, f)
+    return video_id

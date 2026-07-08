@@ -1,9 +1,15 @@
 name: Post YouTube Shorts
 
+# Schedule trigger DISABLED — scheduling has moved to the self-hosted VPS
+# dashboard (see dashboard/README.md), which runs its own hourly best-time
+# check and supports multiple accounts. This workflow is kept only as a
+# manual fallback (workflow_dispatch), e.g. for debugging without touching
+# the VPS. To restore the old GitHub-Actions-only schedule, uncomment the
+# `schedule:` block below.
 on:
-  schedule:
-    - cron: '0 * * * *'      # every hour — the best-time check below decides if it actually posts
-  workflow_dispatch:         # manual trigger from GitHub UI always runs, bypassing the time check
+  # schedule:
+  #   - cron: '0 * * * *'
+  workflow_dispatch:
     inputs:
       slot:
         description: 'Slot label for this manual run (cosmetic only)'
