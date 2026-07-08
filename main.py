@@ -221,7 +221,7 @@ def _post_slot(slot: int):
 
 
 def start_scheduler():
-    if len(POSTING_TIMES) < 4:
+    if len(POSTING_TIMES) < 3:
         log.warning("Only %d posting times configured", len(POSTING_TIMES))
     for i, t in enumerate(sorted(POSTING_TIMES)):
         schedule.every().day.at(t).do(_post_slot, slot=i)
@@ -241,7 +241,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="YouTube Shorts Trend Bot")
     parser.add_argument("--run-now", action="store_true",
                         help="Run one Short immediately and exit")
-    parser.add_argument("--slot", type=int, default=0, choices=[0, 1, 2, 3],
+    parser.add_argument("--slot", type=int, default=0, choices=[0, 1, 2],
                         help="Slot to run (0=night, 1=morning, 2=afternoon, 3=evening)")
     args = parser.parse_args()
 

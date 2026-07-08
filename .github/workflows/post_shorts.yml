@@ -2,14 +2,13 @@ name: Post YouTube Shorts
 
 on:
   schedule:
-    - cron: '0 2 * * *'    #  2 AM UTC — Slot 0 (night)
-    - cron: '0 8 * * *'    #  8 AM UTC — Slot 1 (morning)
-    - cron: '0 14 * * *'   #  2 PM UTC — Slot 2 (afternoon)
-    - cron: '0 20 * * *'   #  8 PM UTC — Slot 3 (evening)
+    - cron: '0 0 * * *'     # 12 AM UTC — Slot 0
+    - cron: '0 8 * * *'     #  8 AM UTC — Slot 1
+    - cron: '0 16 * * *'    #  4 PM UTC — Slot 2
   workflow_dispatch:        # Manual trigger from GitHub UI
     inputs:
       slot:
-        description: 'Which slot to run (0=night, 1=morning, 2=afternoon, 3=evening)'
+        description: 'Which slot to run (0, 1, or 2)'
         required: false
         default: '1'
 
@@ -68,12 +67,10 @@ jobs:
             HOUR=$(date -u +%H | sed 's/^0//')
             if [ "${HOUR:-0}" -lt 5 ]; then
               echo "slot=0" >> $GITHUB_OUTPUT
-            elif [ "${HOUR:-0}" -lt 11 ]; then
+            elif [ "${HOUR:-0}" -lt 13 ]; then
               echo "slot=1" >> $GITHUB_OUTPUT
-            elif [ "${HOUR:-0}" -lt 17 ]; then
-              echo "slot=2" >> $GITHUB_OUTPUT
             else
-              echo "slot=3" >> $GITHUB_OUTPUT
+              echo "slot=2" >> $GITHUB_OUTPUT
             fi
           fi
 
