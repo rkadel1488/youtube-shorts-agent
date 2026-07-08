@@ -2,15 +2,13 @@ name: Post YouTube Shorts
 
 on:
   schedule:
-    - cron: '0 0 * * *'     # 12 AM UTC — Slot 0
-    - cron: '0 8 * * *'     #  8 AM UTC — Slot 1
-    - cron: '0 16 * * *'    #  4 PM UTC — Slot 2
-  workflow_dispatch:        # Manual trigger from GitHub UI
+    - cron: '0 * * * *'      # every hour — the best-time check below decides if it actually posts
+  workflow_dispatch:         # manual trigger from GitHub UI always runs, bypassing the time check
     inputs:
       slot:
-        description: 'Which slot to run (0, 1, or 2)'
+        description: 'Slot label for this manual run (cosmetic only)'
         required: false
-        default: '1'
+        default: '0'
 
 jobs:
   post-short:
@@ -26,68 +24,63 @@ jobs:
       PEXELS_API_KEY: ${{ secrets.PEXELS_API_KEY }}
       YOUTUBE_CLIENT_SECRETS_FILE: client_secrets.json
       YOUTUBE_TOKEN_FILE: youtube_token.json
-      POSTING_TIMES: "02:00,08:00,14:00,20:00"
       MADE_FOR_KIDS: "false"
       GEMINI_TTS_VOICE: "Charon"
-      TREND_REGION: "US"        # geo for Google Trends (US = biggest audience/CPM)
-      INSTAGRAM_ENABLED: "true"           # cross-post to IG Reels (skips gracefully if secrets absent)
-      FACEBOOK_ENABLED: "true"            # also post the video to the Facebook Page
-      IG_THUMB_OFFSET_MS: "2000"          # Reels cover frame (ms) — skips fade-in from black
+      TREND_REGION: "US"
+      AUDIENCE_TIMEZONE: "America/New_York"
+      INSTAGRAM_ENABLED: "true"
+      FACEBOOK_ENABLED: "true"
+      IG_THUMB_OFFSET_MS: "2000"
       IG_USER_ID: ${{ secrets.IG_USER_ID }}
       IG_ACCESS_TOKEN: ${{ secrets.IG_ACCESS_TOKEN }}
-      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # temp video hosting for IG publish
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Check if now is a good time to post
+        id: besttime
+        run: |
+          RESULT=$(python3 scripts/should_post_now.py)
+          echo "should_run=$RESULT" >> $GITHUB_OUTPUT
+
       - name: Set up Python 3.11
+        if: steps.besttime.outputs.should_run == 'true' || github.event_name == 'workflow_dispatch'
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
           cache: 'pip'
 
       - name: Install system fonts
+        if: steps.besttime.outputs.should_run == 'true' || github.event_name == 'workflow_dispatch'
         run: sudo apt-get install -y fonts-dejavu-core
 
       - name: Install Python dependencies
+        if: steps.besttime.outputs.should_run == 'true' || github.event_name == 'workflow_dispatch'
         run: pip install -r requirements.txt
 
       - name: Restore credentials
+        if: steps.besttime.outputs.should_run == 'true' || github.event_name == 'workflow_dispatch'
         run: |
           echo '${{ secrets.YOUTUBE_CLIENT_SECRETS }}' > client_secrets.json
           echo '${{ secrets.YOUTUBE_TOKEN }}' > youtube_token.json
 
-      - name: Determine slot from schedule
-        id: slot
-        run: |
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            echo "slot=${{ github.event.inputs.slot }}" >> $GITHUB_OUTPUT
-          else
-            HOUR=$(date -u +%H | sed 's/^0//')
-            if [ "${HOUR:-0}" -lt 5 ]; then
-              echo "slot=0" >> $GITHUB_OUTPUT
-            elif [ "${HOUR:-0}" -lt 13 ]; then
-              echo "slot=1" >> $GITHUB_OUTPUT
-            else
-              echo "slot=2" >> $GITHUB_OUTPUT
-            fi
-          fi
-
       - name: Run pipeline
+        if: steps.besttime.outputs.should_run == 'true' || github.event_name == 'workflow_dispatch'
         run: |
           set -o pipefail
-          python main.py --run-now --slot ${{ steps.slot.outputs.slot }} 2>&1 | tee pipeline.log
+          python main.py --run-now 2>&1 | tee pipeline.log
 
       - name: Save debug info to state
-        if: always()
+        if: steps.besttime.outputs.should_run == 'true' || github.event_name == 'workflow_dispatch'
         run: |
           mkdir -p state
           tail -n 120 pipeline.log > state/last_run_log.txt || true
           cp output/*/result.json state/last_result.json 2>/dev/null || true
 
       - name: Commit updated history
-        if: always()
+        if: steps.besttime.outputs.should_run == 'true' || github.event_name == 'workflow_dispatch'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
@@ -100,7 +93,7 @@ jobs:
           fi
 
       - name: Upload result as artifact
-        if: always()
+        if: steps.besttime.outputs.should_run == 'true' || github.event_name == 'workflow_dispatch'
         uses: actions/upload-artifact@v4
         with:
           name: short-output-${{ github.run_number }}

@@ -96,10 +96,10 @@ def _next_topic(history: dict) -> dict:
 
 # ── main pipeline ─────────────────────────────────────────────────────────────
 
-def run_pipeline(slot: int = 0) -> dict:
-    """Run one full pipeline for the next story topic in the queue."""
+def run_pipeline() -> dict:
+    """Run one full pipeline for the next trending/evergreen topic."""
     timestamp = time.strftime("%Y%m%d_%H%M%S")
-    job_id    = f"{timestamp}_slot{slot}"
+    job_id    = timestamp
     job_dir   = OUTPUT_DIR / job_id
     temp_dir  = job_dir / "temp"
     job_dir.mkdir(parents=True, exist_ok=True)
@@ -217,7 +217,7 @@ def run_pipeline(slot: int = 0) -> dict:
 
 def _post_slot(slot: int):
     log.info("Scheduler fired — slot %d", slot)
-    run_pipeline(slot=slot)
+    run_pipeline()
 
 
 def start_scheduler():
@@ -241,12 +241,10 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="YouTube Shorts Trend Bot")
     parser.add_argument("--run-now", action="store_true",
                         help="Run one Short immediately and exit")
-    parser.add_argument("--slot", type=int, default=0, choices=[0, 1, 2],
-                        help="Slot to run (0=night, 1=morning, 2=afternoon, 3=evening)")
     args = parser.parse_args()
 
     if args.run_now:
-        r = run_pipeline(slot=args.slot)
+        r = run_pipeline()
         if r.get("status") == "success":
             print(f"\nDone! Watch at: {r['url']}")
             sys.exit(0)
