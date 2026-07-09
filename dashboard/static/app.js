@@ -32,8 +32,11 @@ async function submitUpload() {
   setTimeout(loadRenders, 4000);
 }
 
-function viewError(content) {
-  document.getElementById('log-modal-content').textContent = content || '(no details)';
+let _errorsById = {};
+
+function viewError(renderId) {
+  const content = _errorsById[renderId] || '(no details)';
+  document.getElementById('log-modal-content').textContent = content;
   document.getElementById('log-modal').classList.remove('hidden');
 }
 
@@ -49,6 +52,8 @@ function statusBadge(status) {
 
 async function loadRenders() {
   const renders = await (await fetch('/api/renders')).json();
+  _errorsById = {};
+  renders.forEach(r => { if (r.error) _errorsById[r.id] = r.error; });
   document.getElementById('renders-table').innerHTML = renders.map(r => `
     <tr class="border-t border-slate-800">
       <td class="py-2 text-xs text-slate-400">${r.created_at}</td>
@@ -59,7 +64,7 @@ async function loadRenders() {
         ${r.status === 'success'
           ? `<a href="/api/renders/${r.id}/download" class="text-xs bg-emerald-700 hover:bg-emerald-600 rounded px-2 py-1">Download</a>`
           : r.status === 'failed'
-            ? `<button onclick='viewError(${JSON.stringify(r.error || "")})' class="text-xs bg-red-900 hover:bg-red-800 rounded px-2 py-1">View error</button>`
+            ? `<button onclick="viewError(${r.id})" class="text-xs bg-red-900 hover:bg-red-800 rounded px-2 py-1">View error</button>`
             : '<span class="text-xs text-slate-500">—</span>'}
       </td>
     </tr>`).join('') || '<tr><td class="py-2 text-slate-500" colspan="5">No renders yet — try one above.</td></tr>';
