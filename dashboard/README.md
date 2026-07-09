@@ -75,6 +75,25 @@ trigger can be restored from git history.
 
 ## Known limitations (honest, not hidden)
 
+- **YouTube may block clipper downloads as "bot traffic"** — datacenter/VPS
+  IP ranges (including this VPS) commonly trigger YouTube's
+  "Sign in to confirm you're not a bot" check on yt-dlp downloads. Fix:
+  1. Install a browser extension that exports cookies in Netscape format,
+     e.g. **"Get cookies.txt LOCALLY"** (Chrome/Firefox)
+  2. While logged into YouTube in that browser, export cookies for
+     `youtube.com`
+  3. Copy the entire exported file's contents
+  4. In Coolify, set an environment variable `YTDLP_COOKIES` with that
+     content as the value
+  5. Redeploy
+
+  Security note: this effectively lets the server act as that logged-in
+  Google account for YouTube requests. Using a secondary/throwaway Google
+  account's cookies (rather than your primary one) is safer than not
+  doing this at all. Cookies also expire periodically — if the clipper
+  starts failing again with the same "Sign in to confirm" error after
+  previously working, re-export fresh cookies the same way.
+
 - **TikTok isn't included yet** — its Content Posting API requires a
   separate app-review process with Meta-style approval delays. The account
   model is already generic (`platform` column), so adding it later is a

@@ -9,6 +9,7 @@ function raises a clear error rather than guessing at content via
 guesswork transcription (no ASR model is bundled).
 """
 import json
+import os
 import re
 import subprocess
 from pathlib import Path
@@ -22,6 +23,19 @@ from config import ANTHROPIC_API_KEY, CLAUDE_MODEL
 from utils.logger import get_logger
 
 log = get_logger(__name__)
+
+# YouTube frequently blocks download requests from datacenter/VPS IPs with
+# "Sign in to confirm you're not a bot." Passing cookies from a real,
+# logged-in browser session works around this. Set YTDLP_COOKIES to the
+# full contents of a Netscape-format cookies.txt (exported via a browser
+# extension like "Get cookies.txt LOCALLY"), and it's written to a temp
+# file here for yt-dlp to use. Optional — downloads without it may still
+# work for some videos, and will raise a clear error when they don't.
+_COOKIES_PATH = None
+if os.getenv("YTDLP_COOKIES", "").strip():
+    _COOKIES_PATH = Path("/tmp/ytdlp_cookies.txt")
+    _COOKIES_PATH.write_text(os.environ["YTDLP_COOKIES"])
+    log.info("yt-dlp cookies configured (%d bytes)", _COOKIES_PATH.stat().st_size)
 
 CLIP_SYSTEM_PROMPT = """You select the single most compelling 30-60 second segment from a
 video transcript for repurposing as a vertical Short. You pick the moment with the strongest
@@ -116,10 +130,23 @@ def download_video(url: str, out_path: Path) -> Path:
         "quiet": True,
         "merge_output_format": "mp4",
     }
-    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-        ydl.download([url])
+    if _COOKIES_PATH:
+        ydl_opts["cookiefile"] = str(_COOKIES_PATH)
+
+    try:
+        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+            ydl.download([url])
+    except yt_dlp.utils.DownloadError as exc:
+        if "Sign in to confirm" in str(exc) and not _COOKIES_PATH:
+            raise RuntimeError(
+                "YouTube is blocking this download as bot traffic (common for "
+                "server/VPS IPs). Fix: export cookies.txt from a logged-in "
+                "browser (e.g. the 'Get cookies.txt LOCALLY' extension) and "
+                "set it as the YTDLP_COOKIES environment variable — see "
+                "dashboard/README.md.") from exc
+        raise
+
     if not out_path.exists():
-        # yt-dlp sometimes appends an extension despite outtmpl; find it
         candidates = list(out_path.parent.glob(out_path.stem + "*"))
         if not candidates:
             raise RuntimeError("yt-dlp reported success but no output file was found")
