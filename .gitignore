@@ -2,6 +2,7 @@
 .env
 client_secrets.json
 youtube_token.json
+token.json
 
 # Generated output
 output/
