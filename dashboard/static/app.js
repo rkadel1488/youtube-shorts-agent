@@ -20,6 +20,7 @@ async function submitUpload() {
   form.set('file', fileInput.files[0]);
   form.set('start_seconds', start);
   form.set('end_seconds', end);
+  form.set('mode', document.getElementById('upload-mode').value);
 
   const resp = await fetch('/api/render/upload', { method: 'POST', body: form });
   if (!resp.ok) {

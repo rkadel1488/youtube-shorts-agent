@@ -244,15 +244,38 @@ def download_video(url: str, out_path: Path) -> Path:
 
 
 def cut_and_reframe(source_path: Path, start: float, end: float, out_path: Path,
-                    width: int = 1080, height: int = 1920) -> Path:
-    """Cut [start,end] and reframe to vertical: center-crop if source is wide,
-    blurred-background pillarbox if source is already narrower than target ratio."""
+                    width: int = 1080, height: int = 1920, mode: str = "blur") -> Path:
+    """Cut [start,end] and reframe to vertical (9:16 by default).
+
+    mode="blur" (default): the ENTIRE original frame stays visible, scaled to
+    fit, centered on a blurred/scaled-up copy of itself filling the rest of
+    the vertical canvas — nothing gets cropped off. This is the standard
+    Reels/TikTok/Shorts repurposing look and fixes a real bug where the
+    previous version always center-cropped, silently cutting off whatever
+    was on the left/right of the shot (docstring claimed a blur fallback
+    that the ffmpeg filter never actually implemented).
+
+    mode="crop": tight center-crop, no letterboxing — content fills the
+    whole frame but anything outside the cropped center is lost. Useful for
+    already-vertical or near-vertical source footage.
+    """
     ffmpeg = get_ffmpeg_exe()
     duration = end - start
-    vf = (
-        f"crop='min(iw,ih*{width}/{height})':'min(ih,iw*{height}/{width})',"
-        f"scale={width}:{height}"
-    )
+
+    if mode == "crop":
+        vf = (
+            f"crop='min(iw,ih*{width}/{height})':'min(ih,iw*{height}/{width})',"
+            f"scale={width}:{height}"
+        )
+    else:
+        vf = (
+            f"split=2[bg][fg];"
+            f"[bg]scale={width}:{height}:force_original_aspect_ratio=increase,"
+            f"crop={width}:{height},gblur=sigma=20[bg];"
+            f"[fg]scale={width}:{height}:force_original_aspect_ratio=decrease[fg];"
+            f"[bg][fg]overlay=(W-w)/2:(H-h)/2"
+        )
+
     subprocess.run(
         [ffmpeg, "-y", "-ss", f"{start:.2f}", "-i", str(source_path), "-t", f"{duration:.2f}",
          "-vf", vf, "-c:v", "libx264", "-preset", "veryfast", "-crf", "21",

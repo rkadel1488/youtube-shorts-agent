@@ -49,13 +49,13 @@ def render_from_youtube(youtube_url: str) -> dict:
 
 
 def render_from_upload(uploaded_path: Path, original_filename: str,
-                       start_seconds: float, end_seconds: float) -> dict:
+                       start_seconds: float, end_seconds: float, mode: str = "blur") -> dict:
     render_id = db.create_render("upload", source=original_filename)
     try:
-        log.info("[%d] Reframing uploaded video %s (%.1fs-%.1fs)",
-                render_id, original_filename, start_seconds, end_seconds)
+        log.info("[%d] Reframing uploaded video %s (%.1fs-%.1fs, mode=%s)",
+                render_id, original_filename, start_seconds, end_seconds, mode)
         final_path = WORK_DIR / f"render_{render_id}.mp4"
-        cut_and_reframe(uploaded_path, start_seconds, end_seconds, final_path)
+        cut_and_reframe(uploaded_path, start_seconds, end_seconds, final_path, mode=mode)
 
         db.finish_render(render_id, "success", output_path=str(final_path))
         log.info("[%d] Done", render_id)

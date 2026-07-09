@@ -99,6 +99,7 @@ def api_render_upload(
     file: UploadFile = File(...),
     start_seconds: float = Form(...),
     end_seconds: float = Form(...),
+    mode: str = Form("blur"),
 ):
     from render_runner import render_from_upload
 
@@ -106,6 +107,8 @@ def api_render_upload(
         raise HTTPException(400, "end_seconds must be greater than start_seconds")
     if end_seconds - start_seconds > 120:
         raise HTTPException(400, "Keep clips under 2 minutes")
+    if mode not in ("blur", "crop"):
+        raise HTTPException(400, "mode must be 'blur' or 'crop'")
 
     suffix = Path(file.filename).suffix or ".mp4"
     tmp = tempfile.NamedTemporaryFile(delete=False, suffix=suffix, dir=str(Path(__file__).parent))
@@ -114,7 +117,7 @@ def api_render_upload(
     tmp_path = Path(tmp.name)
 
     def _run():
-        render_from_upload(tmp_path, file.filename, start_seconds, end_seconds)
+        render_from_upload(tmp_path, file.filename, start_seconds, end_seconds, mode=mode)
 
     threading.Thread(target=_run, daemon=True).start()
     return {"status": "started"}

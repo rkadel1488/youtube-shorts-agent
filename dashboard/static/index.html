@@ -30,6 +30,14 @@
       <h2 class="text-base font-semibold mb-2">Upload your own video</h2>
       <p class="text-xs text-slate-500 mb-3">Upload a video and pick the start/end seconds yourself — it'll be cut and reframed to vertical (9:16).</p>
       <input id="upload-file" type="file" accept="video/*" class="w-full text-sm mb-3">
+      <div class="flex gap-3 items-center mb-3">
+        <label class="text-sm">Style
+          <select id="upload-mode" class="bg-slate-800 border border-slate-700 rounded-lg px-2 py-1 ml-1">
+            <option value="blur">Blurred background (full frame visible)</option>
+            <option value="crop">Zoomed crop (fills frame, may cut edges)</option>
+          </select>
+        </label>
+      </div>
       <div class="flex gap-3 items-center">
         <label class="text-sm">Start (s) <input id="upload-start" type="number" value="0" min="0" class="w-20 bg-slate-800 border border-slate-700 rounded-lg px-2 py-1 ml-1"></label>
         <label class="text-sm">End (s) <input id="upload-end" type="number" value="30" min="1" class="w-20 bg-slate-800 border border-slate-700 rounded-lg px-2 py-1 ml-1"></label>
