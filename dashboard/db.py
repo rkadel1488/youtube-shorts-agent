@@ -13,6 +13,7 @@ from pathlib import Path
 from crypto import decrypt_dict, encrypt_dict
 
 DB_PATH = Path(os.getenv("DASHBOARD_DB_PATH", str(Path(__file__).parent / "dashboard.db")))
+DB_PATH.parent.mkdir(parents=True, exist_ok=True)
 
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS accounts (
