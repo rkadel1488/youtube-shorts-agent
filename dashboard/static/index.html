@@ -81,12 +81,23 @@
       <h2 class="text-base font-semibold mb-4">Job history</h2>
       <table class="w-full text-sm">
         <thead class="text-slate-400 text-left">
-          <tr><th class="pb-2">Time</th><th class="pb-2">Kind</th><th class="pb-2">Source</th><th class="pb-2">Status</th><th class="pb-2">Result</th></tr>
+          <tr><th class="pb-2">Time</th><th class="pb-2">Kind</th><th class="pb-2">Source</th><th class="pb-2">Status</th><th class="pb-2">Result</th><th class="pb-2">Log</th></tr>
         </thead>
         <tbody id="jobs-table"></tbody>
       </table>
     </section>
 
+  </div>
+
+  <!-- Log viewer modal -->
+  <div id="log-modal" class="hidden fixed inset-0 bg-black/70 flex items-center justify-center p-6 z-50">
+    <div class="bg-slate-900 border border-slate-700 rounded-xl max-w-3xl w-full max-h-[80vh] flex flex-col">
+      <div class="flex justify-between items-center p-4 border-b border-slate-800">
+        <h3 class="font-semibold">Job log</h3>
+        <button onclick="closeLogModal()" class="text-slate-400 hover:text-slate-200">✕</button>
+      </div>
+      <pre id="log-modal-content" class="p-4 text-xs overflow-auto whitespace-pre-wrap"></pre>
+    </div>
   </div>
 
   <script src="/static/app.js"></script>

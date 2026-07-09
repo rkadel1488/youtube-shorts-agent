@@ -105,6 +105,17 @@ async function runClip() {
   setTimeout(loadJobs, 3000);
 }
 
+async function viewJobLog(jobId) {
+  const job = await (await fetch(`/api/jobs/${jobId}`)).json();
+  document.getElementById('log-modal-content').textContent =
+    (job.log || '(no log captured)') + '\n\n--- result_json ---\n' + (job.result_json || '(none)');
+  document.getElementById('log-modal').classList.remove('hidden');
+}
+
+function closeLogModal() {
+  document.getElementById('log-modal').classList.add('hidden');
+}
+
 function resultSummary(job) {
   if (!job.result_json) return '';
   try {
@@ -127,6 +138,7 @@ async function loadJobs() {
       <td class="py-2 max-w-xs truncate" title="${j.source || ''}">${j.source || '-'}</td>
       <td class="py-2">${j.status === 'success' ? '<span class="text-emerald-400">success</span>' : j.status === 'failed' ? '<span class="text-red-400">failed</span>' : '<span class="text-amber-400">running</span>'}</td>
       <td class="py-2 text-xs text-slate-400">${resultSummary(j)}</td>
+      <td class="py-2"><button onclick="viewJobLog(${j.id})" class="text-xs bg-slate-700 hover:bg-slate-600 rounded px-2 py-1">View log</button></td>
     </tr>`).join('') || '<tr><td class="py-2 text-slate-500" colspan="5">No jobs yet.</td></tr>';
 }
 
