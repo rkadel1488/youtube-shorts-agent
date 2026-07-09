@@ -99,15 +99,28 @@ def fetch_transcript(video_id: str) -> list[dict]:
         return fetched.to_raw_data()  # same [{"text","start","duration"}, ...] shape as before
     except Exception as exc:
         exc_name = exc.__class__.__name__
-        if "Blocked" in exc_name:
+        exc_chain = f"{exc_name}: {exc}"
+        # Any of these indicate YouTube is throttling/blocking this IP, NOT that
+        # the video lacks captions — catching the specific RequestBlocked/
+        # IpBlocked types alone missed raw 429s surfacing as urllib3/requests
+        # retry errors instead.
+        is_rate_limited_or_blocked = (
+            "Blocked" in exc_name
+            or "429" in exc_chain
+            or "RetryError" in exc_chain
+            or "MaxRetryError" in exc_chain
+            or "TooManyRequests" in exc_chain
+        )
+        if is_rate_limited_or_blocked:
             raise RuntimeError(
-                f"YouTube is blocking transcript requests from this server's IP "
-                f"({exc_name}). This is a known issue for videos fetched from "
-                "cloud/VPS IP ranges — it's not about this specific video. "
-                "Set WEBSHARE_PROXY_USERNAME/PASSWORD (see dashboard/README.md) "
-                "to route around it — this is the library's own recommended fix; "
-                "a cookie-based workaround is deliberately not used here since it "
-                "risks getting the authenticating Google account banned.")
+                f"YouTube is rate-limiting/blocking transcript requests from this "
+                f"server's IP ({exc_name}). This is a known issue for cloud/VPS IP "
+                "ranges — it's not about this specific video, and retrying the same "
+                "video repeatedly in a short window can make it worse. Set "
+                "WEBSHARE_PROXY_USERNAME/PASSWORD (see dashboard/README.md) to route "
+                "around it — this is the library's own recommended fix; a cookie-based "
+                "workaround is deliberately not used here since it risks getting the "
+                "authenticating Google account banned.")
         raise RuntimeError(
             f"No transcript/captions available for this video ({exc_name}: {exc}). "
             "The clipper needs existing captions (manual or auto-generated) "
