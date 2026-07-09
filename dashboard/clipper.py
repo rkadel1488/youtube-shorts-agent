@@ -69,6 +69,24 @@ def _extract_video_id(url: str) -> str:
     return m.group(1)
 
 
+def _transcript_api_client() -> YouTubeTranscriptApi:
+    """Build the transcript client, optionally routed through a Webshare
+    residential proxy — youtube-transcript-api's own recommended fix for
+    RequestBlocked/IpBlocked errors on datacenter/VPS IPs (the library
+    explicitly advises AGAINST a cookie-based workaround here, unlike
+    yt-dlp's download step, since it risks permanently banning the Google
+    account used). Optional: set WEBSHARE_PROXY_USERNAME/PASSWORD to
+    enable; without them, requests go out directly as before.
+    """
+    username = os.getenv("WEBSHARE_PROXY_USERNAME", "")
+    password = os.getenv("WEBSHARE_PROXY_PASSWORD", "")
+    if username and password:
+        from youtube_transcript_api.proxies import WebshareProxyConfig
+        return YouTubeTranscriptApi(proxy_config=WebshareProxyConfig(
+            proxy_username=username, proxy_password=password))
+    return YouTubeTranscriptApi()
+
+
 def fetch_transcript(video_id: str) -> list[dict]:
     """[{"text":..., "start":..., "duration":...}, ...]. Raises if no captions exist.
 
@@ -76,7 +94,7 @@ def fetch_transcript(video_id: str) -> list[dict]:
     static YouTubeTranscriptApi.get_transcript() was removed in v1.2.0.
     """
     try:
-        ytt_api = YouTubeTranscriptApi()
+        ytt_api = _transcript_api_client()
         fetched = ytt_api.fetch(video_id)
         return fetched.to_raw_data()  # same [{"text","start","duration"}, ...] shape as before
     except Exception as exc:
@@ -86,7 +104,10 @@ def fetch_transcript(video_id: str) -> list[dict]:
                 f"YouTube is blocking transcript requests from this server's IP "
                 f"({exc_name}). This is a known issue for videos fetched from "
                 "cloud/VPS IP ranges — it's not about this specific video. "
-                "A residential proxy would be needed to work around it reliably.")
+                "Set WEBSHARE_PROXY_USERNAME/PASSWORD (see dashboard/README.md) "
+                "to route around it — this is the library's own recommended fix; "
+                "a cookie-based workaround is deliberately not used here since it "
+                "risks getting the authenticating Google account banned.")
         raise RuntimeError(
             f"No transcript/captions available for this video ({exc_name}: {exc}). "
             "The clipper needs existing captions (manual or auto-generated) "

@@ -34,22 +34,48 @@ lives separately in GitHub Actions, unaffected by this tool.
 5. **Ports Exposes**: `8000`. Set up a domain for HTTPS.
 6. Deploy, visit your domain, log in.
 
-## The YouTube-link mode may hit a bot-check
+## The YouTube-link mode may hit YouTube blocking your VPS's IP
 
-YouTube often blocks download requests from datacenter/VPS IPs with
-"Sign in to confirm you're not a bot." If you hit this:
+This happens in **two separate places**, with two different fixes — if
+you hit one, you may still hit the other:
+
+**1. Transcript fetching blocked** (`RequestBlocked`/`IpBlocked` from
+`youtube-transcript-api`) — the library's own error message explicitly
+recommends **against** a cookie-based workaround here, since it risks
+getting the authenticating Google account permanently banned. Its
+recommended fix is a proxy, and it has built-in support for
+[Webshare](https://www.webshare.io/) specifically:
+
+1. Sign up for Webshare (has a free tier; paid "Residential" proxies
+   work more reliably against YouTube's blocking than the free
+   datacenter ones)
+2. Get your **Proxy Username** and **Proxy Password** from their dashboard
+3. Set `WEBSHARE_PROXY_USERNAME` and `WEBSHARE_PROXY_PASSWORD` as env
+   vars in Coolify
+4. Redeploy — no code changes needed, this activates automatically
+
+Without these set, transcript fetching just goes out directly, same as
+before.
+
+**2. Video download blocked** ("Sign in to confirm you're not a bot"
+from `yt-dlp`) — this is the *download* step, separate from the
+transcript step above. Its accepted fix genuinely is cookies (unlike
+the transcript step):
 
 1. Install a browser extension like **"Get cookies.txt LOCALLY"**
 2. While logged into YouTube, export cookies for `youtube.com`
-3. Copy the file's contents, set as the `YTDLP_COOKIES` env var in Coolify
+3. Set the file's contents as `YTDLP_COOKIES` in Coolify
 4. Redeploy
 
 Using a secondary/throwaway Google account's cookies (rather than your
-main one) is the safer option here. Cookies expire periodically — if this
-starts failing again after previously working, re-export fresh ones.
+main one) is the safer option for this step specifically. Cookies expire
+periodically — re-export if it starts failing again after previously
+working.
 
-**The upload mode never needs this** — it's just your own file, no
-download involved.
+**The upload mode is unaffected by either of these** — it's just your
+own file, no YouTube request involved at all. If the YouTube-link mode's
+setup feels like too much, the upload mode alone is a fully reliable
+fallback with zero extra accounts or services.
 
 ## Known limitations
 
