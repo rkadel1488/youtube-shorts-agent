@@ -2,98 +2,60 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Shorts Automation Dashboard</title>
+<title>AI Shorts Maker</title>
 <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen">
   <nav class="border-b border-slate-800 px-6 py-4 flex items-center justify-between">
-    <h1 class="text-lg font-semibold">Shorts Automation</h1>
+    <h1 class="text-lg font-semibold">AI Shorts Maker</h1>
     <a href="/logout" class="text-sm text-slate-400 hover:text-slate-200">Log out</a>
   </nav>
 
-  <div class="max-w-5xl mx-auto p-6 space-y-8">
+  <div class="max-w-3xl mx-auto p-6 space-y-8">
 
-    <!-- Accounts -->
+    <!-- From YouTube -->
     <section class="bg-slate-900 border border-slate-800 rounded-xl p-6">
-      <div class="flex items-center justify-between mb-4">
-        <h2 class="text-base font-semibold">Accounts</h2>
-        <button onclick="document.getElementById('add-account-form').classList.toggle('hidden')"
-                class="text-sm bg-indigo-600 hover:bg-indigo-500 rounded-lg px-3 py-1.5">+ Add account</button>
+      <h2 class="text-base font-semibold mb-2">From a YouTube link</h2>
+      <p class="text-xs text-slate-500 mb-3">Paste a link — Claude reads the video's captions and picks the best 30-60s moment, then cuts and reframes it to vertical.</p>
+      <div class="flex gap-3">
+        <input id="yt-url" placeholder="https://www.youtube.com/watch?v=..."
+               class="flex-1 bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm">
+        <button onclick="submitYoutube()" class="bg-indigo-600 hover:bg-indigo-500 rounded-lg px-4 py-2 text-sm whitespace-nowrap">Generate Short</button>
       </div>
+      <p class="text-xs text-amber-500/80 mt-2">Note: the source video needs existing captions (manual or auto-generated).</p>
+    </section>
 
-      <div id="add-account-form" class="hidden mb-6 bg-slate-800/50 rounded-lg p-4 space-y-3">
-        <div class="flex gap-3">
-          <select id="new-platform" onchange="togglePlatformFields()" class="bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm">
-            <option value="youtube">YouTube</option>
-            <option value="meta">Instagram + Facebook (Meta)</option>
-          </select>
-          <input id="new-label" placeholder="Label (e.g. 'Client A - YouTube')"
-                 class="flex-1 bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm">
-        </div>
-        <div id="youtube-fields">
-          <label class="text-xs text-slate-400">YouTube OAuth token JSON (from running setup_oauth.py once per account)</label>
-          <textarea id="new-youtube-token" rows="3" placeholder='{"token": "...", "refresh_token": "...", ...}'
-                    class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm font-mono"></textarea>
-        </div>
-        <div id="meta-fields" class="hidden">
-          <label class="text-xs text-slate-400">Meta system-user access token (Business Manager → System Users → Generate token)</label>
-          <input id="new-meta-token" placeholder="EAA..."
-                 class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm font-mono">
-          <div class="flex gap-4 mt-2 text-sm">
-            <label><input type="checkbox" id="new-post-ig" checked> Post to Instagram</label>
-            <label><input type="checkbox" id="new-post-fb" checked> Post to Facebook</label>
-          </div>
-        </div>
-        <button onclick="addAccount()" class="bg-emerald-600 hover:bg-emerald-500 rounded-lg px-4 py-2 text-sm">Save account</button>
-        <span id="add-account-error" class="text-red-400 text-sm ml-2"></span>
+    <!-- Upload your own -->
+    <section class="bg-slate-900 border border-slate-800 rounded-xl p-6">
+      <h2 class="text-base font-semibold mb-2">Upload your own video</h2>
+      <p class="text-xs text-slate-500 mb-3">Upload a video and pick the start/end seconds yourself — it'll be cut and reframed to vertical (9:16).</p>
+      <input id="upload-file" type="file" accept="video/*" class="w-full text-sm mb-3">
+      <div class="flex gap-3 items-center">
+        <label class="text-sm">Start (s) <input id="upload-start" type="number" value="0" min="0" class="w-20 bg-slate-800 border border-slate-700 rounded-lg px-2 py-1 ml-1"></label>
+        <label class="text-sm">End (s) <input id="upload-end" type="number" value="30" min="1" class="w-20 bg-slate-800 border border-slate-700 rounded-lg px-2 py-1 ml-1"></label>
+        <button onclick="submitUpload()" class="bg-indigo-600 hover:bg-indigo-500 rounded-lg px-4 py-2 text-sm ml-auto">Generate Short</button>
       </div>
+      <p class="text-xs text-slate-500 mt-2">Max 2 minutes per clip.</p>
+    </section>
 
+    <!-- History -->
+    <section class="bg-slate-900 border border-slate-800 rounded-xl p-6">
+      <h2 class="text-base font-semibold mb-4">Your renders</h2>
       <table class="w-full text-sm">
         <thead class="text-slate-400 text-left">
-          <tr><th class="pb-2">Platform</th><th class="pb-2">Label</th><th class="pb-2">Status</th><th class="pb-2">Actions</th></tr>
+          <tr><th class="pb-2">Time</th><th class="pb-2">Source</th><th class="pb-2">Title</th><th class="pb-2">Status</th><th class="pb-2">Download</th></tr>
         </thead>
-        <tbody id="accounts-table"></tbody>
-      </table>
-    </section>
-
-    <!-- Manual run -->
-    <section class="bg-slate-900 border border-slate-800 rounded-xl p-6">
-      <h2 class="text-base font-semibold mb-4">Run now</h2>
-      <div class="flex gap-3 items-center flex-wrap">
-        <div id="run-checkboxes" class="flex gap-3 flex-wrap"></div>
-        <button onclick="runNow()" class="bg-indigo-600 hover:bg-indigo-500 rounded-lg px-4 py-2 text-sm">Post a trending Short now</button>
-      </div>
-      <p class="text-xs text-slate-500 mt-2">The scheduler otherwise runs automatically at data-driven best-posting times — this button is for on-demand posts.</p>
-    </section>
-
-    <!-- Clipper -->
-    <section class="bg-slate-900 border border-slate-800 rounded-xl p-6">
-      <h2 class="text-base font-semibold mb-4">YouTube → Shorts clipper</h2>
-      <p class="text-xs text-slate-500 mb-3">Paste a YouTube link — Claude finds the best 30-60s moment (using the video's captions) and posts a vertical clip to the accounts you select.</p>
-      <input id="clip-url" placeholder="https://www.youtube.com/watch?v=..."
-             class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm mb-3">
-      <div id="clip-checkboxes" class="flex gap-3 flex-wrap mb-3"></div>
-      <button onclick="runClip()" class="bg-indigo-600 hover:bg-indigo-500 rounded-lg px-4 py-2 text-sm">Clip and post</button>
-    </section>
-
-    <!-- Job history -->
-    <section class="bg-slate-900 border border-slate-800 rounded-xl p-6">
-      <h2 class="text-base font-semibold mb-4">Job history</h2>
-      <table class="w-full text-sm">
-        <thead class="text-slate-400 text-left">
-          <tr><th class="pb-2">Time</th><th class="pb-2">Kind</th><th class="pb-2">Source</th><th class="pb-2">Status</th><th class="pb-2">Result</th><th class="pb-2">Log</th></tr>
-        </thead>
-        <tbody id="jobs-table"></tbody>
+        <tbody id="renders-table"></tbody>
       </table>
     </section>
 
   </div>
 
-  <!-- Log viewer modal -->
+  <!-- Log/error modal -->
   <div id="log-modal" class="hidden fixed inset-0 bg-black/70 flex items-center justify-center p-6 z-50">
-    <div class="bg-slate-900 border border-slate-700 rounded-xl max-w-3xl w-full max-h-[80vh] flex flex-col">
+    <div class="bg-slate-900 border border-slate-700 rounded-xl max-w-2xl w-full max-h-[80vh] flex flex-col">
       <div class="flex justify-between items-center p-4 border-b border-slate-800">
-        <h3 class="font-semibold">Job log</h3>
+        <h3 class="font-semibold">Error details</h3>
         <button onclick="closeLogModal()" class="text-slate-400 hover:text-slate-200">✕</button>
       </div>
       <pre id="log-modal-content" class="p-4 text-xs overflow-auto whitespace-pre-wrap"></pre>

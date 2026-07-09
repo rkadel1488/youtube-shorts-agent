@@ -16,6 +16,7 @@ WORKDIR /srv/dashboard
 
 # Persisted across deploys via a Coolify volume mounted at /srv/dashboard/data
 ENV DASHBOARD_DB_PATH=/srv/dashboard/data/dashboard.db
+ENV RENDERS_DIR=/srv/dashboard/data/renders
 
 EXPOSE 8000
 CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8000"]

@@ -1,107 +1,60 @@
-# Shorts Automation Dashboard
+# AI Shorts Maker
 
-Self-hosted control panel that fully replaces the GitHub Actions automation:
-same trend-picking/script/voice/render pipeline, but now (1) supports any
-number of YouTube and Meta (Instagram+Facebook) accounts side by side, (2)
-runs its own scheduler on your VPS instead of GitHub's cron, and (3) can turn
-any existing YouTube video into a Short via the clipper tool.
+A simple, self-hosted tool: paste a YouTube link or upload your own video,
+get back a rendered vertical (9:16) Short to download. That's it —
+**nothing auto-posts anywhere, no accounts, no scheduler, no credentials
+stored.** The main channel automation (trend-based posting to YouTube/IG/FB)
+lives separately in GitHub Actions, unaffected by this tool.
 
 ## What it does
 
-- **Add an account by pasting its token** — no code changes, no redeploy.
-  Enable/disable/delete any account anytime from the UI.
-- **Automatic scheduling** — a background thread checks hourly whether now
-  is a good time to post (same logic as before: real Instagram audience
-  data once available, researched engagement-window fallback otherwise),
-  and posts one trend-based Short to every enabled account when it is.
-- **Manual "Run now"** — post on demand, choosing exactly which accounts.
-- **YouTube → Shorts clipper** — paste any YouTube URL, Claude reads its
-  transcript and picks the single best 30-60s moment, cuts + reframes it
-  to vertical, and posts it to the accounts you pick.
-- **Job history** — every run's status and per-platform result, kept in
-  the dashboard's database.
+- **From a YouTube link**: fetches the video's captions, has Claude pick the
+  single best 30–60s moment, then cuts and reframes it to vertical.
+- **From your own upload**: you pick the start/end seconds yourself (no
+  captions available for an arbitrary file), same cut + reframe.
+- Every render shows up in a simple history list with a **Download** button.
 
 ## Deploying on your Contabo VPS via Coolify
 
-1. Push this repo (already done if you're reading this from the repo).
-2. In Coolify: **New Resource → Docker Compose**, point it at this repo,
-   set the compose file path to `dashboard/docker-compose.yml`.
-3. Set these environment variables in Coolify (Resource → Environment):
+1. Coolify → **New Resource → Dockerfile** (not Docker Compose / not
+   Nixpacks — pick **Dockerfile** as the build pack directly)
+2. Base Directory: `/` (repo root) · Dockerfile Location: `dashboard/Dockerfile`
+3. Environment variables:
 
    | Variable | Value |
    |---|---|
-   | `ADMIN_PASSWORD` | any password you choose — this gates the whole dashboard |
-   | `DASHBOARD_SECRET_KEY` | generate with the command below |
-   | `ANTHROPIC_API_KEY` | your existing key |
-   | `GOOGLE_AI_STUDIO_API_KEY` | your existing key |
-   | `PEXELS_API_KEY` | your existing key |
-   | `GH_TOKEN` | a GitHub token with `repo` scope on **this** repo (used only to temporarily host videos for Instagram's fetch-by-URL requirement) |
-   | `GITHUB_REPOSITORY` | `rkadel1488/youtube-shorts-agent` |
-   | `AUDIENCE_TIMEZONE` | e.g. `America/New_York` (optional, defaults to that) |
+   | `ADMIN_PASSWORD` | any password — gates the whole tool |
+   | `DASHBOARD_SECRET_KEY` | generate: `python3 -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"` |
+   | `ANTHROPIC_API_KEY` | your existing key (used to pick the best moment from a transcript) |
+   | `YTDLP_COOKIES` | optional, see below — needed if YouTube blocks downloads |
 
-   Generate `DASHBOARD_SECRET_KEY` once:
-   ```bash
-   python3 -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"
-   ```
+4. **Add persistent storage** (Resource → Storages): mount path
+   `/srv/dashboard/data` — this is where the database *and* all rendered
+   videos live. Skip this and every redeploy wipes your render history.
+5. **Ports Exposes**: `8000`. Set up a domain for HTTPS.
+6. Deploy, visit your domain, log in.
 
-4. Deploy. Coolify will build the Dockerfile and expose port 8000 — set up
-   a domain/subdomain for it in Coolify same as your other apps (e.g.
-   `shorts.yourdomain.com`), so it's reachable over HTTPS rather than a raw
-   IP:port (this dashboard holds live API tokens — always put it behind
-   HTTPS with the password set).
-5. Visit the URL, log in with `ADMIN_PASSWORD`, add your accounts.
+## The YouTube-link mode may hit a bot-check
 
-## Adding an account
+YouTube often blocks download requests from datacenter/VPS IPs with
+"Sign in to confirm you're not a bot." If you hit this:
 
-**YouTube**: needs an OAuth token with a `refresh_token`. Run
-`python setup_oauth.py` once per YouTube account (locally, it opens a
-browser) — this is unchanged from before. Paste the resulting `token.json`
-contents into the "YouTube OAuth token JSON" field.
+1. Install a browser extension like **"Get cookies.txt LOCALLY"**
+2. While logged into YouTube, export cookies for `youtube.com`
+3. Copy the file's contents, set as the `YTDLP_COOKIES` env var in Coolify
+4. Redeploy
 
-**Meta (Instagram + Facebook)**: paste a system-user access token from
-Meta Business Manager → Users → System users → Generate token (permissions:
-`pages_show_list`, `pages_read_engagement`, `instagram_basic`,
-`instagram_content_publish`, `pages_manage_posts`, `publish_video`,
-`business_management`; expiration: **Never**). The dashboard resolves the
-linked Page and Instagram account automatically — use the "Test" button
-after adding to confirm it resolved correctly.
+Using a secondary/throwaway Google account's cookies (rather than your
+main one) is the safer option here. Cookies expire periodically — if this
+starts failing again after previously working, re-export fresh ones.
 
-## Old GitHub Actions workflow
+**The upload mode never needs this** — it's just your own file, no
+download involved.
 
-`.github/workflows/post_shorts.yml` has been disabled (schedule trigger
-removed, manual `workflow_dispatch` kept as a fallback) now that the VPS
-dashboard owns scheduling. If you ever want to go back to it, the schedule
-trigger can be restored from git history.
+## Known limitations
 
-## Known limitations (honest, not hidden)
-
-- **YouTube may block clipper downloads as "bot traffic"** — datacenter/VPS
-  IP ranges (including this VPS) commonly trigger YouTube's
-  "Sign in to confirm you're not a bot" check on yt-dlp downloads. Fix:
-  1. Install a browser extension that exports cookies in Netscape format,
-     e.g. **"Get cookies.txt LOCALLY"** (Chrome/Firefox)
-  2. While logged into YouTube in that browser, export cookies for
-     `youtube.com`
-  3. Copy the entire exported file's contents
-  4. In Coolify, set an environment variable `YTDLP_COOKIES` with that
-     content as the value
-  5. Redeploy
-
-  Security note: this effectively lets the server act as that logged-in
-  Google account for YouTube requests. Using a secondary/throwaway Google
-  account's cookies (rather than your primary one) is safer than not
-  doing this at all. Cookies also expire periodically — if the clipper
-  starts failing again with the same "Sign in to confirm" error after
-  previously working, re-export fresh cookies the same way.
-
-- **TikTok isn't included yet** — its Content Posting API requires a
-  separate app-review process with Meta-style approval delays. The account
-  model is already generic (`platform` column), so adding it later is a
-  contained change, not a redesign.
-- **The clipper needs existing captions** on the source YouTube video
-  (manual or auto-generated — true for the large majority of videos). It
-  does not run its own speech recognition, so a video with captions
-  disabled will fail with a clear error rather than silently guessing.
-- **One job at a time** — the scheduler and manual triggers share a lock;
-  a second trigger while one is rendering will be skipped/queued rather
-  than run in parallel, to avoid overloading a modest VPS.
+- The YouTube-link mode needs existing captions (manual or auto-generated)
+  on the source video — it doesn't run its own transcription.
+- Uploads capped at 2 minutes per clip.
+- One render at a time isn't enforced — for a personal-use tool this is
+  fine, but heavy concurrent use could strain a modest VPS.
