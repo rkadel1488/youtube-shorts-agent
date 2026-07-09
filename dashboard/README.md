@@ -39,23 +39,27 @@ lives separately in GitHub Actions, unaffected by this tool.
 This happens in **two separate places**, with two different fixes — if
 you hit one, you may still hit the other:
 
-**1. Transcript fetching blocked** (`RequestBlocked`/`IpBlocked` from
-`youtube-transcript-api`) — the library's own error message explicitly
-recommends **against** a cookie-based workaround here, since it risks
-getting the authenticating Google account permanently banned. Its
-recommended fix is a proxy, and it has built-in support for
-[Webshare](https://www.webshare.io/) specifically:
+**1. Transcript fetching blocked** (`RequestBlocked`/`IpBlocked`/`429`
+from `youtube-transcript-api`) — as of the latest update, this now
+**automatically falls back to yt-dlp's own caption extraction** first
+(reusing `YTDLP_COOKIES` if you've set it — see step 2 below), which is
+free and often succeeds even when the primary method is blocked, since
+yt-dlp is more actively maintained against YouTube's anti-bot measures.
 
-1. Sign up for Webshare (has a free tier; paid "Residential" proxies
-   work more reliably against YouTube's blocking than the free
-   datacenter ones)
-2. Get your **Proxy Username** and **Proxy Password** from their dashboard
-3. Set `WEBSHARE_PROXY_USERNAME` and `WEBSHARE_PROXY_PASSWORD` as env
-   vars in Coolify
-4. Redeploy — no code changes needed, this activates automatically
+If that fallback *also* fails, the library's own error message
+explicitly recommends **against** a cookie-based workaround for this
+specific step (risks getting the authenticating Google account
+permanently banned), and instead has built-in support for
+[Webshare](https://www.webshare.io/) proxies — **note the free tier's
+shared datacenter proxies may also get rate-limited by YouTube**; only
+the paid residential tier reliably avoids this:
 
-Without these set, transcript fetching just goes out directly, same as
-before.
+1. Sign up for Webshare, get your **Proxy Username**/**Proxy Password**
+2. Set `WEBSHARE_PROXY_USERNAME` / `WEBSHARE_PROXY_PASSWORD` in Coolify
+3. Redeploy — no code changes needed
+
+If you'd rather not pay for the residential tier, **Upload mode is the
+reliable free alternative** — it never contacts YouTube at all.
 
 **2. Video download blocked** ("Sign in to confirm you're not a bot"
 from `yt-dlp`) — this is the *download* step, separate from the

@@ -87,6 +87,58 @@ def _transcript_api_client() -> YouTubeTranscriptApi:
     return YouTubeTranscriptApi()
 
 
+def _fetch_transcript_via_ytdlp(video_id: str) -> list[dict]:
+    """Fallback transcript source: yt-dlp's own caption extraction.
+
+    yt-dlp is far more actively maintained against YouTube's anti-bot
+    measures than youtube-transcript-api, and — crucially — this reuses
+    the same YTDLP_COOKIES already configured for video downloads, so it
+    needs no separate paid service. Returns the same
+    [{"text","start","duration"}, ...] shape as fetch_transcript.
+    """
+    import glob
+    import tempfile
+
+    with tempfile.TemporaryDirectory() as tmpdir:
+        outtmpl = str(Path(tmpdir) / "%(id)s")
+        ydl_opts = {
+            "skip_download": True,
+            "writesubtitles": True,
+            "writeautomaticsub": True,
+            "subtitleslangs": ["en"],
+            "subtitlesformat": "json3",
+            "outtmpl": outtmpl,
+            "quiet": True,
+        }
+        if _COOKIES_PATH:
+            ydl_opts["cookiefile"] = str(_COOKIES_PATH)
+
+        url = f"https://www.youtube.com/watch?v={video_id}"
+        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+            ydl.download([url])
+
+        matches = glob.glob(str(Path(tmpdir) / f"{video_id}*.json3"))
+        if not matches:
+            raise RuntimeError("yt-dlp found no captions/subtitles for this video either")
+
+        data = json.loads(Path(matches[0]).read_text())
+        entries = []
+        for event in data.get("events", []):
+            if "segs" not in event:
+                continue
+            text = "".join(seg.get("utf8", "") for seg in event["segs"]).strip()
+            if not text:
+                continue
+            entries.append({
+                "text": text,
+                "start": event.get("tStartMs", 0) / 1000,
+                "duration": event.get("dDurationMs", 0) / 1000,
+            })
+        if not entries:
+            raise RuntimeError("Caption file was empty after parsing")
+        return entries
+
+
 def fetch_transcript(video_id: str) -> list[dict]:
     """[{"text":..., "start":..., "duration":...}, ...]. Raises if no captions exist.
 
@@ -112,15 +164,18 @@ def fetch_transcript(video_id: str) -> list[dict]:
             or "TooManyRequests" in exc_chain
         )
         if is_rate_limited_or_blocked:
-            raise RuntimeError(
-                f"YouTube is rate-limiting/blocking transcript requests from this "
-                f"server's IP ({exc_name}). This is a known issue for cloud/VPS IP "
-                "ranges — it's not about this specific video, and retrying the same "
-                "video repeatedly in a short window can make it worse. Set "
-                "WEBSHARE_PROXY_USERNAME/PASSWORD (see dashboard/README.md) to route "
-                "around it — this is the library's own recommended fix; a cookie-based "
-                "workaround is deliberately not used here since it risks getting the "
-                "authenticating Google account banned.")
+            log.warning("youtube-transcript-api blocked (%s) — falling back to "
+                       "yt-dlp caption extraction...", exc_name)
+            try:
+                return _fetch_transcript_via_ytdlp(video_id)
+            except Exception as fallback_exc:
+                raise RuntimeError(
+                    f"YouTube is rate-limiting/blocking transcript requests from this "
+                    f"server's IP ({exc_name}), and the yt-dlp caption fallback also "
+                    f"failed ({fallback_exc}). This is a known issue for cloud/VPS IP "
+                    "ranges. Free options are exhausted at this point — either set "
+                    "WEBSHARE_PROXY_USERNAME/PASSWORD with a paid residential proxy "
+                    "tier, or use Upload mode instead, which never contacts YouTube.")
         raise RuntimeError(
             f"No transcript/captions available for this video ({exc_name}: {exc}). "
             "The clipper needs existing captions (manual or auto-generated) "
