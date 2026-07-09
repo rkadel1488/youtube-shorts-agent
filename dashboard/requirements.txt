@@ -4,5 +4,5 @@ uvicorn[standard]>=0.29.0
 cryptography>=42.0.0
 itsdangerous>=2.1.0
 python-multipart>=0.0.9
-youtube-transcript-api>=0.6.2
+youtube-transcript-api>=1.0.0,<2.0.0
 imageio-ffmpeg>=0.4.9

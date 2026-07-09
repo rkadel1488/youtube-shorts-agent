@@ -56,12 +56,25 @@ def _extract_video_id(url: str) -> str:
 
 
 def fetch_transcript(video_id: str) -> list[dict]:
-    """[{"text":..., "start":..., "duration":...}, ...]. Raises if no captions exist."""
+    """[{"text":..., "start":..., "duration":...}, ...]. Raises if no captions exist.
+
+    Uses the instance-based API (youtube-transcript-api >= 1.0) — the old
+    static YouTubeTranscriptApi.get_transcript() was removed in v1.2.0.
+    """
     try:
-        return YouTubeTranscriptApi.get_transcript(video_id)
+        ytt_api = YouTubeTranscriptApi()
+        fetched = ytt_api.fetch(video_id)
+        return fetched.to_raw_data()  # same [{"text","start","duration"}, ...] shape as before
     except Exception as exc:
+        exc_name = exc.__class__.__name__
+        if "Blocked" in exc_name:
+            raise RuntimeError(
+                f"YouTube is blocking transcript requests from this server's IP "
+                f"({exc_name}). This is a known issue for videos fetched from "
+                "cloud/VPS IP ranges — it's not about this specific video. "
+                "A residential proxy would be needed to work around it reliably.")
         raise RuntimeError(
-            f"No transcript/captions available for this video ({exc}). "
+            f"No transcript/captions available for this video ({exc_name}: {exc}). "
             "The clipper needs existing captions (manual or auto-generated) "
             "to pick a moment — it does not run its own speech recognition.")
 
