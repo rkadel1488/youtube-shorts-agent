@@ -1,5 +1,14 @@
 {
-  "job_id": "20260713_114609",
-  "status": "failed",
-  "error": "Evergreen topic generation failed after 3 attempts"
+  "job_id": "20260713_120126",
+  "status": "success",
+  "video_id": "thOw6x7gsP8",
+  "url": "https://www.youtube.com/shorts/thOw6x7gsP8",
+  "title": "Kris Humphries ditched the NBA for chicken shops 🤯",
+  "source": "Kris Humphries' Surprising New Career",
+  "topic_id": 0,
+  "category": "trending",
+  "instagram_id": "18605310112060963",
+  "instagram": "posted",
+  "facebook_id": "894133903133433",
+  "facebook": "posted"
 }
