@@ -73,14 +73,14 @@ jobs:
           python main.py --run-now 2>&1 | tee pipeline.log
 
       - name: Save debug info to state
-        if: steps.besttime.outputs.should_run == 'true' || github.event_name == 'workflow_dispatch'
+        if: always() && (steps.besttime.outputs.should_run == 'true' || github.event_name == 'workflow_dispatch')
         run: |
           mkdir -p state
-          tail -n 120 pipeline.log > state/last_run_log.txt || true
+          tail -n 200 pipeline.log > state/last_run_log.txt || true
           cp output/*/result.json state/last_result.json 2>/dev/null || true
 
       - name: Commit updated history
-        if: steps.besttime.outputs.should_run == 'true' || github.event_name == 'workflow_dispatch'
+        if: always() && (steps.besttime.outputs.should_run == 'true' || github.event_name == 'workflow_dispatch')
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
@@ -93,7 +93,7 @@ jobs:
           fi
 
       - name: Upload result as artifact
-        if: steps.besttime.outputs.should_run == 'true' || github.event_name == 'workflow_dispatch'
+        if: always() && (steps.besttime.outputs.should_run == 'true' || github.event_name == 'workflow_dispatch')
         uses: actions/upload-artifact@v4
         with:
           name: short-output-${{ github.run_number }}
@@ -101,4 +101,5 @@ jobs:
             output/**/result.json
             output/**/seo.json
             output/**/script.json
+            pipeline.log
           retention-days: 30
