@@ -1,85 +1,91 @@
-2026-07-15 18:49:57 | INFO     | main | ============================================================
-2026-07-15 18:49:57 | INFO     | main | STARTING JOB: 20260715_184957
-2026-07-15 18:49:57 | INFO     | main | ============================================================
-2026-07-15 18:49:57 | INFO     | main | History: 24 used titles
-2026-07-15 18:49:57 | INFO     | agents.trend_agent | Google Trends: 10 items (top traffic: 20000)
-2026-07-15 18:49:57 | WARNING  | agents.trend_agent | Reddit fetch failed: 403 Client Error: Blocked for url: https://www.reddit.com/r/popular/hot.json?limit=15
-2026-07-15 18:49:57 | INFO     | agents.trend_agent | Selecting trend topic via Claude (attempt 1)...
-2026-07-15 18:50:03 | INFO     | agents.trend_agent | Trend topic selected: FCC Approves Orbital Mirror Satellite (traffic-ranked)
-2026-07-15 18:50:03 | INFO     | main | [1] Generating script for 'FCC Approves Orbital Mirror Satellite' [trending]...
-2026-07-15 18:50:03 | INFO     | agents.script_agent | Generating trend script for 'FCC Approves Orbital Mirror Satellite' via Claude (attempt 1)...
-2026-07-15 18:50:08 | INFO     | agents.script_agent | Trend script generated: 'FCC Approves Orbital Mirror Satellite'
-2026-07-15 18:50:08 | INFO     | main | [2] Generating AI images...
-2026-07-15 18:50:08 | INFO     | agents.image_agent | Fetching image 1/4 for 'satellite orbiting Earth wide establishing' (attempt 1)...
-2026-07-15 18:50:09 | INFO     | agents.image_agent | Image 1 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260715_184957/temp/images/scene_00.jpg
-2026-07-15 18:50:10 | INFO     | agents.image_agent | Fetching image 2/4 for 'night sky from space close-up detail' (attempt 1)...
-2026-07-15 18:50:10 | INFO     | agents.image_agent | Image 2 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260715_184957/temp/images/scene_01.jpg
-2026-07-15 18:50:11 | INFO     | agents.image_agent | Fetching image 3/4 for 'sunlight reflection in orbit dramatic moment' (attempt 1)...
-2026-07-15 18:50:12 | INFO     | agents.image_agent | Image 3 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260715_184957/temp/images/scene_02.jpg
-2026-07-15 18:50:13 | INFO     | agents.image_agent | Fetching image 4/4 for 'space technology concept powerful finale' (attempt 1)...
-2026-07-15 18:50:13 | INFO     | agents.image_agent | Image 4 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260715_184957/temp/images/scene_03.jpg
-2026-07-15 18:50:14 | INFO     | agents.image_agent | Generated 4/4 images successfully
-2026-07-15 18:50:14 | INFO     | main | [3] Generating voiceover...
-2026-07-15 18:50:14 | INFO     | agents.audio_agent | Generating voiceover with Gemini TTS (attempt 1)…
-2026-07-15 18:50:29 | INFO     | agents.audio_agent | Voiceover saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260715_184957/temp/voiceover.mp3 (327 KB)
-2026-07-15 18:50:29 | INFO     | main | [4] Assembling video...
-2026-07-15 18:50:29 | INFO     | agents.video_agent | Rendering AI video -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260715_184957/final_raw.mp4
-2026-07-15 18:52:45 | INFO     | agents.video_agent | AI video done: /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260715_184957/final_raw.mp4 (6.3 MB)
-2026-07-15 18:52:45 | INFO     | main | [4b] Enhancing with FFmpeg...
-2026-07-15 18:53:07 | INFO     | agents.video_editor | Color graded: graded_final_raw.mp4
-2026-07-15 18:53:30 | INFO     | agents.video_editor | Fade added: final.mp4
-2026-07-15 18:53:30 | INFO     | main | [5] Generating SEO metadata...
-2026-07-15 18:53:30 | INFO     | agents.seo_agent | Generating SEO metadata (attempt 1)...
-2026-07-15 18:53:34 | INFO     | agents.seo_agent | SEO title: 'FCC just approved a satellite that lights up Earth 🤯'
-2026-07-15 18:53:34 | INFO     | main | Title: FCC just approved a satellite that lights up Earth 🤯
-2026-07-15 18:53:34 | INFO     | main | [6] Uploading to YouTube...
-2026-07-15 18:53:34 | INFO     | agents.upload_agent | Refreshing YouTube token...
-2026-07-15 18:53:34 | INFO     | agents.upload_agent | Uploading 'FCC just approved a satellite that lights up Earth 🤯' (attempt 1)...
-2026-07-15 18:53:36 | INFO     | agents.upload_agent | Upload progress: 3%
-2026-07-15 18:53:36 | INFO     | agents.upload_agent | Upload progress: 6%
-2026-07-15 18:53:36 | INFO     | agents.upload_agent | Upload progress: 9%
-2026-07-15 18:53:36 | INFO     | agents.upload_agent | Upload progress: 13%
-2026-07-15 18:53:36 | INFO     | agents.upload_agent | Upload progress: 16%
-2026-07-15 18:53:36 | INFO     | agents.upload_agent | Upload progress: 19%
-2026-07-15 18:53:36 | INFO     | agents.upload_agent | Upload progress: 23%
-2026-07-15 18:53:37 | INFO     | agents.upload_agent | Upload progress: 26%
-2026-07-15 18:53:37 | INFO     | agents.upload_agent | Upload progress: 29%
-2026-07-15 18:53:37 | INFO     | agents.upload_agent | Upload progress: 33%
-2026-07-15 18:53:37 | INFO     | agents.upload_agent | Upload progress: 36%
-2026-07-15 18:53:37 | INFO     | agents.upload_agent | Upload progress: 39%
-2026-07-15 18:53:37 | INFO     | agents.upload_agent | Upload progress: 43%
-2026-07-15 18:53:37 | INFO     | agents.upload_agent | Upload progress: 46%
-2026-07-15 18:53:37 | INFO     | agents.upload_agent | Upload progress: 49%
-2026-07-15 18:53:37 | INFO     | agents.upload_agent | Upload progress: 53%
-2026-07-15 18:53:37 | INFO     | agents.upload_agent | Upload progress: 56%
-2026-07-15 18:53:38 | INFO     | agents.upload_agent | Upload progress: 59%
-2026-07-15 18:53:38 | INFO     | agents.upload_agent | Upload progress: 62%
-2026-07-15 18:53:38 | INFO     | agents.upload_agent | Upload progress: 66%
-2026-07-15 18:53:38 | INFO     | agents.upload_agent | Upload progress: 69%
-2026-07-15 18:53:38 | INFO     | agents.upload_agent | Upload progress: 72%
-2026-07-15 18:53:38 | INFO     | agents.upload_agent | Upload progress: 76%
-2026-07-15 18:53:38 | INFO     | agents.upload_agent | Upload progress: 79%
-2026-07-15 18:53:38 | INFO     | agents.upload_agent | Upload progress: 82%
-2026-07-15 18:53:39 | INFO     | agents.upload_agent | Upload progress: 86%
-2026-07-15 18:53:39 | INFO     | agents.upload_agent | Upload progress: 89%
-2026-07-15 18:53:39 | INFO     | agents.upload_agent | Upload progress: 92%
-2026-07-15 18:53:39 | INFO     | agents.upload_agent | Upload progress: 96%
-2026-07-15 18:53:39 | INFO     | agents.upload_agent | Upload progress: 99%
-2026-07-15 18:53:39 | INFO     | agents.upload_agent | Upload complete! Video ID: 7O_P50Zv5o8
-2026-07-15 18:53:39 | INFO     | agents.upload_agent | URL: https://www.youtube.com/shorts/7O_P50Zv5o8
-2026-07-15 18:53:39 | INFO     | main | History saved: 25 titles
-2026-07-15 18:53:39 | INFO     | main | [7] Cross-posting to Instagram/Facebook...
-2026-07-15 18:53:41 | INFO     | agents.instagram_agent | Resolved IG account 17841414363117627 via page 'Unique Podcast' (page id 1262973056889436)
-2026-07-15 18:53:43 | INFO     | agents.instagram_agent | Video temporarily hosted: https://github.com/rkadel1488/youtube-shorts-agent/releases/download/reel-temp-1784141621/reel.mp4
-2026-07-15 18:53:43 | INFO     | agents.instagram_agent | Creating IG media container...
-2026-07-15 18:53:44 | INFO     | agents.instagram_agent | IG processing... (IN_PROGRESS)
-2026-07-15 18:53:55 | INFO     | agents.instagram_agent | IG processing... (IN_PROGRESS)
-2026-07-15 18:54:05 | INFO     | agents.instagram_agent | IG processing... (IN_PROGRESS)
-2026-07-15 18:54:27 | INFO     | agents.instagram_agent | Instagram Reel published: media id 17938165977296691
-2026-07-15 18:54:42 | INFO     | agents.instagram_agent | Facebook Reel published (native Reels feed): video id 2813487202364167
-2026-07-15 18:54:43 | INFO     | agents.instagram_agent | Temporary release cleaned up
-2026-07-15 18:54:43 | INFO     | main | ============================================================
-2026-07-15 18:54:43 | INFO     | main | SUCCESS: https://www.youtube.com/shorts/7O_P50Zv5o8
-2026-07-15 18:54:43 | INFO     | main | ============================================================
+2026-07-16 11:23:59 | INFO     | main | ============================================================
+2026-07-16 11:23:59 | INFO     | main | STARTING JOB: 20260716_112359
+2026-07-16 11:23:59 | INFO     | main | ============================================================
+2026-07-16 11:23:59 | INFO     | main | History: 25 used titles
+2026-07-16 11:24:00 | INFO     | agents.trend_agent | Google Trends: 10 items (top traffic: 10000)
+2026-07-16 11:24:00 | WARNING  | agents.trend_agent | Reddit fetch failed: 403 Client Error: Blocked for url: https://www.reddit.com/r/popular/hot.json?limit=15
+2026-07-16 11:24:00 | INFO     | agents.trend_agent | Selecting trend topic via Claude (attempt 1)...
+2026-07-16 11:24:03 | INFO     | agents.trend_agent | Trend topic selected: GE Aerospace Stock Surge (traffic-ranked)
+2026-07-16 11:24:03 | INFO     | main | [1] Generating script for 'GE Aerospace Stock Surge' [trending]...
+2026-07-16 11:24:03 | INFO     | agents.script_agent | Generating trend script for 'GE Aerospace Stock Surge' via Claude (attempt 1)...
+2026-07-16 11:24:09 | INFO     | agents.script_agent | Trend script generated: 'GE Aerospace Stock Surge'
+2026-07-16 11:24:09 | INFO     | main | [2] Generating AI images...
+2026-07-16 11:24:09 | INFO     | agents.image_agent | Fetching image 1/4 for 'commercial airplane fleet wide establishing' (attempt 1)...
+2026-07-16 11:24:10 | INFO     | agents.image_agent | Image 1 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260716_112359/temp/images/scene_00.jpg
+2026-07-16 11:24:11 | INFO     | agents.image_agent | Fetching image 2/4 for 'stock market trading screen close-up detail' (attempt 1)...
+2026-07-16 11:24:12 | INFO     | agents.image_agent | Image 2 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260716_112359/temp/images/scene_01.jpg
+2026-07-16 11:24:13 | INFO     | agents.image_agent | Fetching image 3/4 for 'jet engine factory floor dramatic moment' (attempt 1)...
+2026-07-16 11:24:14 | INFO     | agents.image_agent | Image 3 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260716_112359/temp/images/scene_02.jpg
+2026-07-16 11:24:15 | INFO     | agents.image_agent | Fetching image 4/4 for 'aviation runway aerial view powerful finale' (attempt 1)...
+2026-07-16 11:24:16 | INFO     | agents.image_agent | Image 4 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260716_112359/temp/images/scene_03.jpg
+2026-07-16 11:24:17 | INFO     | agents.image_agent | Generated 4/4 images successfully
+2026-07-16 11:24:17 | INFO     | main | [3] Generating voiceover...
+2026-07-16 11:24:17 | INFO     | agents.audio_agent | Generating voiceover with Gemini TTS (attempt 1)…
+2026-07-16 11:24:43 | INFO     | agents.audio_agent | Voiceover saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260716_112359/temp/voiceover.mp3 (330 KB)
+2026-07-16 11:24:43 | INFO     | main | [4] Assembling video...
+2026-07-16 11:24:43 | INFO     | agents.video_agent | Rendering AI video -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260716_112359/final_raw.mp4
+2026-07-16 11:27:06 | INFO     | agents.video_agent | AI video done: /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260716_112359/final_raw.mp4 (7.4 MB)
+2026-07-16 11:27:06 | INFO     | main | [4b] Enhancing with FFmpeg...
+2026-07-16 11:27:33 | INFO     | agents.video_editor | Color graded: graded_final_raw.mp4
+2026-07-16 11:28:00 | INFO     | agents.video_editor | Fade added: final.mp4
+2026-07-16 11:28:00 | INFO     | main | [5] Generating SEO metadata...
+2026-07-16 11:28:00 | INFO     | agents.seo_agent | Generating SEO metadata (attempt 1)...
+2026-07-16 11:28:04 | INFO     | agents.seo_agent | SEO title: 'GE Aerospace just raised its profit outlook big 🔥'
+2026-07-16 11:28:04 | INFO     | main | Title: GE Aerospace just raised its profit outlook big 🔥
+2026-07-16 11:28:04 | INFO     | main | [6] Uploading to YouTube...
+2026-07-16 11:28:04 | INFO     | agents.upload_agent | Refreshing YouTube token...
+2026-07-16 11:28:04 | INFO     | agents.upload_agent | Uploading 'GE Aerospace just raised its profit outlook big 🔥' (attempt 1)...
+2026-07-16 11:28:06 | INFO     | agents.upload_agent | Upload progress: 2%
+2026-07-16 11:28:06 | INFO     | agents.upload_agent | Upload progress: 5%
+2026-07-16 11:28:07 | INFO     | agents.upload_agent | Upload progress: 8%
+2026-07-16 11:28:07 | INFO     | agents.upload_agent | Upload progress: 11%
+2026-07-16 11:28:07 | INFO     | agents.upload_agent | Upload progress: 13%
+2026-07-16 11:28:08 | INFO     | agents.upload_agent | Upload progress: 16%
+2026-07-16 11:28:08 | INFO     | agents.upload_agent | Upload progress: 19%
+2026-07-16 11:28:08 | INFO     | agents.upload_agent | Upload progress: 22%
+2026-07-16 11:28:09 | INFO     | agents.upload_agent | Upload progress: 24%
+2026-07-16 11:28:09 | INFO     | agents.upload_agent | Upload progress: 27%
+2026-07-16 11:28:09 | INFO     | agents.upload_agent | Upload progress: 30%
+2026-07-16 11:28:10 | INFO     | agents.upload_agent | Upload progress: 33%
+2026-07-16 11:28:10 | INFO     | agents.upload_agent | Upload progress: 35%
+2026-07-16 11:28:10 | INFO     | agents.upload_agent | Upload progress: 38%
+2026-07-16 11:28:11 | INFO     | agents.upload_agent | Upload progress: 41%
+2026-07-16 11:28:11 | INFO     | agents.upload_agent | Upload progress: 44%
+2026-07-16 11:28:11 | INFO     | agents.upload_agent | Upload progress: 46%
+2026-07-16 11:28:12 | INFO     | agents.upload_agent | Upload progress: 49%
+2026-07-16 11:28:12 | INFO     | agents.upload_agent | Upload progress: 52%
+2026-07-16 11:28:12 | INFO     | agents.upload_agent | Upload progress: 55%
+2026-07-16 11:28:13 | INFO     | agents.upload_agent | Upload progress: 57%
+2026-07-16 11:28:13 | INFO     | agents.upload_agent | Upload progress: 60%
+2026-07-16 11:28:13 | INFO     | agents.upload_agent | Upload progress: 63%
+2026-07-16 11:28:14 | INFO     | agents.upload_agent | Upload progress: 66%
+2026-07-16 11:28:14 | INFO     | agents.upload_agent | Upload progress: 69%
+2026-07-16 11:28:15 | INFO     | agents.upload_agent | Upload progress: 71%
+2026-07-16 11:28:15 | INFO     | agents.upload_agent | Upload progress: 74%
+2026-07-16 11:28:15 | INFO     | agents.upload_agent | Upload progress: 77%
+2026-07-16 11:28:16 | INFO     | agents.upload_agent | Upload progress: 80%
+2026-07-16 11:28:16 | INFO     | agents.upload_agent | Upload progress: 82%
+2026-07-16 11:28:16 | INFO     | agents.upload_agent | Upload progress: 85%
+2026-07-16 11:28:17 | INFO     | agents.upload_agent | Upload progress: 88%
+2026-07-16 11:28:17 | INFO     | agents.upload_agent | Upload progress: 91%
+2026-07-16 11:28:17 | INFO     | agents.upload_agent | Upload progress: 93%
+2026-07-16 11:28:18 | INFO     | agents.upload_agent | Upload progress: 96%
+2026-07-16 11:28:18 | INFO     | agents.upload_agent | Upload progress: 99%
+2026-07-16 11:28:18 | INFO     | agents.upload_agent | Upload complete! Video ID: 3j_2zVoOb3g
+2026-07-16 11:28:18 | INFO     | agents.upload_agent | URL: https://www.youtube.com/shorts/3j_2zVoOb3g
+2026-07-16 11:28:18 | INFO     | main | History saved: 26 titles
+2026-07-16 11:28:19 | INFO     | main | [7] Cross-posting to Instagram/Facebook...
+2026-07-16 11:28:20 | INFO     | agents.instagram_agent | Resolved IG account 17841414363117627 via page 'Unique Podcast' (page id 1262973056889436)
+2026-07-16 11:28:22 | INFO     | agents.instagram_agent | Video temporarily hosted: https://github.com/rkadel1488/youtube-shorts-agent/releases/download/reel-temp-1784201300/reel.mp4
+2026-07-16 11:28:22 | INFO     | agents.instagram_agent | Creating IG media container...
+2026-07-16 11:28:23 | INFO     | agents.instagram_agent | IG processing... (IN_PROGRESS)
+2026-07-16 11:28:33 | INFO     | agents.instagram_agent | IG processing... (IN_PROGRESS)
+2026-07-16 11:28:43 | INFO     | agents.instagram_agent | IG processing... (IN_PROGRESS)
+2026-07-16 11:29:02 | INFO     | agents.instagram_agent | Instagram Reel published: media id 18084422555647135
+2026-07-16 11:29:17 | INFO     | agents.instagram_agent | Facebook Reel published (native Reels feed): video id 1761836688288808
+2026-07-16 11:29:18 | INFO     | agents.instagram_agent | Temporary release cleaned up
+2026-07-16 11:29:18 | INFO     | main | ============================================================
+2026-07-16 11:29:18 | INFO     | main | SUCCESS: https://www.youtube.com/shorts/3j_2zVoOb3g
+2026-07-16 11:29:18 | INFO     | main | ============================================================
 
-Done! Watch at: https://www.youtube.com/shorts/7O_P50Zv5o8
+Done! Watch at: https://www.youtube.com/shorts/3j_2zVoOb3g
