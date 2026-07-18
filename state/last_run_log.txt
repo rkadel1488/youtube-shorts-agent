@@ -1,94 +1,101 @@
-2026-07-17 18:47:33 | INFO     | main | ============================================================
-2026-07-17 18:47:33 | INFO     | main | STARTING JOB: 20260717_184733
-2026-07-17 18:47:33 | INFO     | main | ============================================================
-2026-07-17 18:47:33 | INFO     | main | History: 28 used titles
-2026-07-17 18:47:34 | INFO     | agents.trend_agent | Google Trends: 10 items (top traffic: 20000)
-2026-07-17 18:47:34 | WARNING  | agents.trend_agent | Reddit fetch failed: 403 Client Error: Blocked for url: https://www.reddit.com/r/popular/hot.json?limit=15
-2026-07-17 18:47:34 | INFO     | agents.trend_agent | Selecting trend topic via Claude (attempt 1)...
-2026-07-17 18:47:38 | INFO     | agents.trend_agent | Trend topic selected: Stock Market Losing Week: Chips & Netflix Crash (traffic-ranked)
-2026-07-17 18:47:38 | INFO     | main | [1] Generating script for 'Stock Market Losing Week: Chips & Netflix Crash' [trending]...
-2026-07-17 18:47:38 | INFO     | agents.script_agent | Generating trend script for 'Stock Market Losing Week: Chips & Netflix Crash' via Claude (attempt 1)...
-2026-07-17 18:47:44 | INFO     | agents.script_agent | Trend script generated: 'Stock Market Losing Week: Chips & Netflix Crash'
-2026-07-17 18:47:44 | INFO     | main | [2] Generating AI images...
-2026-07-17 18:47:44 | INFO     | agents.image_agent | Fetching image 1/4 for 'stock market graph declining wide establishing' (attempt 1)...
-2026-07-17 18:47:44 | INFO     | agents.image_agent | Image 1 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260717_184733/temp/images/scene_00.jpg
-2026-07-17 18:47:45 | INFO     | agents.image_agent | Fetching image 2/4 for 'semiconductor chip close-up close-up detail' (attempt 1)...
-2026-07-17 18:47:46 | INFO     | agents.image_agent | Image 2 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260717_184733/temp/images/scene_01.jpg
-2026-07-17 18:47:47 | INFO     | agents.image_agent | Fetching image 3/4 for 'wall street trading floor dramatic moment' (attempt 1)...
-2026-07-17 18:47:48 | INFO     | agents.image_agent | Image 3 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260717_184733/temp/images/scene_02.jpg
-2026-07-17 18:47:49 | INFO     | agents.image_agent | Fetching image 4/4 for 'crashing stock ticker screen powerful finale' (attempt 1)...
-2026-07-17 18:47:50 | INFO     | agents.image_agent | Image 4 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260717_184733/temp/images/scene_03.jpg
-2026-07-17 18:47:51 | INFO     | agents.image_agent | Generated 4/4 images successfully
-2026-07-17 18:47:51 | INFO     | main | [3] Generating voiceover...
-2026-07-17 18:47:51 | INFO     | agents.audio_agent | Generating voiceover with Gemini TTS (attempt 1)…
-2026-07-17 18:48:06 | INFO     | agents.audio_agent | Voiceover saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260717_184733/temp/voiceover.mp3 (345 KB)
-2026-07-17 18:48:06 | INFO     | main | [4] Assembling video...
-2026-07-17 18:48:07 | INFO     | agents.video_agent | Rendering AI video -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260717_184733/final_raw.mp4
-2026-07-17 18:50:43 | INFO     | agents.video_agent | AI video done: /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260717_184733/final_raw.mp4 (7.9 MB)
-2026-07-17 18:50:43 | INFO     | main | [4b] Enhancing with FFmpeg...
-2026-07-17 18:51:12 | INFO     | agents.video_editor | Color graded: graded_final_raw.mp4
-2026-07-17 18:51:41 | INFO     | agents.video_editor | Fade added: final.mp4
-2026-07-17 18:51:41 | INFO     | main | [5] Generating SEO metadata...
-2026-07-17 18:51:41 | INFO     | agents.seo_agent | Generating SEO metadata (attempt 1)...
-2026-07-17 18:51:45 | INFO     | agents.seo_agent | SEO title: 'Chips and Netflix just crashed the market 🚨'
-2026-07-17 18:51:45 | INFO     | main | Title: Chips and Netflix just crashed the market 🚨
-2026-07-17 18:51:45 | INFO     | main | [6] Uploading to YouTube...
-2026-07-17 18:51:45 | INFO     | agents.upload_agent | Refreshing YouTube token...
-2026-07-17 18:51:45 | INFO     | agents.upload_agent | Uploading 'Chips and Netflix just crashed the market 🚨' (attempt 1)...
-2026-07-17 18:51:46 | INFO     | agents.upload_agent | Upload progress: 2%
-2026-07-17 18:51:46 | INFO     | agents.upload_agent | Upload progress: 5%
-2026-07-17 18:51:46 | INFO     | agents.upload_agent | Upload progress: 7%
-2026-07-17 18:51:46 | INFO     | agents.upload_agent | Upload progress: 10%
-2026-07-17 18:51:46 | INFO     | agents.upload_agent | Upload progress: 12%
-2026-07-17 18:51:47 | INFO     | agents.upload_agent | Upload progress: 15%
-2026-07-17 18:51:47 | INFO     | agents.upload_agent | Upload progress: 17%
-2026-07-17 18:51:47 | INFO     | agents.upload_agent | Upload progress: 20%
-2026-07-17 18:51:47 | INFO     | agents.upload_agent | Upload progress: 22%
-2026-07-17 18:51:47 | INFO     | agents.upload_agent | Upload progress: 25%
-2026-07-17 18:51:47 | INFO     | agents.upload_agent | Upload progress: 27%
-2026-07-17 18:51:47 | INFO     | agents.upload_agent | Upload progress: 30%
-2026-07-17 18:51:47 | INFO     | agents.upload_agent | Upload progress: 32%
-2026-07-17 18:51:48 | INFO     | agents.upload_agent | Upload progress: 35%
-2026-07-17 18:51:48 | INFO     | agents.upload_agent | Upload progress: 37%
-2026-07-17 18:51:48 | INFO     | agents.upload_agent | Upload progress: 40%
-2026-07-17 18:51:48 | INFO     | agents.upload_agent | Upload progress: 43%
-2026-07-17 18:51:48 | INFO     | agents.upload_agent | Upload progress: 45%
-2026-07-17 18:51:48 | INFO     | agents.upload_agent | Upload progress: 48%
-2026-07-17 18:51:48 | INFO     | agents.upload_agent | Upload progress: 50%
-2026-07-17 18:51:49 | INFO     | agents.upload_agent | Upload progress: 53%
-2026-07-17 18:51:49 | INFO     | agents.upload_agent | Upload progress: 55%
-2026-07-17 18:51:49 | INFO     | agents.upload_agent | Upload progress: 58%
-2026-07-17 18:51:49 | INFO     | agents.upload_agent | Upload progress: 60%
-2026-07-17 18:51:49 | INFO     | agents.upload_agent | Upload progress: 63%
-2026-07-17 18:51:49 | INFO     | agents.upload_agent | Upload progress: 65%
-2026-07-17 18:51:50 | INFO     | agents.upload_agent | Upload progress: 68%
-2026-07-17 18:51:50 | INFO     | agents.upload_agent | Upload progress: 70%
-2026-07-17 18:51:50 | INFO     | agents.upload_agent | Upload progress: 73%
-2026-07-17 18:51:50 | INFO     | agents.upload_agent | Upload progress: 75%
-2026-07-17 18:51:50 | INFO     | agents.upload_agent | Upload progress: 78%
-2026-07-17 18:51:50 | INFO     | agents.upload_agent | Upload progress: 81%
-2026-07-17 18:51:50 | INFO     | agents.upload_agent | Upload progress: 83%
-2026-07-17 18:51:50 | INFO     | agents.upload_agent | Upload progress: 86%
-2026-07-17 18:51:51 | INFO     | agents.upload_agent | Upload progress: 88%
-2026-07-17 18:51:51 | INFO     | agents.upload_agent | Upload progress: 91%
-2026-07-17 18:51:51 | INFO     | agents.upload_agent | Upload progress: 93%
-2026-07-17 18:51:51 | INFO     | agents.upload_agent | Upload progress: 96%
-2026-07-17 18:51:51 | INFO     | agents.upload_agent | Upload progress: 98%
-2026-07-17 18:51:52 | INFO     | agents.upload_agent | Upload complete! Video ID: yOKA1JxxEgc
-2026-07-17 18:51:52 | INFO     | agents.upload_agent | URL: https://www.youtube.com/shorts/yOKA1JxxEgc
-2026-07-17 18:51:52 | INFO     | main | History saved: 29 titles
-2026-07-17 18:51:52 | INFO     | main | [7] Cross-posting to Instagram/Facebook...
-2026-07-17 18:51:55 | INFO     | agents.instagram_agent | Resolved IG account 17841414363117627 via page 'Unique Podcast' (page id 1262973056889436)
-2026-07-17 18:51:57 | INFO     | agents.instagram_agent | Video temporarily hosted: https://github.com/rkadel1488/youtube-shorts-agent/releases/download/reel-temp-1784314315/reel.mp4
-2026-07-17 18:51:57 | INFO     | agents.instagram_agent | Creating IG media container...
-2026-07-17 18:51:58 | INFO     | agents.instagram_agent | IG processing... (IN_PROGRESS)
-2026-07-17 18:52:08 | INFO     | agents.instagram_agent | IG processing... (IN_PROGRESS)
-2026-07-17 18:52:18 | INFO     | agents.instagram_agent | IG processing... (IN_PROGRESS)
-2026-07-17 18:52:40 | INFO     | agents.instagram_agent | Instagram Reel published: media id 18109530193813390
-2026-07-17 18:52:51 | INFO     | agents.instagram_agent | Facebook Reel published (native Reels feed): video id 26993575006982545
-2026-07-17 18:52:52 | INFO     | agents.instagram_agent | Temporary release cleaned up
-2026-07-17 18:52:52 | INFO     | main | ============================================================
-2026-07-17 18:52:52 | INFO     | main | SUCCESS: https://www.youtube.com/shorts/yOKA1JxxEgc
-2026-07-17 18:52:52 | INFO     | main | ============================================================
+2026-07-18 11:41:25 | INFO     | main | ============================================================
+2026-07-18 11:41:25 | INFO     | main | STARTING JOB: 20260718_114125
+2026-07-18 11:41:25 | INFO     | main | ============================================================
+2026-07-18 11:41:25 | INFO     | main | History: 29 used titles
+2026-07-18 11:41:25 | INFO     | agents.trend_agent | Google Trends: 10 items (top traffic: 20000)
+2026-07-18 11:41:26 | WARNING  | agents.trend_agent | Reddit fetch failed: 403 Client Error: Blocked for url: https://www.reddit.com/r/popular/hot.json?limit=15
+2026-07-18 11:41:26 | INFO     | agents.trend_agent | Selecting trend topic via Claude (attempt 1)...
+2026-07-18 11:41:29 | INFO     | agents.trend_agent | Trend topic selected: 385-Million-Year-Old Amber Found in China (traffic-ranked)
+2026-07-18 11:41:29 | INFO     | main | [1] Generating script for '385-Million-Year-Old Amber Found in China' [trending]...
+2026-07-18 11:41:29 | INFO     | agents.script_agent | Generating trend script for '385-Million-Year-Old Amber Found in China' via Claude (attempt 1)...
+2026-07-18 11:41:35 | INFO     | agents.script_agent | Trend script generated: '385-Million-Year-Old Amber Found in China'
+2026-07-18 11:41:35 | INFO     | main | [2] Generating AI images...
+2026-07-18 11:41:35 | INFO     | agents.image_agent | Fetching image 1/4 for 'ancient amber fossil closeup wide establishing' (attempt 1)...
+2026-07-18 11:41:35 | INFO     | agents.image_agent | Image 1 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260718_114125/temp/images/scene_00.jpg
+2026-07-18 11:41:36 | INFO     | agents.image_agent | Fetching image 2/4 for 'prehistoric forest landscape close-up detail' (attempt 1)...
+2026-07-18 11:41:37 | INFO     | agents.image_agent | Image 2 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260718_114125/temp/images/scene_01.jpg
+2026-07-18 11:41:38 | INFO     | agents.image_agent | Fetching image 3/4 for 'archaeological excavation site dramatic moment' (attempt 1)...
+2026-07-18 11:41:39 | INFO     | agents.image_agent | Image 3 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260718_114125/temp/images/scene_02.jpg
+2026-07-18 11:41:40 | INFO     | agents.image_agent | Fetching image 4/4 for 'early tree resin scientific study powerful finale' (attempt 1)...
+2026-07-18 11:41:41 | INFO     | agents.image_agent | Image 4 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260718_114125/temp/images/scene_03.jpg
+2026-07-18 11:41:42 | INFO     | agents.image_agent | Generated 4/4 images successfully
+2026-07-18 11:41:42 | INFO     | main | [3] Generating voiceover...
+2026-07-18 11:41:42 | INFO     | agents.audio_agent | Generating voiceover with Gemini TTS (attempt 1)…
+2026-07-18 11:42:01 | INFO     | agents.audio_agent | Voiceover saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260718_114125/temp/voiceover.mp3 (351 KB)
+2026-07-18 11:42:01 | INFO     | main | [4] Assembling video...
+2026-07-18 11:42:02 | INFO     | agents.video_agent | Rendering AI video -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260718_114125/final_raw.mp4
+2026-07-18 11:44:40 | INFO     | agents.video_agent | AI video done: /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260718_114125/final_raw.mp4 (9.5 MB)
+2026-07-18 11:44:40 | INFO     | main | [4b] Enhancing with FFmpeg...
+2026-07-18 11:45:09 | INFO     | agents.video_editor | Color graded: graded_final_raw.mp4
+2026-07-18 11:45:39 | INFO     | agents.video_editor | Fade added: final.mp4
+2026-07-18 11:45:39 | INFO     | main | [5] Generating SEO metadata...
+2026-07-18 11:45:39 | INFO     | agents.seo_agent | Generating SEO metadata (attempt 1)...
+2026-07-18 11:45:44 | INFO     | agents.seo_agent | SEO title: '385-million-year-old amber found in China 😳'
+2026-07-18 11:45:44 | INFO     | main | Title: 385-million-year-old amber found in China 😳
+2026-07-18 11:45:44 | INFO     | main | [6] Uploading to YouTube...
+2026-07-18 11:45:44 | INFO     | agents.upload_agent | Refreshing YouTube token...
+2026-07-18 11:45:45 | INFO     | agents.upload_agent | Uploading '385-million-year-old amber found in China 😳' (attempt 1)...
+2026-07-18 11:45:46 | INFO     | agents.upload_agent | Upload progress: 2%
+2026-07-18 11:45:46 | INFO     | agents.upload_agent | Upload progress: 4%
+2026-07-18 11:45:46 | INFO     | agents.upload_agent | Upload progress: 6%
+2026-07-18 11:45:46 | INFO     | agents.upload_agent | Upload progress: 8%
+2026-07-18 11:45:47 | INFO     | agents.upload_agent | Upload progress: 10%
+2026-07-18 11:45:47 | INFO     | agents.upload_agent | Upload progress: 12%
+2026-07-18 11:45:47 | INFO     | agents.upload_agent | Upload progress: 15%
+2026-07-18 11:45:47 | INFO     | agents.upload_agent | Upload progress: 17%
+2026-07-18 11:45:47 | INFO     | agents.upload_agent | Upload progress: 19%
+2026-07-18 11:45:47 | INFO     | agents.upload_agent | Upload progress: 21%
+2026-07-18 11:45:48 | INFO     | agents.upload_agent | Upload progress: 23%
+2026-07-18 11:45:48 | INFO     | agents.upload_agent | Upload progress: 25%
+2026-07-18 11:45:48 | INFO     | agents.upload_agent | Upload progress: 28%
+2026-07-18 11:45:48 | INFO     | agents.upload_agent | Upload progress: 30%
+2026-07-18 11:45:48 | INFO     | agents.upload_agent | Upload progress: 32%
+2026-07-18 11:45:48 | INFO     | agents.upload_agent | Upload progress: 34%
+2026-07-18 11:45:49 | INFO     | agents.upload_agent | Upload progress: 36%
+2026-07-18 11:45:49 | INFO     | agents.upload_agent | Upload progress: 38%
+2026-07-18 11:45:49 | INFO     | agents.upload_agent | Upload progress: 40%
+2026-07-18 11:45:49 | INFO     | agents.upload_agent | Upload progress: 43%
+2026-07-18 11:45:49 | INFO     | agents.upload_agent | Upload progress: 45%
+2026-07-18 11:45:49 | INFO     | agents.upload_agent | Upload progress: 47%
+2026-07-18 11:45:49 | INFO     | agents.upload_agent | Upload progress: 49%
+2026-07-18 11:45:50 | INFO     | agents.upload_agent | Upload progress: 51%
+2026-07-18 11:45:50 | INFO     | agents.upload_agent | Upload progress: 53%
+2026-07-18 11:45:50 | INFO     | agents.upload_agent | Upload progress: 56%
+2026-07-18 11:45:50 | INFO     | agents.upload_agent | Upload progress: 58%
+2026-07-18 11:45:50 | INFO     | agents.upload_agent | Upload progress: 60%
+2026-07-18 11:45:51 | INFO     | agents.upload_agent | Upload progress: 62%
+2026-07-18 11:45:51 | INFO     | agents.upload_agent | Upload progress: 64%
+2026-07-18 11:45:51 | INFO     | agents.upload_agent | Upload progress: 66%
+2026-07-18 11:45:51 | INFO     | agents.upload_agent | Upload progress: 69%
+2026-07-18 11:45:51 | INFO     | agents.upload_agent | Upload progress: 71%
+2026-07-18 11:45:51 | INFO     | agents.upload_agent | Upload progress: 73%
+2026-07-18 11:45:52 | INFO     | agents.upload_agent | Upload progress: 75%
+2026-07-18 11:45:52 | INFO     | agents.upload_agent | Upload progress: 77%
+2026-07-18 11:45:52 | INFO     | agents.upload_agent | Upload progress: 79%
+2026-07-18 11:45:52 | INFO     | agents.upload_agent | Upload progress: 81%
+2026-07-18 11:45:52 | INFO     | agents.upload_agent | Upload progress: 84%
+2026-07-18 11:45:52 | INFO     | agents.upload_agent | Upload progress: 86%
+2026-07-18 11:45:53 | INFO     | agents.upload_agent | Upload progress: 88%
+2026-07-18 11:45:53 | INFO     | agents.upload_agent | Upload progress: 90%
+2026-07-18 11:45:53 | INFO     | agents.upload_agent | Upload progress: 92%
+2026-07-18 11:45:53 | INFO     | agents.upload_agent | Upload progress: 94%
+2026-07-18 11:45:53 | INFO     | agents.upload_agent | Upload progress: 97%
+2026-07-18 11:45:53 | INFO     | agents.upload_agent | Upload progress: 99%
+2026-07-18 11:45:54 | INFO     | agents.upload_agent | Upload complete! Video ID: jql1O6Fxq6s
+2026-07-18 11:45:54 | INFO     | agents.upload_agent | URL: https://www.youtube.com/shorts/jql1O6Fxq6s
+2026-07-18 11:45:54 | INFO     | main | History saved: 30 titles
+2026-07-18 11:45:54 | INFO     | main | [7] Cross-posting to Instagram/Facebook...
+2026-07-18 11:45:56 | INFO     | agents.instagram_agent | Resolved IG account 17841414363117627 via page 'Unique Podcast' (page id 1262973056889436)
+2026-07-18 11:45:57 | INFO     | agents.instagram_agent | Video temporarily hosted: https://github.com/rkadel1488/youtube-shorts-agent/releases/download/reel-temp-1784375156/reel.mp4
+2026-07-18 11:45:57 | INFO     | agents.instagram_agent | Creating IG media container...
+2026-07-18 11:45:58 | INFO     | agents.instagram_agent | IG processing... (IN_PROGRESS)
+2026-07-18 11:46:09 | INFO     | agents.instagram_agent | IG processing... (IN_PROGRESS)
+2026-07-18 11:46:19 | INFO     | agents.instagram_agent | IG processing... (IN_PROGRESS)
+2026-07-18 11:46:43 | INFO     | agents.instagram_agent | Instagram Reel published: media id 18098523746265307
+2026-07-18 11:46:55 | INFO     | agents.instagram_agent | Facebook Reel published (native Reels feed): video id 27804410649184677
+2026-07-18 11:46:56 | INFO     | agents.instagram_agent | Temporary release cleaned up
+2026-07-18 11:46:56 | INFO     | main | ============================================================
+2026-07-18 11:46:56 | INFO     | main | SUCCESS: https://www.youtube.com/shorts/jql1O6Fxq6s
+2026-07-18 11:46:56 | INFO     | main | ============================================================
 
-Done! Watch at: https://www.youtube.com/shorts/yOKA1JxxEgc
+Done! Watch at: https://www.youtube.com/shorts/jql1O6Fxq6s
