@@ -1,83 +1,91 @@
-2026-07-18 19:56:58 | INFO     | main | ============================================================
-2026-07-18 19:56:58 | INFO     | main | STARTING JOB: 20260718_195658
-2026-07-18 19:56:58 | INFO     | main | ============================================================
-2026-07-18 19:56:58 | INFO     | main | History: 30 used titles
-2026-07-18 19:56:58 | INFO     | agents.trend_agent | Google Trends: 10 items (top traffic: 2000)
-2026-07-18 19:56:58 | WARNING  | agents.trend_agent | Reddit fetch failed: 403 Client Error: Blocked for url: https://www.reddit.com/r/popular/hot.json?limit=15
-2026-07-18 19:56:58 | INFO     | agents.trend_agent | Selecting trend topic via Claude (attempt 1)...
-2026-07-18 19:57:02 | INFO     | agents.trend_agent | Trend topic selected: Men Switched at Birth Sue Hospital 38 Years Later (traffic-ranked)
-2026-07-18 19:57:02 | INFO     | main | [1] Generating script for 'Men Switched at Birth Sue Hospital 38 Years Later' [trending]...
-2026-07-18 19:57:02 | INFO     | agents.script_agent | Generating trend script for 'Men Switched at Birth Sue Hospital 38 Years Later' via Claude (attempt 1)...
-2026-07-18 19:57:08 | INFO     | agents.script_agent | Trend script generated: 'Men Switched at Birth Sue Hospital 38 Years Later'
-2026-07-18 19:57:08 | INFO     | main | [2] Generating AI images...
-2026-07-18 19:57:08 | INFO     | agents.image_agent | Fetching image 1/4 for 'hospital nursery room wide establishing' (attempt 1)...
-2026-07-18 19:57:08 | INFO     | agents.image_agent | Image 1 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260718_195658/temp/images/scene_00.jpg
-2026-07-18 19:57:09 | INFO     | agents.image_agent | Fetching image 2/4 for 'DNA test kit close-up detail' (attempt 1)...
-2026-07-18 19:57:10 | INFO     | agents.image_agent | Image 2 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260718_195658/temp/images/scene_01.jpg
-2026-07-18 19:57:11 | INFO     | agents.image_agent | Fetching image 3/4 for 'legal courthouse exterior dramatic moment' (attempt 1)...
-2026-07-18 19:57:12 | INFO     | agents.image_agent | Image 3 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260718_195658/temp/images/scene_02.jpg
-2026-07-18 19:57:13 | INFO     | agents.image_agent | Fetching image 4/4 for 'newborn baby bassinet powerful finale' (attempt 1)...
-2026-07-18 19:57:14 | INFO     | agents.image_agent | Image 4 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260718_195658/temp/images/scene_03.jpg
-2026-07-18 19:57:15 | INFO     | agents.image_agent | Generated 4/4 images successfully
-2026-07-18 19:57:15 | INFO     | main | [3] Generating voiceover...
-2026-07-18 19:57:15 | INFO     | agents.audio_agent | Generating voiceover with Gemini TTS (attempt 1)…
-2026-07-18 19:57:31 | INFO     | agents.audio_agent | Voiceover saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260718_195658/temp/voiceover.mp3 (300 KB)
-2026-07-18 19:57:31 | INFO     | main | [4] Assembling video...
-2026-07-18 19:57:32 | INFO     | agents.video_agent | Rendering AI video -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260718_195658/final_raw.mp4
-2026-07-18 19:59:56 | INFO     | agents.video_agent | AI video done: /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260718_195658/final_raw.mp4 (5.0 MB)
-2026-07-18 19:59:56 | INFO     | main | [4b] Enhancing with FFmpeg...
-2026-07-18 20:00:22 | INFO     | agents.video_editor | Color graded: graded_final_raw.mp4
-2026-07-18 20:00:48 | INFO     | agents.video_editor | Fade added: final.mp4
-2026-07-18 20:00:48 | INFO     | main | [5] Generating SEO metadata...
-2026-07-18 20:00:48 | INFO     | agents.seo_agent | Generating SEO metadata (attempt 1)...
-2026-07-18 20:00:53 | INFO     | agents.seo_agent | SEO title: 'Two men lived wrong lives for 38 years 😳'
-2026-07-18 20:00:53 | INFO     | main | Title: Two men lived wrong lives for 38 years 😳
-2026-07-18 20:00:53 | INFO     | main | [6] Uploading to YouTube...
-2026-07-18 20:00:53 | INFO     | agents.upload_agent | Refreshing YouTube token...
-2026-07-18 20:00:53 | INFO     | agents.upload_agent | Uploading 'Two men lived wrong lives for 38 years 😳' (attempt 1)...
-2026-07-18 20:00:55 | INFO     | agents.upload_agent | Upload progress: 3%
-2026-07-18 20:00:55 | INFO     | agents.upload_agent | Upload progress: 6%
-2026-07-18 20:00:55 | INFO     | agents.upload_agent | Upload progress: 10%
-2026-07-18 20:00:55 | INFO     | agents.upload_agent | Upload progress: 13%
-2026-07-18 20:00:56 | INFO     | agents.upload_agent | Upload progress: 17%
-2026-07-18 20:00:56 | INFO     | agents.upload_agent | Upload progress: 20%
-2026-07-18 20:00:56 | INFO     | agents.upload_agent | Upload progress: 24%
-2026-07-18 20:00:56 | INFO     | agents.upload_agent | Upload progress: 27%
-2026-07-18 20:00:56 | INFO     | agents.upload_agent | Upload progress: 31%
-2026-07-18 20:00:56 | INFO     | agents.upload_agent | Upload progress: 34%
-2026-07-18 20:00:56 | INFO     | agents.upload_agent | Upload progress: 38%
-2026-07-18 20:00:57 | INFO     | agents.upload_agent | Upload progress: 41%
-2026-07-18 20:00:57 | INFO     | agents.upload_agent | Upload progress: 45%
-2026-07-18 20:00:57 | INFO     | agents.upload_agent | Upload progress: 48%
-2026-07-18 20:00:57 | INFO     | agents.upload_agent | Upload progress: 52%
-2026-07-18 20:00:57 | INFO     | agents.upload_agent | Upload progress: 55%
-2026-07-18 20:00:57 | INFO     | agents.upload_agent | Upload progress: 59%
-2026-07-18 20:00:57 | INFO     | agents.upload_agent | Upload progress: 62%
-2026-07-18 20:00:58 | INFO     | agents.upload_agent | Upload progress: 66%
-2026-07-18 20:00:58 | INFO     | agents.upload_agent | Upload progress: 69%
-2026-07-18 20:00:58 | INFO     | agents.upload_agent | Upload progress: 73%
-2026-07-18 20:00:58 | INFO     | agents.upload_agent | Upload progress: 76%
-2026-07-18 20:00:58 | INFO     | agents.upload_agent | Upload progress: 80%
-2026-07-18 20:00:58 | INFO     | agents.upload_agent | Upload progress: 83%
-2026-07-18 20:00:58 | INFO     | agents.upload_agent | Upload progress: 87%
-2026-07-18 20:00:59 | INFO     | agents.upload_agent | Upload progress: 90%
-2026-07-18 20:00:59 | INFO     | agents.upload_agent | Upload progress: 94%
-2026-07-18 20:00:59 | INFO     | agents.upload_agent | Upload progress: 97%
-2026-07-18 20:00:59 | INFO     | agents.upload_agent | Upload complete! Video ID: J8FAaBYds7w
-2026-07-18 20:00:59 | INFO     | agents.upload_agent | URL: https://www.youtube.com/shorts/J8FAaBYds7w
-2026-07-18 20:00:59 | INFO     | main | History saved: 31 titles
-2026-07-18 20:00:59 | INFO     | main | [7] Cross-posting to Instagram/Facebook...
-2026-07-18 20:01:01 | INFO     | agents.instagram_agent | Resolved IG account 17841414363117627 via page 'Unique Podcast' (page id 1262973056889436)
-2026-07-18 20:01:03 | INFO     | agents.instagram_agent | Video temporarily hosted: https://github.com/rkadel1488/youtube-shorts-agent/releases/download/reel-temp-1784404861/reel.mp4
-2026-07-18 20:01:03 | INFO     | agents.instagram_agent | Creating IG media container...
-2026-07-18 20:01:04 | INFO     | agents.instagram_agent | IG processing... (IN_PROGRESS)
-2026-07-18 20:01:14 | INFO     | agents.instagram_agent | IG processing... (IN_PROGRESS)
-2026-07-18 20:01:25 | INFO     | agents.instagram_agent | IG processing... (IN_PROGRESS)
-2026-07-18 20:01:45 | INFO     | agents.instagram_agent | Instagram Reel published: media id 18123708751739448
-2026-07-18 20:02:03 | INFO     | agents.instagram_agent | Facebook Reel published (native Reels feed): video id 1019532097351264
-2026-07-18 20:02:04 | INFO     | agents.instagram_agent | Temporary release cleaned up
-2026-07-18 20:02:04 | INFO     | main | ============================================================
-2026-07-18 20:02:04 | INFO     | main | SUCCESS: https://www.youtube.com/shorts/J8FAaBYds7w
-2026-07-18 20:02:04 | INFO     | main | ============================================================
+2026-07-19 11:01:44 | INFO     | main | ============================================================
+2026-07-19 11:01:44 | INFO     | main | STARTING JOB: 20260719_110144
+2026-07-19 11:01:44 | INFO     | main | ============================================================
+2026-07-19 11:01:44 | INFO     | main | History: 31 used titles
+2026-07-19 11:01:45 | INFO     | agents.trend_agent | Google Trends: 10 items (top traffic: 20000)
+2026-07-19 11:01:45 | WARNING  | agents.trend_agent | Reddit fetch failed: 403 Client Error: Blocked for url: https://www.reddit.com/r/popular/hot.json?limit=15
+2026-07-19 11:01:45 | INFO     | agents.trend_agent | Selecting trend topic via Claude (attempt 1)...
+2026-07-19 11:01:49 | INFO     | agents.trend_agent | Trend topic selected: Caitlin Clark Historic 45-Point Game (traffic-ranked)
+2026-07-19 11:01:49 | INFO     | main | [1] Generating script for 'Caitlin Clark Historic 45-Point Game' [trending]...
+2026-07-19 11:01:49 | INFO     | agents.script_agent | Generating trend script for 'Caitlin Clark Historic 45-Point Game' via Claude (attempt 1)...
+2026-07-19 11:01:54 | INFO     | agents.script_agent | Trend script generated: 'Caitlin Clark Historic 45-Point Game'
+2026-07-19 11:01:54 | INFO     | main | [2] Generating AI images...
+2026-07-19 11:01:54 | INFO     | agents.image_agent | Fetching image 1/4 for 'basketball arena crowd wide establishing' (attempt 1)...
+2026-07-19 11:01:54 | INFO     | agents.image_agent | Image 1 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260719_110144/temp/images/scene_00.jpg
+2026-07-19 11:01:55 | INFO     | agents.image_agent | Fetching image 2/4 for 'scoreboard closeup close-up detail' (attempt 1)...
+2026-07-19 11:01:56 | INFO     | agents.image_agent | Image 2 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260719_110144/temp/images/scene_01.jpg
+2026-07-19 11:01:57 | INFO     | agents.image_agent | Fetching image 3/4 for 'basketball court overhead view dramatic moment' (attempt 1)...
+2026-07-19 11:01:58 | INFO     | agents.image_agent | Image 3 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260719_110144/temp/images/scene_02.jpg
+2026-07-19 11:01:59 | INFO     | agents.image_agent | Fetching image 4/4 for 'sports record celebration powerful finale' (attempt 1)...
+2026-07-19 11:02:00 | INFO     | agents.image_agent | Image 4 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260719_110144/temp/images/scene_03.jpg
+2026-07-19 11:02:01 | INFO     | agents.image_agent | Generated 4/4 images successfully
+2026-07-19 11:02:01 | INFO     | main | [3] Generating voiceover...
+2026-07-19 11:02:01 | INFO     | agents.audio_agent | Generating voiceover with Gemini TTS (attempt 1)…
+2026-07-19 11:02:18 | INFO     | agents.audio_agent | Voiceover saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260719_110144/temp/voiceover.mp3 (307 KB)
+2026-07-19 11:02:18 | INFO     | main | [4] Assembling video...
+2026-07-19 11:02:18 | INFO     | agents.video_agent | Rendering AI video -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260719_110144/final_raw.mp4
+2026-07-19 11:04:36 | INFO     | agents.video_agent | AI video done: /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260719_110144/final_raw.mp4 (7.4 MB)
+2026-07-19 11:04:36 | INFO     | main | [4b] Enhancing with FFmpeg...
+2026-07-19 11:05:01 | INFO     | agents.video_editor | Color graded: graded_final_raw.mp4
+2026-07-19 11:05:28 | INFO     | agents.video_editor | Fade added: final.mp4
+2026-07-19 11:05:28 | INFO     | main | [5] Generating SEO metadata...
+2026-07-19 11:05:28 | INFO     | agents.seo_agent | Generating SEO metadata (attempt 1)...
+2026-07-19 11:05:32 | INFO     | agents.seo_agent | SEO title: 'Caitlin Clark just scored 45 — a WNBA first 🤯'
+2026-07-19 11:05:32 | INFO     | main | Title: Caitlin Clark just scored 45 — a WNBA first 🤯
+2026-07-19 11:05:32 | INFO     | main | [6] Uploading to YouTube...
+2026-07-19 11:05:32 | INFO     | agents.upload_agent | Refreshing YouTube token...
+2026-07-19 11:05:32 | INFO     | agents.upload_agent | Uploading 'Caitlin Clark just scored 45 — a WNBA first 🤯' (attempt 1)...
+2026-07-19 11:05:34 | INFO     | agents.upload_agent | Upload progress: 2%
+2026-07-19 11:05:34 | INFO     | agents.upload_agent | Upload progress: 5%
+2026-07-19 11:05:34 | INFO     | agents.upload_agent | Upload progress: 8%
+2026-07-19 11:05:34 | INFO     | agents.upload_agent | Upload progress: 11%
+2026-07-19 11:05:34 | INFO     | agents.upload_agent | Upload progress: 14%
+2026-07-19 11:05:34 | INFO     | agents.upload_agent | Upload progress: 16%
+2026-07-19 11:05:34 | INFO     | agents.upload_agent | Upload progress: 19%
+2026-07-19 11:05:34 | INFO     | agents.upload_agent | Upload progress: 22%
+2026-07-19 11:05:34 | INFO     | agents.upload_agent | Upload progress: 25%
+2026-07-19 11:05:34 | INFO     | agents.upload_agent | Upload progress: 28%
+2026-07-19 11:05:34 | INFO     | agents.upload_agent | Upload progress: 31%
+2026-07-19 11:05:35 | INFO     | agents.upload_agent | Upload progress: 33%
+2026-07-19 11:05:35 | INFO     | agents.upload_agent | Upload progress: 36%
+2026-07-19 11:05:35 | INFO     | agents.upload_agent | Upload progress: 39%
+2026-07-19 11:05:35 | INFO     | agents.upload_agent | Upload progress: 42%
+2026-07-19 11:05:35 | INFO     | agents.upload_agent | Upload progress: 45%
+2026-07-19 11:05:35 | INFO     | agents.upload_agent | Upload progress: 48%
+2026-07-19 11:05:35 | INFO     | agents.upload_agent | Upload progress: 50%
+2026-07-19 11:05:35 | INFO     | agents.upload_agent | Upload progress: 53%
+2026-07-19 11:05:35 | INFO     | agents.upload_agent | Upload progress: 56%
+2026-07-19 11:05:35 | INFO     | agents.upload_agent | Upload progress: 59%
+2026-07-19 11:05:36 | INFO     | agents.upload_agent | Upload progress: 62%
+2026-07-19 11:05:36 | INFO     | agents.upload_agent | Upload progress: 65%
+2026-07-19 11:05:36 | INFO     | agents.upload_agent | Upload progress: 67%
+2026-07-19 11:05:36 | INFO     | agents.upload_agent | Upload progress: 70%
+2026-07-19 11:05:36 | INFO     | agents.upload_agent | Upload progress: 73%
+2026-07-19 11:05:36 | INFO     | agents.upload_agent | Upload progress: 76%
+2026-07-19 11:05:36 | INFO     | agents.upload_agent | Upload progress: 79%
+2026-07-19 11:05:36 | INFO     | agents.upload_agent | Upload progress: 82%
+2026-07-19 11:05:36 | INFO     | agents.upload_agent | Upload progress: 84%
+2026-07-19 11:05:36 | INFO     | agents.upload_agent | Upload progress: 87%
+2026-07-19 11:05:36 | INFO     | agents.upload_agent | Upload progress: 90%
+2026-07-19 11:05:36 | INFO     | agents.upload_agent | Upload progress: 93%
+2026-07-19 11:05:37 | INFO     | agents.upload_agent | Upload progress: 96%
+2026-07-19 11:05:37 | INFO     | agents.upload_agent | Upload progress: 98%
+2026-07-19 11:05:37 | INFO     | agents.upload_agent | Upload complete! Video ID: 77AOiAfsylA
+2026-07-19 11:05:37 | INFO     | agents.upload_agent | URL: https://www.youtube.com/shorts/77AOiAfsylA
+2026-07-19 11:05:37 | INFO     | main | History saved: 32 titles
+2026-07-19 11:05:37 | INFO     | main | [7] Cross-posting to Instagram/Facebook...
+2026-07-19 11:05:38 | INFO     | agents.instagram_agent | Resolved IG account 17841414363117627 via page 'Unique Podcast' (page id 1262973056889436)
+2026-07-19 11:05:40 | INFO     | agents.instagram_agent | Video temporarily hosted: https://github.com/rkadel1488/youtube-shorts-agent/releases/download/reel-temp-1784459138/reel.mp4
+2026-07-19 11:05:40 | INFO     | agents.instagram_agent | Creating IG media container...
+2026-07-19 11:05:40 | INFO     | agents.instagram_agent | IG processing... (IN_PROGRESS)
+2026-07-19 11:05:50 | INFO     | agents.instagram_agent | IG processing... (IN_PROGRESS)
+2026-07-19 11:06:01 | INFO     | agents.instagram_agent | IG processing... (IN_PROGRESS)
+2026-07-19 11:06:11 | INFO     | agents.instagram_agent | IG processing... (IN_PROGRESS)
+2026-07-19 11:06:28 | INFO     | agents.instagram_agent | Instagram Reel published: media id 18602000899002096
+2026-07-19 11:06:41 | INFO     | agents.instagram_agent | Facebook Reel published (native Reels feed): video id 1742235786982835
+2026-07-19 11:06:42 | INFO     | agents.instagram_agent | Temporary release cleaned up
+2026-07-19 11:06:42 | INFO     | main | ============================================================
+2026-07-19 11:06:42 | INFO     | main | SUCCESS: https://www.youtube.com/shorts/77AOiAfsylA
+2026-07-19 11:06:42 | INFO     | main | ============================================================
 
-Done! Watch at: https://www.youtube.com/shorts/J8FAaBYds7w
+Done! Watch at: https://www.youtube.com/shorts/77AOiAfsylA
