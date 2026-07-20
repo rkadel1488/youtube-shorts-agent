@@ -1,93 +1,90 @@
-2026-07-19 18:44:08 | INFO     | main | ============================================================
-2026-07-19 18:44:08 | INFO     | main | STARTING JOB: 20260719_184408
-2026-07-19 18:44:08 | INFO     | main | ============================================================
-2026-07-19 18:44:08 | INFO     | main | History: 32 used titles
-2026-07-19 18:44:08 | INFO     | agents.trend_agent | Google Trends: 10 items (top traffic: 1000)
-2026-07-19 18:44:08 | WARNING  | agents.trend_agent | Reddit fetch failed: 403 Client Error: Blocked for url: https://www.reddit.com/r/popular/hot.json?limit=15
-2026-07-19 18:44:08 | INFO     | agents.trend_agent | Selecting trend topic via Claude (attempt 1)...
-2026-07-19 18:44:12 | INFO     | agents.trend_agent | Trend topic selected: ICE Body Cameras Under Tom Homan (traffic-ranked)
-2026-07-19 18:44:12 | INFO     | main | [1] Generating script for 'ICE Body Cameras Under Tom Homan' [trending]...
-2026-07-19 18:44:12 | INFO     | agents.script_agent | Generating trend script for 'ICE Body Cameras Under Tom Homan' via Claude (attempt 1)...
-2026-07-19 18:44:17 | INFO     | agents.script_agent | Trend script generated: 'ICE Body Cameras Under Tom Homan'
-2026-07-19 18:44:17 | INFO     | main | [2] Generating AI images...
-2026-07-19 18:44:17 | INFO     | agents.image_agent | Fetching image 1/4 for 'law enforcement body camera wide establishing' (attempt 1)...
-2026-07-19 18:44:18 | INFO     | agents.image_agent | Image 1 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260719_184408/temp/images/scene_00.jpg
-2026-07-19 18:44:19 | INFO     | agents.image_agent | Fetching image 2/4 for 'traffic stop police vehicle close-up detail' (attempt 1)...
-2026-07-19 18:44:20 | INFO     | agents.image_agent | Image 2 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260719_184408/temp/images/scene_01.jpg
-2026-07-19 18:44:21 | INFO     | agents.image_agent | Fetching image 3/4 for 'federal officer uniform dramatic moment' (attempt 1)...
-2026-07-19 18:44:21 | INFO     | agents.image_agent | Image 3 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260719_184408/temp/images/scene_02.jpg
-2026-07-19 18:44:22 | INFO     | agents.image_agent | Fetching image 4/4 for 'dashboard camera footage powerful finale' (attempt 1)...
-2026-07-19 18:44:23 | INFO     | agents.image_agent | Image 4 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260719_184408/temp/images/scene_03.jpg
-2026-07-19 18:44:24 | INFO     | agents.image_agent | Generated 4/4 images successfully
-2026-07-19 18:44:24 | INFO     | main | [3] Generating voiceover...
-2026-07-19 18:44:24 | INFO     | agents.audio_agent | Generating voiceover with Gemini TTS (attempt 1)…
-2026-07-19 18:44:40 | INFO     | agents.audio_agent | Voiceover saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260719_184408/temp/voiceover.mp3 (309 KB)
-2026-07-19 18:44:40 | INFO     | main | [4] Assembling video...
-2026-07-19 18:44:40 | INFO     | agents.video_agent | Rendering AI video -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260719_184408/final_raw.mp4
-2026-07-19 18:46:59 | INFO     | agents.video_agent | AI video done: /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260719_184408/final_raw.mp4 (6.2 MB)
-2026-07-19 18:46:59 | INFO     | main | [4b] Enhancing with FFmpeg...
-2026-07-19 18:47:25 | INFO     | agents.video_editor | Color graded: graded_final_raw.mp4
-2026-07-19 18:47:50 | INFO     | agents.video_editor | Fade added: final.mp4
-2026-07-19 18:47:50 | INFO     | main | [5] Generating SEO metadata...
-2026-07-19 18:47:50 | INFO     | agents.seo_agent | Generating SEO metadata (attempt 1)...
-2026-07-19 18:47:56 | INFO     | agents.seo_agent | SEO title: 'ICE agents must now film every traffic stop 🚨'
-2026-07-19 18:47:56 | INFO     | main | Title: ICE agents must now film every traffic stop 🚨
-2026-07-19 18:47:56 | INFO     | main | [6] Uploading to YouTube...
-2026-07-19 18:47:56 | INFO     | agents.upload_agent | Refreshing YouTube token...
-2026-07-19 18:47:56 | INFO     | agents.upload_agent | Uploading 'ICE agents must now film every traffic stop 🚨' (attempt 1)...
-2026-07-19 18:47:57 | INFO     | agents.upload_agent | Upload progress: 3%
-2026-07-19 18:47:57 | INFO     | agents.upload_agent | Upload progress: 6%
-2026-07-19 18:47:57 | INFO     | agents.upload_agent | Upload progress: 9%
-2026-07-19 18:47:57 | INFO     | agents.upload_agent | Upload progress: 12%
-2026-07-19 18:47:58 | INFO     | agents.upload_agent | Upload progress: 15%
-2026-07-19 18:47:58 | INFO     | agents.upload_agent | Upload progress: 18%
-2026-07-19 18:47:58 | INFO     | agents.upload_agent | Upload progress: 21%
-2026-07-19 18:47:58 | INFO     | agents.upload_agent | Upload progress: 24%
-2026-07-19 18:47:58 | INFO     | agents.upload_agent | Upload progress: 27%
-2026-07-19 18:47:58 | INFO     | agents.upload_agent | Upload progress: 30%
-2026-07-19 18:47:58 | INFO     | agents.upload_agent | Upload progress: 33%
-2026-07-19 18:47:59 | INFO     | agents.upload_agent | Upload progress: 36%
-2026-07-19 18:47:59 | INFO     | agents.upload_agent | Upload progress: 39%
-2026-07-19 18:47:59 | INFO     | agents.upload_agent | Upload progress: 42%
-2026-07-19 18:47:59 | INFO     | agents.upload_agent | Upload progress: 45%
-2026-07-19 18:47:59 | INFO     | agents.upload_agent | Upload progress: 48%
-2026-07-19 18:48:00 | INFO     | agents.upload_agent | Upload progress: 51%
-2026-07-19 18:48:00 | INFO     | agents.upload_agent | Upload progress: 54%
-2026-07-19 18:48:00 | INFO     | agents.upload_agent | Upload progress: 57%
-2026-07-19 18:48:00 | INFO     | agents.upload_agent | Upload progress: 60%
-2026-07-19 18:48:00 | INFO     | agents.upload_agent | Upload progress: 63%
-2026-07-19 18:48:00 | INFO     | agents.upload_agent | Upload progress: 66%
-2026-07-19 18:48:00 | INFO     | agents.upload_agent | Upload progress: 69%
-2026-07-19 18:48:01 | INFO     | agents.upload_agent | Upload progress: 72%
-2026-07-19 18:48:01 | INFO     | agents.upload_agent | Upload progress: 75%
-2026-07-19 18:48:01 | INFO     | agents.upload_agent | Upload progress: 78%
-2026-07-19 18:48:01 | INFO     | agents.upload_agent | Upload progress: 81%
-2026-07-19 18:48:01 | INFO     | agents.upload_agent | Upload progress: 84%
-2026-07-19 18:48:01 | INFO     | agents.upload_agent | Upload progress: 87%
-2026-07-19 18:48:01 | INFO     | agents.upload_agent | Upload progress: 90%
-2026-07-19 18:48:01 | INFO     | agents.upload_agent | Upload progress: 93%
-2026-07-19 18:48:02 | INFO     | agents.upload_agent | Upload progress: 96%
-2026-07-19 18:48:02 | INFO     | agents.upload_agent | Upload progress: 99%
-2026-07-19 18:48:02 | INFO     | agents.upload_agent | Upload complete! Video ID: VCnmQrrL1oY
-2026-07-19 18:48:02 | INFO     | agents.upload_agent | URL: https://www.youtube.com/shorts/VCnmQrrL1oY
-2026-07-19 18:48:02 | INFO     | main | History saved: 33 titles
-2026-07-19 18:48:02 | INFO     | main | [7] Cross-posting to Instagram/Facebook...
-2026-07-19 18:48:03 | INFO     | agents.instagram_agent | Resolved IG account 17841414363117627 via page 'Unique Podcast' (page id 1262973056889436)
-2026-07-19 18:48:05 | INFO     | agents.instagram_agent | Video temporarily hosted: https://github.com/rkadel1488/youtube-shorts-agent/releases/download/reel-temp-1784486883/reel.mp4
-2026-07-19 18:48:05 | INFO     | agents.instagram_agent | Creating IG media container...
-2026-07-19 18:48:06 | INFO     | agents.instagram_agent | IG processing... (IN_PROGRESS)
-2026-07-19 18:48:16 | INFO     | agents.instagram_agent | IG processing... (IN_PROGRESS)
-2026-07-19 18:48:27 | INFO     | agents.instagram_agent | IG processing... (IN_PROGRESS)
-2026-07-19 18:48:37 | INFO     | agents.instagram_agent | IG processing... (IN_PROGRESS)
-2026-07-19 18:48:47 | INFO     | agents.instagram_agent | IG processing... (IN_PROGRESS)
-2026-07-19 18:48:58 | INFO     | agents.instagram_agent | IG processing... (IN_PROGRESS)
-2026-07-19 18:49:08 | INFO     | agents.instagram_agent | IG processing... (IN_PROGRESS)
-2026-07-19 18:49:18 | INFO     | agents.instagram_agent | IG processing... (IN_PROGRESS)
-2026-07-19 18:49:38 | INFO     | agents.instagram_agent | Instagram Reel published: media id 18063249251725715
-2026-07-19 18:49:52 | INFO     | agents.instagram_agent | Facebook Reel published (native Reels feed): video id 914949308313005
-2026-07-19 18:49:53 | INFO     | agents.instagram_agent | Temporary release cleaned up
-2026-07-19 18:49:53 | INFO     | main | ============================================================
-2026-07-19 18:49:53 | INFO     | main | SUCCESS: https://www.youtube.com/shorts/VCnmQrrL1oY
-2026-07-19 18:49:53 | INFO     | main | ============================================================
+2026-07-20 02:17:32 | INFO     | main | ============================================================
+2026-07-20 02:17:32 | INFO     | main | STARTING JOB: 20260720_021732
+2026-07-20 02:17:32 | INFO     | main | ============================================================
+2026-07-20 02:17:32 | INFO     | main | History: 33 used titles
+2026-07-20 02:17:32 | INFO     | agents.trend_agent | Google Trends: 10 items (top traffic: 5000)
+2026-07-20 02:17:32 | WARNING  | agents.trend_agent | Reddit fetch failed: 403 Client Error: Blocked for url: https://www.reddit.com/r/popular/hot.json?limit=15
+2026-07-20 02:17:32 | INFO     | agents.trend_agent | Selecting trend topic via Claude (attempt 1)...
+2026-07-20 02:17:36 | INFO     | agents.trend_agent | Trend topic selected: Bethesda Fallout 5 Roadmap Revealed (traffic-ranked)
+2026-07-20 02:17:36 | INFO     | main | [1] Generating script for 'Bethesda Fallout 5 Roadmap Revealed' [trending]...
+2026-07-20 02:17:36 | INFO     | agents.script_agent | Generating trend script for 'Bethesda Fallout 5 Roadmap Revealed' via Claude (attempt 1)...
+2026-07-20 02:17:42 | INFO     | agents.script_agent | Trend script generated: 'Bethesda Fallout 5 Roadmap Revealed'
+2026-07-20 02:17:42 | INFO     | main | [2] Generating AI images...
+2026-07-20 02:17:42 | INFO     | agents.image_agent | Fetching image 1/4 for 'post-apocalyptic wasteland landscape wide establishing' (attempt 1)...
+2026-07-20 02:17:43 | INFO     | agents.image_agent | Image 1 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260720_021732/temp/images/scene_00.jpg
+2026-07-20 02:17:44 | INFO     | agents.image_agent | Fetching image 2/4 for 'retro futuristic video game concept art close-up detail' (attempt 1)...
+2026-07-20 02:17:45 | INFO     | agents.image_agent | Image 2 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260720_021732/temp/images/scene_01.jpg
+2026-07-20 02:17:46 | INFO     | agents.image_agent | Fetching image 3/4 for 'nuclear fallout bunker interior dramatic moment' (attempt 1)...
+2026-07-20 02:17:46 | INFO     | agents.image_agent | Image 3 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260720_021732/temp/images/scene_02.jpg
+2026-07-20 02:17:47 | INFO     | agents.image_agent | Fetching image 4/4 for 'gaming roadmap announcement screen powerful finale' (attempt 1)...
+2026-07-20 02:17:47 | INFO     | agents.image_agent | Image 4 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260720_021732/temp/images/scene_03.jpg
+2026-07-20 02:17:48 | INFO     | agents.image_agent | Generated 4/4 images successfully
+2026-07-20 02:17:48 | INFO     | main | [3] Generating voiceover...
+2026-07-20 02:17:48 | INFO     | agents.audio_agent | Generating voiceover with Gemini TTS (attempt 1)…
+2026-07-20 02:18:02 | INFO     | agents.audio_agent | Voiceover saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260720_021732/temp/voiceover.mp3 (321 KB)
+2026-07-20 02:18:02 | INFO     | main | [4] Assembling video...
+2026-07-20 02:18:03 | INFO     | agents.video_agent | Rendering AI video -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260720_021732/final_raw.mp4
+2026-07-20 02:20:22 | INFO     | agents.video_agent | AI video done: /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260720_021732/final_raw.mp4 (6.3 MB)
+2026-07-20 02:20:22 | INFO     | main | [4b] Enhancing with FFmpeg...
+2026-07-20 02:20:48 | INFO     | agents.video_editor | Color graded: graded_final_raw.mp4
+2026-07-20 02:21:14 | INFO     | agents.video_editor | Fade added: final.mp4
+2026-07-20 02:21:14 | INFO     | main | [5] Generating SEO metadata...
+2026-07-20 02:21:14 | INFO     | agents.seo_agent | Generating SEO metadata (attempt 1)...
+2026-07-20 02:21:19 | INFO     | agents.seo_agent | SEO title: 'Fallout 5 roadmap just dropped — here's what's next 🔥'
+2026-07-20 02:21:19 | INFO     | main | Title: Fallout 5 roadmap just dropped — here's what's next 🔥
+2026-07-20 02:21:19 | INFO     | main | [6] Uploading to YouTube...
+2026-07-20 02:21:19 | INFO     | agents.upload_agent | Refreshing YouTube token...
+2026-07-20 02:21:19 | INFO     | agents.upload_agent | Uploading 'Fallout 5 roadmap just dropped — here's what's next 🔥' (attempt 1)...
+2026-07-20 02:21:20 | INFO     | agents.upload_agent | Upload progress: 3%
+2026-07-20 02:21:20 | INFO     | agents.upload_agent | Upload progress: 6%
+2026-07-20 02:21:20 | INFO     | agents.upload_agent | Upload progress: 9%
+2026-07-20 02:21:20 | INFO     | agents.upload_agent | Upload progress: 12%
+2026-07-20 02:21:20 | INFO     | agents.upload_agent | Upload progress: 15%
+2026-07-20 02:21:20 | INFO     | agents.upload_agent | Upload progress: 18%
+2026-07-20 02:21:21 | INFO     | agents.upload_agent | Upload progress: 21%
+2026-07-20 02:21:21 | INFO     | agents.upload_agent | Upload progress: 25%
+2026-07-20 02:21:21 | INFO     | agents.upload_agent | Upload progress: 28%
+2026-07-20 02:21:21 | INFO     | agents.upload_agent | Upload progress: 31%
+2026-07-20 02:21:21 | INFO     | agents.upload_agent | Upload progress: 34%
+2026-07-20 02:21:21 | INFO     | agents.upload_agent | Upload progress: 37%
+2026-07-20 02:21:21 | INFO     | agents.upload_agent | Upload progress: 40%
+2026-07-20 02:21:22 | INFO     | agents.upload_agent | Upload progress: 43%
+2026-07-20 02:21:22 | INFO     | agents.upload_agent | Upload progress: 47%
+2026-07-20 02:21:22 | INFO     | agents.upload_agent | Upload progress: 50%
+2026-07-20 02:21:22 | INFO     | agents.upload_agent | Upload progress: 53%
+2026-07-20 02:21:22 | INFO     | agents.upload_agent | Upload progress: 56%
+2026-07-20 02:21:22 | INFO     | agents.upload_agent | Upload progress: 59%
+2026-07-20 02:21:22 | INFO     | agents.upload_agent | Upload progress: 62%
+2026-07-20 02:21:22 | INFO     | agents.upload_agent | Upload progress: 65%
+2026-07-20 02:21:23 | INFO     | agents.upload_agent | Upload progress: 69%
+2026-07-20 02:21:23 | INFO     | agents.upload_agent | Upload progress: 72%
+2026-07-20 02:21:23 | INFO     | agents.upload_agent | Upload progress: 75%
+2026-07-20 02:21:23 | INFO     | agents.upload_agent | Upload progress: 78%
+2026-07-20 02:21:23 | INFO     | agents.upload_agent | Upload progress: 81%
+2026-07-20 02:21:23 | INFO     | agents.upload_agent | Upload progress: 84%
+2026-07-20 02:21:23 | INFO     | agents.upload_agent | Upload progress: 87%
+2026-07-20 02:21:23 | INFO     | agents.upload_agent | Upload progress: 90%
+2026-07-20 02:21:24 | INFO     | agents.upload_agent | Upload progress: 94%
+2026-07-20 02:21:24 | INFO     | agents.upload_agent | Upload progress: 97%
+2026-07-20 02:21:24 | INFO     | agents.upload_agent | Upload complete! Video ID: GIGmXi78NYg
+2026-07-20 02:21:24 | INFO     | agents.upload_agent | URL: https://www.youtube.com/shorts/GIGmXi78NYg
+2026-07-20 02:21:24 | INFO     | main | History saved: 34 titles
+2026-07-20 02:21:24 | INFO     | main | [7] Cross-posting to Instagram/Facebook...
+2026-07-20 02:21:26 | INFO     | agents.instagram_agent | Resolved IG account 17841414363117627 via page 'Unique Podcast' (page id 1262973056889436)
+2026-07-20 02:21:27 | INFO     | agents.instagram_agent | Video temporarily hosted: https://github.com/rkadel1488/youtube-shorts-agent/releases/download/reel-temp-1784514086/reel.mp4
+2026-07-20 02:21:27 | INFO     | agents.instagram_agent | Creating IG media container...
+2026-07-20 02:21:29 | INFO     | agents.instagram_agent | IG processing... (IN_PROGRESS)
+2026-07-20 02:21:40 | INFO     | agents.instagram_agent | IG processing... (IN_PROGRESS)
+2026-07-20 02:21:51 | INFO     | agents.instagram_agent | IG processing... (IN_PROGRESS)
+2026-07-20 02:22:02 | INFO     | agents.instagram_agent | IG processing... (IN_PROGRESS)
+2026-07-20 02:22:13 | INFO     | agents.instagram_agent | IG processing... (IN_PROGRESS)
+2026-07-20 02:22:25 | INFO     | agents.instagram_agent | IG processing... (IN_PROGRESS)
+2026-07-20 02:22:35 | INFO     | agents.instagram_agent | IG processing... (IN_PROGRESS)
+2026-07-20 02:22:56 | INFO     | agents.instagram_agent | Instagram Reel published: media id 17967201299942711
+2026-07-20 02:23:11 | INFO     | agents.instagram_agent | Facebook Reel published (native Reels feed): video id 2513296239122418
+2026-07-20 02:23:12 | INFO     | agents.instagram_agent | Temporary release cleaned up
+2026-07-20 02:23:12 | INFO     | main | ============================================================
+2026-07-20 02:23:12 | INFO     | main | SUCCESS: https://www.youtube.com/shorts/GIGmXi78NYg
+2026-07-20 02:23:12 | INFO     | main | ============================================================
 
-Done! Watch at: https://www.youtube.com/shorts/VCnmQrrL1oY
+Done! Watch at: https://www.youtube.com/shorts/GIGmXi78NYg
