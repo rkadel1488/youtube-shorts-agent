@@ -1,85 +1,89 @@
-2026-07-20 19:19:45 | INFO     | main | ============================================================
-2026-07-20 19:19:45 | INFO     | main | STARTING JOB: 20260720_191945
-2026-07-20 19:19:45 | INFO     | main | ============================================================
-2026-07-20 19:19:45 | INFO     | main | History: 35 used titles
-2026-07-20 19:19:45 | INFO     | agents.trend_agent | Google Trends: 10 items (top traffic: 5000)
-2026-07-20 19:19:45 | WARNING  | agents.trend_agent | Reddit fetch failed: 403 Client Error: Blocked for url: https://www.reddit.com/r/popular/hot.json?limit=15
-2026-07-20 19:19:45 | INFO     | agents.trend_agent | Selecting trend topic via Claude (attempt 1)...
-2026-07-20 19:19:49 | INFO     | agents.trend_agent | Trend topic selected: Supreme Court: Plane Seized Over a 6-Pack of Beer (traffic-ranked)
-2026-07-20 19:19:49 | INFO     | main | [1] Generating script for 'Supreme Court: Plane Seized Over a 6-Pack of Beer' [trending]...
-2026-07-20 19:19:49 | INFO     | agents.script_agent | Generating trend script for 'Supreme Court: Plane Seized Over a 6-Pack of Beer' via Claude (attempt 1)...
-2026-07-20 19:19:54 | INFO     | agents.script_agent | Trend script generated: 'Supreme Court: Plane Seized Over a 6-Pack of Beer'
-2026-07-20 19:19:54 | INFO     | main | [2] Generating AI images...
-2026-07-20 19:19:54 | INFO     | agents.image_agent | Fetching image 1/4 for 'small bush plane on runway wide establishing' (attempt 1)...
-2026-07-20 19:19:55 | INFO     | agents.image_agent | Image 1 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260720_191945/temp/images/scene_00.jpg
-2026-07-20 19:19:56 | INFO     | agents.image_agent | Fetching image 2/4 for 'courtroom interior close-up detail' (attempt 1)...
-2026-07-20 19:19:56 | INFO     | agents.image_agent | Image 2 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260720_191945/temp/images/scene_01.jpg
-2026-07-20 19:19:57 | INFO     | agents.image_agent | Fetching image 3/4 for 'government seizure documents dramatic moment' (attempt 1)...
-2026-07-20 19:19:58 | INFO     | agents.image_agent | Image 3 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260720_191945/temp/images/scene_02.jpg
-2026-07-20 19:19:59 | INFO     | agents.image_agent | Fetching image 4/4 for 'Alaska wilderness airstrip powerful finale' (attempt 1)...
-2026-07-20 19:20:00 | INFO     | agents.image_agent | Image 4 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260720_191945/temp/images/scene_03.jpg
-2026-07-20 19:20:01 | INFO     | agents.image_agent | Generated 4/4 images successfully
-2026-07-20 19:20:01 | INFO     | main | [3] Generating voiceover...
-2026-07-20 19:20:01 | INFO     | agents.audio_agent | Generating voiceover with Gemini TTS (attempt 1)…
-2026-07-20 19:20:18 | INFO     | agents.audio_agent | Voiceover saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260720_191945/temp/voiceover.mp3 (316 KB)
-2026-07-20 19:20:18 | INFO     | main | [4] Assembling video...
-2026-07-20 19:20:18 | INFO     | agents.video_agent | Rendering AI video -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260720_191945/final_raw.mp4
-2026-07-20 19:22:46 | INFO     | agents.video_agent | AI video done: /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260720_191945/final_raw.mp4 (6.3 MB)
-2026-07-20 19:22:46 | INFO     | main | [4b] Enhancing with FFmpeg...
-2026-07-20 19:23:10 | INFO     | agents.video_editor | Color graded: graded_final_raw.mp4
-2026-07-20 19:23:34 | INFO     | agents.video_editor | Fade added: final.mp4
-2026-07-20 19:23:34 | INFO     | main | [5] Generating SEO metadata...
-2026-07-20 19:23:34 | INFO     | agents.seo_agent | Generating SEO metadata (attempt 1)...
-2026-07-20 19:23:40 | INFO     | agents.seo_agent | SEO title: 'Pilot lost his plane over a 6-pack of beer 😳'
-2026-07-20 19:23:40 | INFO     | main | Title: Pilot lost his plane over a 6-pack of beer 😳
-2026-07-20 19:23:40 | INFO     | main | [6] Uploading to YouTube...
-2026-07-20 19:23:40 | INFO     | agents.upload_agent | Refreshing YouTube token...
-2026-07-20 19:23:40 | INFO     | agents.upload_agent | Uploading 'Pilot lost his plane over a 6-pack of beer 😳' (attempt 1)...
-2026-07-20 19:23:41 | INFO     | agents.upload_agent | Upload progress: 3%
-2026-07-20 19:23:41 | INFO     | agents.upload_agent | Upload progress: 6%
-2026-07-20 19:23:41 | INFO     | agents.upload_agent | Upload progress: 9%
-2026-07-20 19:23:41 | INFO     | agents.upload_agent | Upload progress: 13%
-2026-07-20 19:23:41 | INFO     | agents.upload_agent | Upload progress: 16%
-2026-07-20 19:23:42 | INFO     | agents.upload_agent | Upload progress: 19%
-2026-07-20 19:23:42 | INFO     | agents.upload_agent | Upload progress: 23%
-2026-07-20 19:23:42 | INFO     | agents.upload_agent | Upload progress: 26%
-2026-07-20 19:23:42 | INFO     | agents.upload_agent | Upload progress: 29%
-2026-07-20 19:23:42 | INFO     | agents.upload_agent | Upload progress: 33%
-2026-07-20 19:23:42 | INFO     | agents.upload_agent | Upload progress: 36%
-2026-07-20 19:23:42 | INFO     | agents.upload_agent | Upload progress: 39%
-2026-07-20 19:23:43 | INFO     | agents.upload_agent | Upload progress: 43%
-2026-07-20 19:23:43 | INFO     | agents.upload_agent | Upload progress: 46%
-2026-07-20 19:23:43 | INFO     | agents.upload_agent | Upload progress: 49%
-2026-07-20 19:23:43 | INFO     | agents.upload_agent | Upload progress: 53%
-2026-07-20 19:23:43 | INFO     | agents.upload_agent | Upload progress: 56%
-2026-07-20 19:23:43 | INFO     | agents.upload_agent | Upload progress: 59%
-2026-07-20 19:23:43 | INFO     | agents.upload_agent | Upload progress: 63%
-2026-07-20 19:23:43 | INFO     | agents.upload_agent | Upload progress: 66%
-2026-07-20 19:23:43 | INFO     | agents.upload_agent | Upload progress: 69%
-2026-07-20 19:23:43 | INFO     | agents.upload_agent | Upload progress: 73%
-2026-07-20 19:23:44 | INFO     | agents.upload_agent | Upload progress: 76%
-2026-07-20 19:23:44 | INFO     | agents.upload_agent | Upload progress: 79%
-2026-07-20 19:23:44 | INFO     | agents.upload_agent | Upload progress: 83%
-2026-07-20 19:23:44 | INFO     | agents.upload_agent | Upload progress: 86%
-2026-07-20 19:23:44 | INFO     | agents.upload_agent | Upload progress: 89%
-2026-07-20 19:23:44 | INFO     | agents.upload_agent | Upload progress: 93%
-2026-07-20 19:23:44 | INFO     | agents.upload_agent | Upload progress: 96%
-2026-07-20 19:23:44 | INFO     | agents.upload_agent | Upload progress: 99%
-2026-07-20 19:23:44 | INFO     | agents.upload_agent | Upload complete! Video ID: p2-BpQWr3gk
-2026-07-20 19:23:44 | INFO     | agents.upload_agent | URL: https://www.youtube.com/shorts/p2-BpQWr3gk
-2026-07-20 19:23:44 | INFO     | main | History saved: 36 titles
-2026-07-20 19:23:44 | INFO     | main | [7] Cross-posting to Instagram/Facebook...
-2026-07-20 19:23:45 | INFO     | agents.instagram_agent | Resolved IG account 17841414363117627 via page 'Unique Podcast' (page id 1262973056889436)
-2026-07-20 19:23:47 | INFO     | agents.instagram_agent | Video temporarily hosted: https://github.com/rkadel1488/youtube-shorts-agent/releases/download/reel-temp-1784575425/reel.mp4
-2026-07-20 19:23:47 | INFO     | agents.instagram_agent | Creating IG media container...
-2026-07-20 19:23:48 | INFO     | agents.instagram_agent | IG processing... (IN_PROGRESS)
-2026-07-20 19:23:59 | INFO     | agents.instagram_agent | IG processing... (IN_PROGRESS)
-2026-07-20 19:24:09 | INFO     | agents.instagram_agent | IG processing... (IN_PROGRESS)
-2026-07-20 19:24:26 | INFO     | agents.instagram_agent | Instagram Reel published: media id 18031558211648727
-2026-07-20 19:24:33 | INFO     | agents.instagram_agent | Facebook Reel published (native Reels feed): video id 27266215953075016
-2026-07-20 19:24:34 | INFO     | agents.instagram_agent | Temporary release cleaned up
-2026-07-20 19:24:34 | INFO     | main | ============================================================
-2026-07-20 19:24:34 | INFO     | main | SUCCESS: https://www.youtube.com/shorts/p2-BpQWr3gk
-2026-07-20 19:24:34 | INFO     | main | ============================================================
+2026-07-21 12:16:36 | INFO     | main | ============================================================
+2026-07-21 12:16:36 | INFO     | main | STARTING JOB: 20260721_121636
+2026-07-21 12:16:36 | INFO     | main | ============================================================
+2026-07-21 12:16:36 | INFO     | main | History: 36 used titles
+2026-07-21 12:16:36 | INFO     | agents.trend_agent | Google Trends: 10 items (top traffic: 1000)
+2026-07-21 12:16:36 | WARNING  | agents.trend_agent | Reddit fetch failed: 403 Client Error: Blocked for url: https://www.reddit.com/r/popular/hot.json?limit=15
+2026-07-21 12:16:36 | INFO     | agents.trend_agent | Selecting trend topic via Claude (attempt 1)...
+2026-07-21 12:16:40 | INFO     | agents.trend_agent | Trend topic selected: American Airlines New DFW Admirals Club (traffic-ranked)
+2026-07-21 12:16:40 | INFO     | main | [1] Generating script for 'American Airlines New DFW Admirals Club' [trending]...
+2026-07-21 12:16:40 | INFO     | agents.script_agent | Generating trend script for 'American Airlines New DFW Admirals Club' via Claude (attempt 1)...
+2026-07-21 12:16:46 | INFO     | agents.script_agent | Trend script generated: 'American Airlines New DFW Admirals Club'
+2026-07-21 12:16:46 | INFO     | main | [2] Generating AI images...
+2026-07-21 12:16:46 | INFO     | agents.image_agent | Fetching image 1/4 for 'luxury airport lounge interior wide establishing' (attempt 1)...
+2026-07-21 12:16:46 | INFO     | agents.image_agent | Image 1 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260721_121636/temp/images/scene_00.jpg
+2026-07-21 12:16:47 | INFO     | agents.image_agent | Fetching image 2/4 for 'modern terminal architecture close-up detail' (attempt 1)...
+2026-07-21 12:16:48 | INFO     | agents.image_agent | Image 2 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260721_121636/temp/images/scene_01.jpg
+2026-07-21 12:16:49 | INFO     | agents.image_agent | Fetching image 3/4 for 'airline passenger seating area dramatic moment' (attempt 1)...
+2026-07-21 12:16:49 | INFO     | agents.image_agent | Image 3 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260721_121636/temp/images/scene_02.jpg
+2026-07-21 12:16:50 | INFO     | agents.image_agent | Fetching image 4/4 for 'airport terminal wide shot powerful finale' (attempt 1)...
+2026-07-21 12:16:51 | INFO     | agents.image_agent | Image 4 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260721_121636/temp/images/scene_03.jpg
+2026-07-21 12:16:52 | INFO     | agents.image_agent | Generated 4/4 images successfully
+2026-07-21 12:16:52 | INFO     | main | [3] Generating voiceover...
+2026-07-21 12:16:53 | INFO     | agents.audio_agent | Generating voiceover with Gemini TTS (attempt 1)…
+2026-07-21 12:17:07 | INFO     | agents.audio_agent | Voiceover saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260721_121636/temp/voiceover.mp3 (329 KB)
+2026-07-21 12:17:07 | INFO     | main | [4] Assembling video...
+2026-07-21 12:17:08 | INFO     | agents.video_agent | Rendering AI video -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260721_121636/final_raw.mp4
+2026-07-21 12:19:32 | INFO     | agents.video_agent | AI video done: /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260721_121636/final_raw.mp4 (7.1 MB)
+2026-07-21 12:19:32 | INFO     | main | [4b] Enhancing with FFmpeg...
+2026-07-21 12:19:58 | INFO     | agents.video_editor | Color graded: graded_final_raw.mp4
+2026-07-21 12:20:25 | INFO     | agents.video_editor | Fade added: final.mp4
+2026-07-21 12:20:25 | INFO     | main | [5] Generating SEO metadata...
+2026-07-21 12:20:25 | INFO     | agents.seo_agent | Generating SEO metadata (attempt 1)...
+2026-07-21 12:20:30 | INFO     | agents.seo_agent | SEO title: 'American Airlines' 37,000 sq ft lounge is wild 😳'
+2026-07-21 12:20:30 | INFO     | main | Title: American Airlines' 37,000 sq ft lounge is wild 😳
+2026-07-21 12:20:30 | INFO     | main | [6] Uploading to YouTube...
+2026-07-21 12:20:30 | INFO     | agents.upload_agent | Refreshing YouTube token...
+2026-07-21 12:20:30 | INFO     | agents.upload_agent | Uploading 'American Airlines' 37,000 sq ft lounge is wild 😳' (attempt 1)...
+2026-07-21 12:20:31 | INFO     | agents.upload_agent | Upload progress: 2%
+2026-07-21 12:20:31 | INFO     | agents.upload_agent | Upload progress: 5%
+2026-07-21 12:20:31 | INFO     | agents.upload_agent | Upload progress: 8%
+2026-07-21 12:20:31 | INFO     | agents.upload_agent | Upload progress: 11%
+2026-07-21 12:20:31 | INFO     | agents.upload_agent | Upload progress: 14%
+2026-07-21 12:20:32 | INFO     | agents.upload_agent | Upload progress: 17%
+2026-07-21 12:20:32 | INFO     | agents.upload_agent | Upload progress: 20%
+2026-07-21 12:20:32 | INFO     | agents.upload_agent | Upload progress: 23%
+2026-07-21 12:20:32 | INFO     | agents.upload_agent | Upload progress: 26%
+2026-07-21 12:20:32 | INFO     | agents.upload_agent | Upload progress: 28%
+2026-07-21 12:20:32 | INFO     | agents.upload_agent | Upload progress: 31%
+2026-07-21 12:20:32 | INFO     | agents.upload_agent | Upload progress: 34%
+2026-07-21 12:20:33 | INFO     | agents.upload_agent | Upload progress: 37%
+2026-07-21 12:20:33 | INFO     | agents.upload_agent | Upload progress: 40%
+2026-07-21 12:20:33 | INFO     | agents.upload_agent | Upload progress: 43%
+2026-07-21 12:20:33 | INFO     | agents.upload_agent | Upload progress: 46%
+2026-07-21 12:20:33 | INFO     | agents.upload_agent | Upload progress: 49%
+2026-07-21 12:20:33 | INFO     | agents.upload_agent | Upload progress: 52%
+2026-07-21 12:20:33 | INFO     | agents.upload_agent | Upload progress: 55%
+2026-07-21 12:20:34 | INFO     | agents.upload_agent | Upload progress: 57%
+2026-07-21 12:20:34 | INFO     | agents.upload_agent | Upload progress: 60%
+2026-07-21 12:20:34 | INFO     | agents.upload_agent | Upload progress: 63%
+2026-07-21 12:20:34 | INFO     | agents.upload_agent | Upload progress: 66%
+2026-07-21 12:20:34 | INFO     | agents.upload_agent | Upload progress: 69%
+2026-07-21 12:20:34 | INFO     | agents.upload_agent | Upload progress: 72%
+2026-07-21 12:20:34 | INFO     | agents.upload_agent | Upload progress: 75%
+2026-07-21 12:20:34 | INFO     | agents.upload_agent | Upload progress: 78%
+2026-07-21 12:20:35 | INFO     | agents.upload_agent | Upload progress: 81%
+2026-07-21 12:20:35 | INFO     | agents.upload_agent | Upload progress: 84%
+2026-07-21 12:20:35 | INFO     | agents.upload_agent | Upload progress: 86%
+2026-07-21 12:20:35 | INFO     | agents.upload_agent | Upload progress: 89%
+2026-07-21 12:20:35 | INFO     | agents.upload_agent | Upload progress: 92%
+2026-07-21 12:20:35 | INFO     | agents.upload_agent | Upload progress: 95%
+2026-07-21 12:20:36 | INFO     | agents.upload_agent | Upload progress: 98%
+2026-07-21 12:20:36 | INFO     | agents.upload_agent | Upload complete! Video ID: -bpMhhyTpTE
+2026-07-21 12:20:36 | INFO     | agents.upload_agent | URL: https://www.youtube.com/shorts/-bpMhhyTpTE
+2026-07-21 12:20:36 | INFO     | main | History saved: 37 titles
+2026-07-21 12:20:36 | INFO     | main | [7] Cross-posting to Instagram/Facebook...
+2026-07-21 12:20:37 | INFO     | agents.instagram_agent | Resolved IG account 17841414363117627 via page 'Unique Podcast' (page id 1262973056889436)
+2026-07-21 12:20:39 | INFO     | agents.instagram_agent | Video temporarily hosted: https://github.com/rkadel1488/youtube-shorts-agent/releases/download/reel-temp-1784636437/reel.mp4
+2026-07-21 12:20:39 | INFO     | agents.instagram_agent | Creating IG media container...
+2026-07-21 12:20:39 | INFO     | agents.instagram_agent | IG processing... (IN_PROGRESS)
+2026-07-21 12:20:50 | INFO     | agents.instagram_agent | IG processing... (IN_PROGRESS)
+2026-07-21 12:21:00 | INFO     | agents.instagram_agent | IG processing... (IN_PROGRESS)
+2026-07-21 12:21:17 | INFO     | agents.instagram_agent | Instagram Reel published: media id 18093791810574968
+2026-07-21 12:21:28 | INFO     | agents.instagram_agent | Facebook Reel published (native Reels feed): video id 744184815454785
+2026-07-21 12:21:29 | INFO     | agents.instagram_agent | Temporary release cleaned up
+2026-07-21 12:21:29 | INFO     | main | ============================================================
+2026-07-21 12:21:29 | INFO     | main | SUCCESS: https://www.youtube.com/shorts/-bpMhhyTpTE
+2026-07-21 12:21:29 | INFO     | main | ============================================================
 
-Done! Watch at: https://www.youtube.com/shorts/p2-BpQWr3gk
+Done! Watch at: https://www.youtube.com/shorts/-bpMhhyTpTE
