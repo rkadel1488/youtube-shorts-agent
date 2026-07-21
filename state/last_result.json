@@ -1,14 +1,5 @@
 {
-  "job_id": "20260721_121636",
-  "status": "success",
-  "video_id": "-bpMhhyTpTE",
-  "url": "https://www.youtube.com/shorts/-bpMhhyTpTE",
-  "title": "American Airlines' 37,000 sq ft lounge is wild 😳",
-  "source": "American Airlines New DFW Admirals Club",
-  "topic_id": 0,
-  "category": "trending",
-  "instagram_id": "18093791810574968",
-  "instagram": "posted",
-  "facebook_id": "744184815454785",
-  "facebook": "posted"
+  "job_id": "20260721_201011",
+  "status": "failed",
+  "error": "Trend script generation failed after 3 attempts"
 }
