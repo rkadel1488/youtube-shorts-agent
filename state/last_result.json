@@ -1,5 +1,14 @@
 {
-  "job_id": "20260721_201011",
-  "status": "failed",
-  "error": "Trend script generation failed after 3 attempts"
+  "job_id": "20260722_121906",
+  "status": "success",
+  "video_id": "0gMjO6sAuug",
+  "url": "https://www.youtube.com/shorts/0gMjO6sAuug",
+  "title": "Eton is building a golf simulator for Prince George 👀",
+  "source": "Prince George's New School Eton College",
+  "topic_id": 0,
+  "category": "trending",
+  "instagram_id": "18099345845253021",
+  "instagram": "posted",
+  "facebook_id": "1575094147291488",
+  "facebook": "posted"
 }
