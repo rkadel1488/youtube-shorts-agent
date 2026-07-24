@@ -1,96 +1,86 @@
-2026-07-23 20:05:11 | INFO     | main | ============================================================
-2026-07-23 20:05:11 | INFO     | main | STARTING JOB: 20260723_200511
-2026-07-23 20:05:11 | INFO     | main | ============================================================
-2026-07-23 20:05:11 | INFO     | main | History: 40 used titles
-2026-07-23 20:05:12 | INFO     | agents.trend_agent | Google Trends: 10 items (top traffic: 2000)
-2026-07-23 20:05:12 | WARNING  | agents.trend_agent | Reddit fetch failed: 403 Client Error: Blocked for url: https://www.reddit.com/r/popular/hot.json?limit=15
-2026-07-23 20:05:12 | INFO     | agents.trend_agent | Selecting trend topic via Claude (attempt 1)...
-2026-07-23 20:05:15 | INFO     | agents.trend_agent | Trend topic selected: Gavin Williams Immaculate Inning (traffic-ranked)
-2026-07-23 20:05:15 | INFO     | main | [1] Generating script for 'Gavin Williams Immaculate Inning' [trending]...
-2026-07-23 20:05:15 | INFO     | agents.script_agent | Generating trend script for 'Gavin Williams Immaculate Inning' via Claude (attempt 1)...
-2026-07-23 20:05:21 | INFO     | agents.script_agent | Trend script generated: 'Gavin Williams Immaculate Inning'
-2026-07-23 20:05:21 | INFO     | main | [2] Generating AI images...
-2026-07-23 20:05:21 | INFO     | agents.image_agent | Fetching image 1/4 for 'baseball pitcher throwing fastball wide establishing' (attempt 1)...
-2026-07-23 20:05:22 | INFO     | agents.image_agent | Image 1 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260723_200511/temp/images/scene_00.jpg
-2026-07-23 20:05:23 | INFO     | agents.image_agent | Fetching image 2/4 for 'baseball stadium crowd close-up detail' (attempt 1)...
-2026-07-23 20:05:23 | INFO     | agents.image_agent | Image 2 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260723_200511/temp/images/scene_01.jpg
-2026-07-23 20:05:24 | INFO     | agents.image_agent | Fetching image 3/4 for 'baseball scoreboard dramatic moment' (attempt 1)...
-2026-07-23 20:05:25 | INFO     | agents.image_agent | Image 3 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260723_200511/temp/images/scene_02.jpg
-2026-07-23 20:05:26 | INFO     | agents.image_agent | Fetching image 4/4 for 'pitcher mound close-up powerful finale' (attempt 1)...
-2026-07-23 20:05:27 | INFO     | agents.image_agent | Image 4 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260723_200511/temp/images/scene_03.jpg
-2026-07-23 20:05:28 | INFO     | agents.image_agent | Generated 4/4 images successfully
-2026-07-23 20:05:28 | INFO     | main | [3] Generating voiceover...
-2026-07-23 20:05:28 | INFO     | agents.audio_agent | Generating voiceover with Gemini TTS (attempt 1)…
-2026-07-23 20:05:47 | INFO     | agents.audio_agent | Voiceover saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260723_200511/temp/voiceover.mp3 (331 KB)
-2026-07-23 20:05:47 | INFO     | main | [4] Assembling video...
-2026-07-23 20:05:48 | INFO     | agents.video_agent | Rendering AI video -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260723_200511/final_raw.mp4
-2026-07-23 20:08:09 | INFO     | agents.video_agent | AI video done: /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260723_200511/final_raw.mp4 (8.6 MB)
-2026-07-23 20:08:09 | INFO     | main | [4b] Enhancing with FFmpeg...
-2026-07-23 20:08:35 | INFO     | agents.video_editor | Color graded: graded_final_raw.mp4
-2026-07-23 20:09:01 | INFO     | agents.video_editor | Fade added: final.mp4
-2026-07-23 20:09:01 | INFO     | main | [5] Generating SEO metadata...
-2026-07-23 20:09:01 | INFO     | agents.seo_agent | Generating SEO metadata (attempt 1)...
-2026-07-23 20:09:06 | INFO     | agents.seo_agent | SEO title: 'Gavin Williams just joined a 5-man Guardians club 🤯'
-2026-07-23 20:09:06 | INFO     | main | Title: Gavin Williams just joined a 5-man Guardians club 🤯
-2026-07-23 20:09:06 | INFO     | main | [6] Uploading to YouTube...
-2026-07-23 20:09:06 | INFO     | agents.upload_agent | Refreshing YouTube token...
-2026-07-23 20:09:06 | INFO     | agents.upload_agent | Uploading 'Gavin Williams just joined a 5-man Guardians club 🤯' (attempt 1)...
-2026-07-23 20:09:08 | INFO     | agents.upload_agent | Upload progress: 2%
-2026-07-23 20:09:08 | INFO     | agents.upload_agent | Upload progress: 4%
-2026-07-23 20:09:08 | INFO     | agents.upload_agent | Upload progress: 7%
-2026-07-23 20:09:08 | INFO     | agents.upload_agent | Upload progress: 9%
-2026-07-23 20:09:08 | INFO     | agents.upload_agent | Upload progress: 11%
-2026-07-23 20:09:08 | INFO     | agents.upload_agent | Upload progress: 14%
-2026-07-23 20:09:08 | INFO     | agents.upload_agent | Upload progress: 16%
-2026-07-23 20:09:08 | INFO     | agents.upload_agent | Upload progress: 18%
-2026-07-23 20:09:08 | INFO     | agents.upload_agent | Upload progress: 21%
-2026-07-23 20:09:09 | INFO     | agents.upload_agent | Upload progress: 23%
-2026-07-23 20:09:09 | INFO     | agents.upload_agent | Upload progress: 26%
-2026-07-23 20:09:09 | INFO     | agents.upload_agent | Upload progress: 28%
-2026-07-23 20:09:09 | INFO     | agents.upload_agent | Upload progress: 30%
-2026-07-23 20:09:09 | INFO     | agents.upload_agent | Upload progress: 33%
-2026-07-23 20:09:09 | INFO     | agents.upload_agent | Upload progress: 35%
-2026-07-23 20:09:09 | INFO     | agents.upload_agent | Upload progress: 37%
-2026-07-23 20:09:09 | INFO     | agents.upload_agent | Upload progress: 40%
-2026-07-23 20:09:10 | INFO     | agents.upload_agent | Upload progress: 42%
-2026-07-23 20:09:10 | INFO     | agents.upload_agent | Upload progress: 45%
-2026-07-23 20:09:10 | INFO     | agents.upload_agent | Upload progress: 47%
-2026-07-23 20:09:10 | INFO     | agents.upload_agent | Upload progress: 49%
-2026-07-23 20:09:10 | INFO     | agents.upload_agent | Upload progress: 52%
-2026-07-23 20:09:10 | INFO     | agents.upload_agent | Upload progress: 54%
-2026-07-23 20:09:10 | INFO     | agents.upload_agent | Upload progress: 56%
-2026-07-23 20:09:10 | INFO     | agents.upload_agent | Upload progress: 59%
-2026-07-23 20:09:11 | INFO     | agents.upload_agent | Upload progress: 61%
-2026-07-23 20:09:11 | INFO     | agents.upload_agent | Upload progress: 63%
-2026-07-23 20:09:11 | INFO     | agents.upload_agent | Upload progress: 66%
-2026-07-23 20:09:11 | INFO     | agents.upload_agent | Upload progress: 68%
-2026-07-23 20:09:11 | INFO     | agents.upload_agent | Upload progress: 71%
-2026-07-23 20:09:11 | INFO     | agents.upload_agent | Upload progress: 73%
-2026-07-23 20:09:11 | INFO     | agents.upload_agent | Upload progress: 75%
-2026-07-23 20:09:11 | INFO     | agents.upload_agent | Upload progress: 78%
-2026-07-23 20:09:12 | INFO     | agents.upload_agent | Upload progress: 80%
-2026-07-23 20:09:12 | INFO     | agents.upload_agent | Upload progress: 82%
-2026-07-23 20:09:12 | INFO     | agents.upload_agent | Upload progress: 85%
-2026-07-23 20:09:12 | INFO     | agents.upload_agent | Upload progress: 87%
-2026-07-23 20:09:12 | INFO     | agents.upload_agent | Upload progress: 90%
-2026-07-23 20:09:12 | INFO     | agents.upload_agent | Upload progress: 92%
-2026-07-23 20:09:12 | INFO     | agents.upload_agent | Upload progress: 94%
-2026-07-23 20:09:12 | INFO     | agents.upload_agent | Upload progress: 97%
-2026-07-23 20:09:13 | INFO     | agents.upload_agent | Upload progress: 99%
-2026-07-23 20:09:13 | INFO     | agents.upload_agent | Upload complete! Video ID: R7Vazi3FbSk
-2026-07-23 20:09:13 | INFO     | agents.upload_agent | URL: https://www.youtube.com/shorts/R7Vazi3FbSk
-2026-07-23 20:09:13 | INFO     | main | History saved: 41 titles
-2026-07-23 20:09:13 | INFO     | main | [7] Cross-posting to Instagram/Facebook...
-2026-07-23 20:09:15 | INFO     | agents.instagram_agent | Resolved IG account 17841414363117627 via page 'Unique Podcast' (page id 1262973056889436)
-2026-07-23 20:09:16 | INFO     | agents.instagram_agent | Video temporarily hosted: https://github.com/rkadel1488/youtube-shorts-agent/releases/download/reel-temp-1784837355/reel.mp4
-2026-07-23 20:09:16 | INFO     | agents.instagram_agent | Creating IG media container...
-2026-07-23 20:09:17 | INFO     | agents.instagram_agent | IG processing... (IN_PROGRESS)
-2026-07-23 20:09:27 | INFO     | agents.instagram_agent | IG processing... (IN_PROGRESS)
-2026-07-23 20:09:50 | INFO     | agents.instagram_agent | Instagram Reel published: media id 17891257608393387
-2026-07-23 20:10:04 | INFO     | agents.instagram_agent | Facebook Reel published (native Reels feed): video id 1028687446695886
-2026-07-23 20:10:05 | INFO     | agents.instagram_agent | Temporary release cleaned up
-2026-07-23 20:10:05 | INFO     | main | ============================================================
-2026-07-23 20:10:05 | INFO     | main | SUCCESS: https://www.youtube.com/shorts/R7Vazi3FbSk
-2026-07-23 20:10:05 | INFO     | main | ============================================================
+2026-07-24 12:10:00 | INFO     | main | ============================================================
+2026-07-24 12:10:00 | INFO     | main | STARTING JOB: 20260724_121000
+2026-07-24 12:10:00 | INFO     | main | ============================================================
+2026-07-24 12:10:00 | INFO     | main | History: 41 used titles
+2026-07-24 12:10:00 | INFO     | agents.trend_agent | Google Trends: 10 items (top traffic: 500)
+2026-07-24 12:10:00 | WARNING  | agents.trend_agent | Reddit fetch failed: 403 Client Error: Blocked for url: https://www.reddit.com/r/popular/hot.json?limit=15
+2026-07-24 12:10:00 | INFO     | agents.trend_agent | Selecting trend topic via Claude (attempt 1)...
+2026-07-24 12:10:05 | INFO     | agents.trend_agent | Trend topic selected: Cetirizine Antihistamine Recall (traffic-ranked)
+2026-07-24 12:10:05 | INFO     | main | [1] Generating script for 'Cetirizine Antihistamine Recall' [trending]...
+2026-07-24 12:10:05 | INFO     | agents.script_agent | Generating trend script for 'Cetirizine Antihistamine Recall' via Claude (attempt 1)...
+2026-07-24 12:10:10 | INFO     | agents.script_agent | Trend script generated: 'Cetirizine Antihistamine Recall'
+2026-07-24 12:10:10 | INFO     | main | [2] Generating AI images...
+2026-07-24 12:10:10 | INFO     | agents.image_agent | Fetching image 1/4 for 'medicine cabinet close-up wide establishing' (attempt 1)...
+2026-07-24 12:10:11 | INFO     | agents.image_agent | Image 1 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260724_121000/temp/images/scene_00.jpg
+2026-07-24 12:10:12 | INFO     | agents.image_agent | Fetching image 2/4 for 'pharmacy shelves close-up detail' (attempt 1)...
+2026-07-24 12:10:12 | INFO     | agents.image_agent | Image 2 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260724_121000/temp/images/scene_01.jpg
+2026-07-24 12:10:13 | INFO     | agents.image_agent | Fetching image 3/4 for 'FDA recall notice dramatic moment' (attempt 1)...
+2026-07-24 12:10:14 | INFO     | agents.image_agent | Image 3 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260724_121000/temp/images/scene_02.jpg
+2026-07-24 12:10:15 | INFO     | agents.image_agent | Fetching image 4/4 for 'allergy medication pills powerful finale' (attempt 1)...
+2026-07-24 12:10:15 | INFO     | agents.image_agent | Image 4 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260724_121000/temp/images/scene_03.jpg
+2026-07-24 12:10:16 | INFO     | agents.image_agent | Generated 4/4 images successfully
+2026-07-24 12:10:16 | INFO     | main | [3] Generating voiceover...
+2026-07-24 12:10:16 | INFO     | agents.audio_agent | Generating voiceover with Gemini TTS (attempt 1)…
+2026-07-24 12:10:31 | INFO     | agents.audio_agent | Voiceover saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260724_121000/temp/voiceover.mp3 (335 KB)
+2026-07-24 12:10:31 | INFO     | main | [4] Assembling video...
+2026-07-24 12:10:31 | INFO     | agents.video_agent | Rendering AI video -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260724_121000/final_raw.mp4
+2026-07-24 12:12:51 | INFO     | agents.video_agent | AI video done: /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260724_121000/final_raw.mp4 (5.6 MB)
+2026-07-24 12:12:51 | INFO     | main | [4b] Enhancing with FFmpeg...
+2026-07-24 12:13:17 | INFO     | agents.video_editor | Color graded: graded_final_raw.mp4
+2026-07-24 12:13:44 | INFO     | agents.video_editor | Fade added: final.mp4
+2026-07-24 12:13:44 | INFO     | main | [5] Generating SEO metadata...
+2026-07-24 12:13:44 | INFO     | agents.seo_agent | Generating SEO metadata (attempt 1)...
+2026-07-24 12:13:49 | INFO     | agents.seo_agent | SEO title: 'Cetirizine recall just hit pharmacy shelves 🚨'
+2026-07-24 12:13:49 | INFO     | main | Title: Cetirizine recall just hit pharmacy shelves 🚨
+2026-07-24 12:13:49 | INFO     | main | [6] Uploading to YouTube...
+2026-07-24 12:13:49 | INFO     | agents.upload_agent | Refreshing YouTube token...
+2026-07-24 12:13:49 | INFO     | agents.upload_agent | Uploading 'Cetirizine recall just hit pharmacy shelves 🚨' (attempt 1)...
+2026-07-24 12:13:50 | INFO     | agents.upload_agent | Upload progress: 3%
+2026-07-24 12:13:50 | INFO     | agents.upload_agent | Upload progress: 6%
+2026-07-24 12:13:50 | INFO     | agents.upload_agent | Upload progress: 9%
+2026-07-24 12:13:51 | INFO     | agents.upload_agent | Upload progress: 12%
+2026-07-24 12:13:51 | INFO     | agents.upload_agent | Upload progress: 16%
+2026-07-24 12:13:51 | INFO     | agents.upload_agent | Upload progress: 19%
+2026-07-24 12:13:51 | INFO     | agents.upload_agent | Upload progress: 22%
+2026-07-24 12:13:51 | INFO     | agents.upload_agent | Upload progress: 25%
+2026-07-24 12:13:51 | INFO     | agents.upload_agent | Upload progress: 28%
+2026-07-24 12:13:51 | INFO     | agents.upload_agent | Upload progress: 32%
+2026-07-24 12:13:51 | INFO     | agents.upload_agent | Upload progress: 35%
+2026-07-24 12:13:51 | INFO     | agents.upload_agent | Upload progress: 38%
+2026-07-24 12:13:51 | INFO     | agents.upload_agent | Upload progress: 41%
+2026-07-24 12:13:51 | INFO     | agents.upload_agent | Upload progress: 44%
+2026-07-24 12:13:52 | INFO     | agents.upload_agent | Upload progress: 48%
+2026-07-24 12:13:52 | INFO     | agents.upload_agent | Upload progress: 51%
+2026-07-24 12:13:52 | INFO     | agents.upload_agent | Upload progress: 54%
+2026-07-24 12:13:52 | INFO     | agents.upload_agent | Upload progress: 57%
+2026-07-24 12:13:52 | INFO     | agents.upload_agent | Upload progress: 61%
+2026-07-24 12:13:52 | INFO     | agents.upload_agent | Upload progress: 64%
+2026-07-24 12:13:52 | INFO     | agents.upload_agent | Upload progress: 67%
+2026-07-24 12:13:52 | INFO     | agents.upload_agent | Upload progress: 70%
+2026-07-24 12:13:52 | INFO     | agents.upload_agent | Upload progress: 73%
+2026-07-24 12:13:52 | INFO     | agents.upload_agent | Upload progress: 77%
+2026-07-24 12:13:53 | INFO     | agents.upload_agent | Upload progress: 80%
+2026-07-24 12:13:53 | INFO     | agents.upload_agent | Upload progress: 83%
+2026-07-24 12:13:53 | INFO     | agents.upload_agent | Upload progress: 86%
+2026-07-24 12:13:53 | INFO     | agents.upload_agent | Upload progress: 89%
+2026-07-24 12:13:53 | INFO     | agents.upload_agent | Upload progress: 93%
+2026-07-24 12:13:53 | INFO     | agents.upload_agent | Upload progress: 96%
+2026-07-24 12:13:53 | INFO     | agents.upload_agent | Upload progress: 99%
+2026-07-24 12:13:53 | INFO     | agents.upload_agent | Upload complete! Video ID: 0tqCn5fZ5g4
+2026-07-24 12:13:53 | INFO     | agents.upload_agent | URL: https://www.youtube.com/shorts/0tqCn5fZ5g4
+2026-07-24 12:13:53 | INFO     | main | History saved: 42 titles
+2026-07-24 12:13:53 | INFO     | main | [7] Cross-posting to Instagram/Facebook...
+2026-07-24 12:13:55 | INFO     | agents.instagram_agent | Resolved IG account 17841414363117627 via page 'Unique Podcast' (page id 1262973056889436)
+2026-07-24 12:13:57 | INFO     | agents.instagram_agent | Video temporarily hosted: https://github.com/rkadel1488/youtube-shorts-agent/releases/download/reel-temp-1784895235/reel.mp4
+2026-07-24 12:13:57 | INFO     | agents.instagram_agent | Creating IG media container...
+2026-07-24 12:13:58 | INFO     | agents.instagram_agent | IG processing... (IN_PROGRESS)
+2026-07-24 12:14:08 | INFO     | agents.instagram_agent | IG processing... (IN_PROGRESS)
+2026-07-24 12:14:18 | INFO     | agents.instagram_agent | IG processing... (IN_PROGRESS)
+2026-07-24 12:14:37 | INFO     | agents.instagram_agent | Instagram Reel published: media id 17962603991961137
+2026-07-24 12:14:50 | INFO     | agents.instagram_agent | Facebook Reel published (native Reels feed): video id 979722645081186
+2026-07-24 12:14:51 | INFO     | agents.instagram_agent | Temporary release cleaned up
+2026-07-24 12:14:51 | INFO     | main | ============================================================
+2026-07-24 12:14:51 | INFO     | main | SUCCESS: https://www.youtube.com/shorts/0tqCn5fZ5g4
+2026-07-24 12:14:51 | INFO     | main | ============================================================
 
-Done! Watch at: https://www.youtube.com/shorts/R7Vazi3FbSk
+Done! Watch at: https://www.youtube.com/shorts/0tqCn5fZ5g4
