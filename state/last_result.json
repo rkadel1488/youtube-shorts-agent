@@ -1,5 +1,14 @@
 {
-  "job_id": "20260726_115157",
-  "status": "failed",
-  "error": "Trend script generation failed after 3 attempts"
+  "job_id": "20260726_200152",
+  "status": "success",
+  "video_id": "gTjjffshfIk",
+  "url": "https://www.youtube.com/shorts/gTjjffshfIk",
+  "title": "United and Delta secretly tried to merge airlines 👀",
+  "source": "United Airlines Secretly Pursued Delta Merger",
+  "topic_id": 0,
+  "category": "trending",
+  "instagram_id": "18095661392526251",
+  "instagram": "posted",
+  "facebook_id": "1341979714796138",
+  "facebook": "posted"
 }
