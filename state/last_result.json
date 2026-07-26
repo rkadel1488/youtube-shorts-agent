@@ -1,14 +1,5 @@
 {
-  "job_id": "20260725_200238",
-  "status": "success",
-  "video_id": "ompy5bTnlQ4",
-  "url": "https://www.youtube.com/shorts/ompy5bTnlQ4",
-  "title": "Salvador Perez just became Royals' HR king 👀",
-  "source": "Salvador Perez Becomes Royals' All-Time Home Run King",
-  "topic_id": 0,
-  "category": "trending",
-  "instagram_id": "17900367795497386",
-  "instagram": "posted",
-  "facebook_id": "1052215454127281",
-  "facebook": "posted"
+  "job_id": "20260726_115157",
+  "status": "failed",
+  "error": "Trend script generation failed after 3 attempts"
 }
