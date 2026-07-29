@@ -1,82 +1,91 @@
-2026-07-29 12:52:54 | INFO     | main | ============================================================
-2026-07-29 12:52:54 | INFO     | main | STARTING JOB: 20260729_125254
-2026-07-29 12:52:54 | INFO     | main | ============================================================
-2026-07-29 12:52:54 | INFO     | main | History: 50 used titles
-2026-07-29 12:52:54 | INFO     | agents.trend_agent | Google Trends: 10 items (top traffic: 2000)
-2026-07-29 12:52:54 | WARNING  | agents.trend_agent | Reddit fetch failed: 403 Client Error: Blocked for url: https://www.reddit.com/r/popular/hot.json?limit=15
-2026-07-29 12:52:54 | INFO     | agents.trend_agent | Selecting trend topic via Claude (attempt 1)...
-2026-07-29 12:53:02 | INFO     | agents.trend_agent | Trend topic selected: Grant Thornton Acquires CBIZ for $5 Billion (traffic-ranked)
-2026-07-29 12:53:02 | INFO     | main | [1] Generating script for 'Grant Thornton Acquires CBIZ for $5 Billion' [trending]...
-2026-07-29 12:53:02 | INFO     | agents.script_agent | Generating trend script for 'Grant Thornton Acquires CBIZ for $5 Billion' via Claude (attempt 1)...
-2026-07-29 12:53:07 | INFO     | agents.script_agent | Trend script generated: 'Grant Thornton Acquires CBIZ for $5 Billion'
-2026-07-29 12:53:07 | INFO     | main | [2] Generating AI images...
-2026-07-29 12:53:07 | INFO     | agents.image_agent | Fetching image 1/4 for 'corporate merger handshake wide establishing' (attempt 1)...
-2026-07-29 12:53:07 | INFO     | agents.image_agent | Image 1 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260729_125254/temp/images/scene_00.jpg
-2026-07-29 12:53:08 | INFO     | agents.image_agent | Fetching image 2/4 for 'financial district skyscrapers close-up detail' (attempt 1)...
-2026-07-29 12:53:09 | INFO     | agents.image_agent | Image 2 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260729_125254/temp/images/scene_01.jpg
-2026-07-29 12:53:10 | INFO     | agents.image_agent | Fetching image 3/4 for 'accounting office boardroom dramatic moment' (attempt 1)...
-2026-07-29 12:53:11 | INFO     | agents.image_agent | Image 3 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260729_125254/temp/images/scene_02.jpg
-2026-07-29 12:53:12 | INFO     | agents.image_agent | Fetching image 4/4 for 'stock market numbers screen powerful finale' (attempt 1)...
-2026-07-29 12:53:12 | INFO     | agents.image_agent | Image 4 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260729_125254/temp/images/scene_03.jpg
-2026-07-29 12:53:13 | INFO     | agents.image_agent | Generated 4/4 images successfully
-2026-07-29 12:53:13 | INFO     | main | [3] Generating voiceover...
-2026-07-29 12:53:13 | INFO     | agents.audio_agent | Generating voiceover with Gemini TTS (attempt 1)…
-2026-07-29 12:53:27 | INFO     | agents.audio_agent | Voiceover saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260729_125254/temp/voiceover.mp3 (300 KB)
-2026-07-29 12:53:27 | INFO     | main | [4] Assembling video...
-2026-07-29 12:53:28 | INFO     | agents.video_agent | Rendering AI video -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260729_125254/final_raw.mp4
-2026-07-29 12:55:39 | INFO     | agents.video_agent | AI video done: /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260729_125254/final_raw.mp4 (5.9 MB)
-2026-07-29 12:55:39 | INFO     | main | [4b] Enhancing with FFmpeg...
-2026-07-29 12:56:02 | INFO     | agents.video_editor | Color graded: graded_final_raw.mp4
-2026-07-29 12:56:26 | INFO     | agents.video_editor | Fade added: final.mp4
-2026-07-29 12:56:26 | INFO     | main | [5] Generating SEO metadata...
-2026-07-29 12:56:26 | INFO     | agents.seo_agent | Generating SEO metadata (attempt 1)...
-2026-07-29 12:56:32 | INFO     | agents.seo_agent | SEO title: 'Grant Thornton just swallowed CBIZ for $5B 🤯'
-2026-07-29 12:56:32 | INFO     | main | Title: Grant Thornton just swallowed CBIZ for $5B 🤯
-2026-07-29 12:56:32 | INFO     | main | [6] Uploading to YouTube...
-2026-07-29 12:56:32 | INFO     | agents.upload_agent | Refreshing YouTube token...
-2026-07-29 12:56:32 | INFO     | agents.upload_agent | Uploading 'Grant Thornton just swallowed CBIZ for $5B 🤯' (attempt 1)...
-2026-07-29 12:56:33 | INFO     | agents.upload_agent | Upload progress: 3%
-2026-07-29 12:56:33 | INFO     | agents.upload_agent | Upload progress: 7%
-2026-07-29 12:56:33 | INFO     | agents.upload_agent | Upload progress: 10%
-2026-07-29 12:56:33 | INFO     | agents.upload_agent | Upload progress: 14%
-2026-07-29 12:56:33 | INFO     | agents.upload_agent | Upload progress: 18%
-2026-07-29 12:56:34 | INFO     | agents.upload_agent | Upload progress: 21%
-2026-07-29 12:56:34 | INFO     | agents.upload_agent | Upload progress: 25%
-2026-07-29 12:56:34 | INFO     | agents.upload_agent | Upload progress: 29%
-2026-07-29 12:56:34 | INFO     | agents.upload_agent | Upload progress: 32%
-2026-07-29 12:56:34 | INFO     | agents.upload_agent | Upload progress: 36%
-2026-07-29 12:56:34 | INFO     | agents.upload_agent | Upload progress: 39%
-2026-07-29 12:56:34 | INFO     | agents.upload_agent | Upload progress: 43%
-2026-07-29 12:56:34 | INFO     | agents.upload_agent | Upload progress: 47%
-2026-07-29 12:56:34 | INFO     | agents.upload_agent | Upload progress: 50%
-2026-07-29 12:56:34 | INFO     | agents.upload_agent | Upload progress: 54%
-2026-07-29 12:56:35 | INFO     | agents.upload_agent | Upload progress: 58%
-2026-07-29 12:56:35 | INFO     | agents.upload_agent | Upload progress: 61%
-2026-07-29 12:56:35 | INFO     | agents.upload_agent | Upload progress: 65%
-2026-07-29 12:56:35 | INFO     | agents.upload_agent | Upload progress: 68%
-2026-07-29 12:56:35 | INFO     | agents.upload_agent | Upload progress: 72%
-2026-07-29 12:56:35 | INFO     | agents.upload_agent | Upload progress: 76%
-2026-07-29 12:56:35 | INFO     | agents.upload_agent | Upload progress: 79%
-2026-07-29 12:56:35 | INFO     | agents.upload_agent | Upload progress: 83%
-2026-07-29 12:56:35 | INFO     | agents.upload_agent | Upload progress: 87%
-2026-07-29 12:56:35 | INFO     | agents.upload_agent | Upload progress: 90%
-2026-07-29 12:56:36 | INFO     | agents.upload_agent | Upload progress: 94%
-2026-07-29 12:56:36 | INFO     | agents.upload_agent | Upload progress: 97%
-2026-07-29 12:56:36 | INFO     | agents.upload_agent | Upload complete! Video ID: NfIN1jaC1AE
-2026-07-29 12:56:36 | INFO     | agents.upload_agent | URL: https://www.youtube.com/shorts/NfIN1jaC1AE
-2026-07-29 12:56:36 | INFO     | main | History saved: 51 titles
-2026-07-29 12:56:36 | INFO     | main | [7] Cross-posting to Instagram/Facebook...
-2026-07-29 12:56:37 | INFO     | agents.instagram_agent | Resolved IG account 17841414363117627 via page 'Unique Podcast' (page id 1262973056889436)
-2026-07-29 12:56:39 | INFO     | agents.instagram_agent | Video temporarily hosted: https://github.com/rkadel1488/youtube-shorts-agent/releases/download/reel-temp-1785329797/reel.mp4
-2026-07-29 12:56:39 | INFO     | agents.instagram_agent | Creating IG media container...
-2026-07-29 12:56:40 | INFO     | agents.instagram_agent | IG processing... (IN_PROGRESS)
-2026-07-29 12:56:51 | INFO     | agents.instagram_agent | IG processing... (IN_PROGRESS)
-2026-07-29 12:57:01 | INFO     | agents.instagram_agent | IG processing... (IN_PROGRESS)
-2026-07-29 12:57:19 | INFO     | agents.instagram_agent | Instagram Reel published: media id 17975089824115945
-2026-07-29 12:57:31 | INFO     | agents.instagram_agent | Facebook Reel published (native Reels feed): video id 1048935364224887
-2026-07-29 12:57:32 | INFO     | agents.instagram_agent | Temporary release cleaned up
-2026-07-29 12:57:32 | INFO     | main | ============================================================
-2026-07-29 12:57:32 | INFO     | main | SUCCESS: https://www.youtube.com/shorts/NfIN1jaC1AE
-2026-07-29 12:57:32 | INFO     | main | ============================================================
+2026-07-29 20:05:32 | INFO     | main | ============================================================
+2026-07-29 20:05:32 | INFO     | main | STARTING JOB: 20260729_200532
+2026-07-29 20:05:32 | INFO     | main | ============================================================
+2026-07-29 20:05:32 | INFO     | main | History: 51 used titles
+2026-07-29 20:05:32 | INFO     | agents.trend_agent | Google Trends: 10 items (top traffic: 1000)
+2026-07-29 20:05:32 | WARNING  | agents.trend_agent | Reddit fetch failed: 403 Client Error: Blocked for url: https://www.reddit.com/r/popular/hot.json?limit=15
+2026-07-29 20:05:32 | INFO     | agents.trend_agent | Selecting trend topic via Claude (attempt 1)...
+2026-07-29 20:05:36 | INFO     | agents.trend_agent | Trend topic selected: Meta Q2 Earnings & AI Spending (traffic-ranked)
+2026-07-29 20:05:36 | INFO     | main | [1] Generating script for 'Meta Q2 Earnings & AI Spending' [trending]...
+2026-07-29 20:05:36 | INFO     | agents.script_agent | Generating trend script for 'Meta Q2 Earnings & AI Spending' via Claude (attempt 1)...
+2026-07-29 20:05:42 | INFO     | agents.script_agent | Trend script generated: 'Meta Q2 Earnings & AI Spending'
+2026-07-29 20:05:42 | INFO     | main | [2] Generating AI images...
+2026-07-29 20:05:42 | INFO     | agents.image_agent | Fetching image 1/4 for 'tech company earnings report wide establishing' (attempt 1)...
+2026-07-29 20:05:43 | INFO     | agents.image_agent | Image 1 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260729_200532/temp/images/scene_00.jpg
+2026-07-29 20:05:44 | INFO     | agents.image_agent | Fetching image 2/4 for 'financial data on screen close-up detail' (attempt 1)...
+2026-07-29 20:05:45 | INFO     | agents.image_agent | Image 2 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260729_200532/temp/images/scene_01.jpg
+2026-07-29 20:05:46 | INFO     | agents.image_agent | Fetching image 3/4 for 'corporate investment strategy dramatic moment' (attempt 1)...
+2026-07-29 20:05:47 | INFO     | agents.image_agent | Image 3 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260729_200532/temp/images/scene_02.jpg
+2026-07-29 20:05:48 | INFO     | agents.image_agent | Fetching image 4/4 for 'artificial intelligence server room powerful finale' (attempt 1)...
+2026-07-29 20:05:49 | INFO     | agents.image_agent | Image 4 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260729_200532/temp/images/scene_03.jpg
+2026-07-29 20:05:50 | INFO     | agents.image_agent | Generated 4/4 images successfully
+2026-07-29 20:05:50 | INFO     | main | [3] Generating voiceover...
+2026-07-29 20:05:50 | INFO     | agents.audio_agent | Generating voiceover with Gemini TTS (attempt 1)…
+2026-07-29 20:06:05 | INFO     | agents.audio_agent | Voiceover saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260729_200532/temp/voiceover.mp3 (335 KB)
+2026-07-29 20:06:05 | INFO     | main | [4] Assembling video...
+2026-07-29 20:06:06 | INFO     | agents.video_agent | Rendering AI video -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260729_200532/final_raw.mp4
+2026-07-29 20:09:41 | INFO     | agents.video_agent | AI video done: /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260729_200532/final_raw.mp4 (7.0 MB)
+2026-07-29 20:09:41 | INFO     | main | [4b] Enhancing with FFmpeg...
+2026-07-29 20:10:10 | INFO     | agents.video_editor | Color graded: graded_final_raw.mp4
+2026-07-29 20:10:37 | INFO     | agents.video_editor | Fade added: final.mp4
+2026-07-29 20:10:37 | INFO     | main | [5] Generating SEO metadata...
+2026-07-29 20:10:37 | INFO     | agents.seo_agent | Generating SEO metadata (attempt 1)...
+2026-07-29 20:10:49 | INFO     | agents.seo_agent | SEO title: 'Meta's AI spending just hit $72 billion 😳'
+2026-07-29 20:10:49 | INFO     | main | Title: Meta's AI spending just hit $72 billion 😳
+2026-07-29 20:10:49 | INFO     | main | [6] Uploading to YouTube...
+2026-07-29 20:10:49 | INFO     | agents.upload_agent | Refreshing YouTube token...
+2026-07-29 20:10:50 | INFO     | agents.upload_agent | Uploading 'Meta's AI spending just hit $72 billion 😳' (attempt 1)...
+2026-07-29 20:10:51 | INFO     | agents.upload_agent | Upload progress: 3%
+2026-07-29 20:10:51 | INFO     | agents.upload_agent | Upload progress: 6%
+2026-07-29 20:10:52 | INFO     | agents.upload_agent | Upload progress: 9%
+2026-07-29 20:10:52 | INFO     | agents.upload_agent | Upload progress: 12%
+2026-07-29 20:10:52 | INFO     | agents.upload_agent | Upload progress: 15%
+2026-07-29 20:10:53 | INFO     | agents.upload_agent | Upload progress: 18%
+2026-07-29 20:10:53 | INFO     | agents.upload_agent | Upload progress: 21%
+2026-07-29 20:10:53 | INFO     | agents.upload_agent | Upload progress: 24%
+2026-07-29 20:10:54 | INFO     | agents.upload_agent | Upload progress: 28%
+2026-07-29 20:10:54 | INFO     | agents.upload_agent | Upload progress: 31%
+2026-07-29 20:10:54 | INFO     | agents.upload_agent | Upload progress: 34%
+2026-07-29 20:10:55 | INFO     | agents.upload_agent | Upload progress: 37%
+2026-07-29 20:10:55 | INFO     | agents.upload_agent | Upload progress: 40%
+2026-07-29 20:10:55 | INFO     | agents.upload_agent | Upload progress: 43%
+2026-07-29 20:10:56 | INFO     | agents.upload_agent | Upload progress: 46%
+2026-07-29 20:10:56 | INFO     | agents.upload_agent | Upload progress: 49%
+2026-07-29 20:10:56 | INFO     | agents.upload_agent | Upload progress: 52%
+2026-07-29 20:10:57 | INFO     | agents.upload_agent | Upload progress: 56%
+2026-07-29 20:10:57 | INFO     | agents.upload_agent | Upload progress: 59%
+2026-07-29 20:10:57 | INFO     | agents.upload_agent | Upload progress: 62%
+2026-07-29 20:10:58 | INFO     | agents.upload_agent | Upload progress: 65%
+2026-07-29 20:10:58 | INFO     | agents.upload_agent | Upload progress: 68%
+2026-07-29 20:10:58 | INFO     | agents.upload_agent | Upload progress: 71%
+2026-07-29 20:10:59 | INFO     | agents.upload_agent | Upload progress: 74%
+2026-07-29 20:10:59 | INFO     | agents.upload_agent | Upload progress: 77%
+2026-07-29 20:10:59 | INFO     | agents.upload_agent | Upload progress: 80%
+2026-07-29 20:11:00 | INFO     | agents.upload_agent | Upload progress: 84%
+2026-07-29 20:11:00 | INFO     | agents.upload_agent | Upload progress: 87%
+2026-07-29 20:11:00 | INFO     | agents.upload_agent | Upload progress: 90%
+2026-07-29 20:11:01 | INFO     | agents.upload_agent | Upload progress: 93%
+2026-07-29 20:11:01 | INFO     | agents.upload_agent | Upload progress: 96%
+2026-07-29 20:11:01 | INFO     | agents.upload_agent | Upload progress: 99%
+2026-07-29 20:11:02 | INFO     | agents.upload_agent | Upload complete! Video ID: abOrdl9hHp8
+2026-07-29 20:11:02 | INFO     | agents.upload_agent | URL: https://www.youtube.com/shorts/abOrdl9hHp8
+2026-07-29 20:11:02 | INFO     | main | History saved: 52 titles
+2026-07-29 20:11:02 | INFO     | main | [7] Cross-posting to Instagram/Facebook...
+2026-07-29 20:11:03 | INFO     | agents.instagram_agent | Resolved IG account 17841414363117627 via page 'Unique Podcast' (page id 1262973056889436)
+2026-07-29 20:11:06 | INFO     | agents.instagram_agent | Video temporarily hosted: https://github.com/rkadel1488/youtube-shorts-agent/releases/download/reel-temp-1785355863/reel.mp4
+2026-07-29 20:11:06 | INFO     | agents.instagram_agent | Creating IG media container...
+2026-07-29 20:11:07 | INFO     | agents.instagram_agent | IG processing... (IN_PROGRESS)
+2026-07-29 20:11:18 | INFO     | agents.instagram_agent | IG processing... (IN_PROGRESS)
+2026-07-29 20:11:28 | INFO     | agents.instagram_agent | IG processing... (IN_PROGRESS)
+2026-07-29 20:11:39 | INFO     | agents.instagram_agent | IG processing... (IN_PROGRESS)
+2026-07-29 20:11:49 | INFO     | agents.instagram_agent | IG processing... (IN_PROGRESS)
+2026-07-29 20:12:00 | INFO     | agents.instagram_agent | IG processing... (IN_PROGRESS)
+2026-07-29 20:12:10 | INFO     | agents.instagram_agent | IG processing... (IN_PROGRESS)
+2026-07-29 20:12:31 | INFO     | agents.instagram_agent | Instagram Reel published: media id 17859243567676569
+2026-07-29 20:12:41 | INFO     | agents.instagram_agent | Facebook Reel published (native Reels feed): video id 875735978625380
+2026-07-29 20:12:42 | INFO     | agents.instagram_agent | Temporary release cleaned up
+2026-07-29 20:12:42 | INFO     | main | ============================================================
+2026-07-29 20:12:42 | INFO     | main | SUCCESS: https://www.youtube.com/shorts/abOrdl9hHp8
+2026-07-29 20:12:42 | INFO     | main | ============================================================
 
-Done! Watch at: https://www.youtube.com/shorts/NfIN1jaC1AE
+Done! Watch at: https://www.youtube.com/shorts/abOrdl9hHp8
