@@ -1,88 +1,80 @@
-2026-07-31 19:02:19 | INFO     | main | ============================================================
-2026-07-31 19:02:19 | INFO     | main | STARTING JOB: 20260731_190219
-2026-07-31 19:02:19 | INFO     | main | ============================================================
-2026-07-31 19:02:19 | INFO     | main | History: 55 used titles
-2026-07-31 19:02:19 | INFO     | agents.trend_agent | Google Trends: 10 items (top traffic: 2000)
-2026-07-31 19:02:20 | WARNING  | agents.trend_agent | Reddit fetch failed: 403 Client Error: Blocked for url: https://www.reddit.com/r/popular/hot.json?limit=15
-2026-07-31 19:02:20 | INFO     | agents.trend_agent | Selecting trend topic via Claude (attempt 1)...
-2026-07-31 19:02:27 | INFO     | agents.trend_agent | Trend topic selected: F-35 Crash at MCAS Miramar (traffic-ranked)
-2026-07-31 19:02:27 | INFO     | main | [1] Generating script for 'F-35 Crash at MCAS Miramar' [trending]...
-2026-07-31 19:02:27 | INFO     | agents.script_agent | Generating trend script for 'F-35 Crash at MCAS Miramar' via Claude (attempt 1)...
-2026-07-31 19:02:32 | INFO     | agents.script_agent | Trend script generated: 'F-35 Crash at MCAS Miramar'
-2026-07-31 19:02:32 | INFO     | main | [2] Generating AI images...
-2026-07-31 19:02:32 | INFO     | agents.image_agent | Fetching image 1/4 for 'military fighter jet crash wide establishing' (attempt 1)...
-2026-07-31 19:02:33 | INFO     | agents.image_agent | Image 1 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260731_190219/temp/images/scene_00.jpg
-2026-07-31 19:02:34 | INFO     | agents.image_agent | Fetching image 2/4 for 'airfield emergency response close-up detail' (attempt 1)...
-2026-07-31 19:02:35 | INFO     | agents.image_agent | Image 2 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260731_190219/temp/images/scene_01.jpg
-2026-07-31 19:02:36 | INFO     | agents.image_agent | Fetching image 3/4 for 'fire trucks on runway dramatic moment' (attempt 1)...
-2026-07-31 19:02:37 | INFO     | agents.image_agent | Image 3 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260731_190219/temp/images/scene_02.jpg
-2026-07-31 19:02:38 | INFO     | agents.image_agent | Fetching image 4/4 for 'military air base powerful finale' (attempt 1)...
-2026-07-31 19:02:39 | INFO     | agents.image_agent | Image 4 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260731_190219/temp/images/scene_03.jpg
-2026-07-31 19:02:40 | INFO     | agents.image_agent | Generated 4/4 images successfully
-2026-07-31 19:02:40 | INFO     | main | [3] Generating voiceover...
-2026-07-31 19:02:40 | INFO     | agents.audio_agent | Generating voiceover with Gemini TTS (attempt 1)…
-2026-07-31 19:03:02 | INFO     | agents.audio_agent | Voiceover saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260731_190219/temp/voiceover.mp3 (293 KB)
-2026-07-31 19:03:02 | INFO     | main | [4] Assembling video...
-2026-07-31 19:03:02 | INFO     | agents.video_agent | Rendering AI video -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260731_190219/final_raw.mp4
-2026-07-31 19:05:15 | INFO     | agents.video_agent | AI video done: /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260731_190219/final_raw.mp4 (6.9 MB)
-2026-07-31 19:05:15 | INFO     | main | [4b] Enhancing with FFmpeg...
-2026-07-31 19:05:39 | INFO     | agents.video_editor | Color graded: graded_final_raw.mp4
-2026-07-31 19:06:03 | INFO     | agents.video_editor | Fade added: final.mp4
-2026-07-31 19:06:03 | INFO     | main | [5] Generating SEO metadata...
-2026-07-31 19:06:03 | INFO     | agents.seo_agent | Generating SEO metadata (attempt 1)...
-2026-07-31 19:06:08 | INFO     | agents.seo_agent | SEO title: 'F-35 burst into flames at MCAS Miramar 🚨'
-2026-07-31 19:06:08 | INFO     | main | Title: F-35 burst into flames at MCAS Miramar 🚨
-2026-07-31 19:06:08 | INFO     | main | [6] Uploading to YouTube...
-2026-07-31 19:06:08 | INFO     | agents.upload_agent | Refreshing YouTube token...
-2026-07-31 19:06:08 | INFO     | agents.upload_agent | Uploading 'F-35 burst into flames at MCAS Miramar 🚨' (attempt 1)...
-2026-07-31 19:06:09 | INFO     | agents.upload_agent | Upload progress: 3%
-2026-07-31 19:06:09 | INFO     | agents.upload_agent | Upload progress: 6%
-2026-07-31 19:06:09 | INFO     | agents.upload_agent | Upload progress: 9%
-2026-07-31 19:06:09 | INFO     | agents.upload_agent | Upload progress: 12%
-2026-07-31 19:06:09 | INFO     | agents.upload_agent | Upload progress: 15%
-2026-07-31 19:06:09 | INFO     | agents.upload_agent | Upload progress: 18%
-2026-07-31 19:06:10 | INFO     | agents.upload_agent | Upload progress: 21%
-2026-07-31 19:06:10 | INFO     | agents.upload_agent | Upload progress: 25%
-2026-07-31 19:06:10 | INFO     | agents.upload_agent | Upload progress: 28%
-2026-07-31 19:06:10 | INFO     | agents.upload_agent | Upload progress: 31%
-2026-07-31 19:06:10 | INFO     | agents.upload_agent | Upload progress: 34%
-2026-07-31 19:06:10 | INFO     | agents.upload_agent | Upload progress: 37%
-2026-07-31 19:06:10 | INFO     | agents.upload_agent | Upload progress: 40%
-2026-07-31 19:06:10 | INFO     | agents.upload_agent | Upload progress: 43%
-2026-07-31 19:06:10 | INFO     | agents.upload_agent | Upload progress: 47%
-2026-07-31 19:06:10 | INFO     | agents.upload_agent | Upload progress: 50%
-2026-07-31 19:06:10 | INFO     | agents.upload_agent | Upload progress: 53%
-2026-07-31 19:06:10 | INFO     | agents.upload_agent | Upload progress: 56%
-2026-07-31 19:06:10 | INFO     | agents.upload_agent | Upload progress: 59%
-2026-07-31 19:06:11 | INFO     | agents.upload_agent | Upload progress: 62%
-2026-07-31 19:06:11 | INFO     | agents.upload_agent | Upload progress: 65%
-2026-07-31 19:06:11 | INFO     | agents.upload_agent | Upload progress: 69%
-2026-07-31 19:06:11 | INFO     | agents.upload_agent | Upload progress: 72%
-2026-07-31 19:06:11 | INFO     | agents.upload_agent | Upload progress: 75%
-2026-07-31 19:06:11 | INFO     | agents.upload_agent | Upload progress: 78%
-2026-07-31 19:06:11 | INFO     | agents.upload_agent | Upload progress: 81%
-2026-07-31 19:06:11 | INFO     | agents.upload_agent | Upload progress: 84%
-2026-07-31 19:06:11 | INFO     | agents.upload_agent | Upload progress: 87%
-2026-07-31 19:06:11 | INFO     | agents.upload_agent | Upload progress: 91%
-2026-07-31 19:06:11 | INFO     | agents.upload_agent | Upload progress: 94%
-2026-07-31 19:06:11 | INFO     | agents.upload_agent | Upload progress: 97%
-2026-07-31 19:06:12 | INFO     | agents.upload_agent | Upload complete! Video ID: 71Gu68XCYrM
-2026-07-31 19:06:12 | INFO     | agents.upload_agent | URL: https://www.youtube.com/shorts/71Gu68XCYrM
-2026-07-31 19:06:12 | INFO     | main | History saved: 56 titles
-2026-07-31 19:06:12 | INFO     | main | [7] Cross-posting to Instagram/Facebook...
-2026-07-31 19:06:13 | INFO     | agents.instagram_agent | Resolved IG account 17841414363117627 via page 'Unique Podcast' (page id 1262973056889436)
-2026-07-31 19:06:17 | INFO     | agents.instagram_agent | Video temporarily hosted: https://github.com/rkadel1488/youtube-shorts-agent/releases/download/reel-temp-1785524773/reel.mp4
-2026-07-31 19:06:17 | INFO     | agents.instagram_agent | Creating IG media container...
-2026-07-31 19:06:20 | INFO     | agents.instagram_agent | IG processing... (IN_PROGRESS)
-2026-07-31 19:06:31 | INFO     | agents.instagram_agent | IG processing... (IN_PROGRESS)
-2026-07-31 19:06:42 | INFO     | agents.instagram_agent | IG processing... (IN_PROGRESS)
-2026-07-31 19:06:53 | INFO     | agents.instagram_agent | IG processing... (IN_PROGRESS)
-2026-07-31 19:07:04 | INFO     | agents.instagram_agent | IG processing... (IN_PROGRESS)
-2026-07-31 19:07:26 | INFO     | agents.instagram_agent | Instagram Reel published: media id 17912359110433232
-2026-07-31 19:07:38 | INFO     | agents.instagram_agent | Facebook Reel published (native Reels feed): video id 1087018853762239
-2026-07-31 19:07:39 | INFO     | agents.instagram_agent | Temporary release cleaned up
-2026-07-31 19:07:39 | INFO     | main | ============================================================
-2026-07-31 19:07:39 | INFO     | main | SUCCESS: https://www.youtube.com/shorts/71Gu68XCYrM
-2026-07-31 19:07:39 | INFO     | main | ============================================================
+2026-08-01 11:08:18 | INFO     | main | ============================================================
+2026-08-01 11:08:18 | INFO     | main | STARTING JOB: 20260801_110818
+2026-08-01 11:08:18 | INFO     | main | ============================================================
+2026-08-01 11:08:18 | INFO     | main | History: 56 used titles
+2026-08-01 11:08:18 | INFO     | agents.trend_agent | Google Trends: 10 items (top traffic: 2000)
+2026-08-01 11:08:18 | WARNING  | agents.trend_agent | Reddit fetch failed: 403 Client Error: Blocked for url: https://www.reddit.com/r/popular/hot.json?limit=15
+2026-08-01 11:08:18 | INFO     | agents.trend_agent | Selecting trend topic via Claude (attempt 1)...
+2026-08-01 11:08:21 | INFO     | agents.trend_agent | Trend topic selected: T-Mobile Outage Billing Credits (traffic-ranked)
+2026-08-01 11:08:21 | INFO     | main | [1] Generating script for 'T-Mobile Outage Billing Credits' [trending]...
+2026-08-01 11:08:21 | INFO     | agents.script_agent | Generating trend script for 'T-Mobile Outage Billing Credits' via Claude (attempt 1)...
+2026-08-01 11:08:27 | INFO     | agents.script_agent | Trend script generated: 'T-Mobile Outage Billing Credits'
+2026-08-01 11:08:27 | INFO     | main | [2] Generating AI images...
+2026-08-01 11:08:27 | INFO     | agents.image_agent | Fetching image 1/4 for 'smartphone with no signal wide establishing' (attempt 1)...
+2026-08-01 11:08:28 | INFO     | agents.image_agent | Image 1 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260801_110818/temp/images/scene_00.jpg
+2026-08-01 11:08:29 | INFO     | agents.image_agent | Fetching image 2/4 for 'phone bill close-up close-up detail' (attempt 1)...
+2026-08-01 11:08:29 | INFO     | agents.image_agent | Image 2 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260801_110818/temp/images/scene_01.jpg
+2026-08-01 11:08:30 | INFO     | agents.image_agent | Fetching image 3/4 for 'cell tower at dusk dramatic moment' (attempt 1)...
+2026-08-01 11:08:31 | INFO     | agents.image_agent | Image 3 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260801_110818/temp/images/scene_02.jpg
+2026-08-01 11:08:32 | INFO     | agents.image_agent | Fetching image 4/4 for 'frustrated person looking at phone powerful finale' (attempt 1)...
+2026-08-01 11:08:33 | INFO     | agents.image_agent | Image 4 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260801_110818/temp/images/scene_03.jpg
+2026-08-01 11:08:34 | INFO     | agents.image_agent | Generated 4/4 images successfully
+2026-08-01 11:08:34 | INFO     | main | [3] Generating voiceover...
+2026-08-01 11:08:34 | INFO     | agents.audio_agent | Generating voiceover with Gemini TTS (attempt 1)…
+2026-08-01 11:08:47 | INFO     | agents.audio_agent | Voiceover saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260801_110818/temp/voiceover.mp3 (259 KB)
+2026-08-01 11:08:47 | INFO     | main | [4] Assembling video...
+2026-08-01 11:08:48 | INFO     | agents.video_agent | Rendering AI video -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260801_110818/final_raw.mp4
+2026-08-01 11:10:45 | INFO     | agents.video_agent | AI video done: /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260801_110818/final_raw.mp4 (4.9 MB)
+2026-08-01 11:10:45 | INFO     | main | [4b] Enhancing with FFmpeg...
+2026-08-01 11:11:06 | INFO     | agents.video_editor | Color graded: graded_final_raw.mp4
+2026-08-01 11:11:26 | INFO     | agents.video_editor | Fade added: final.mp4
+2026-08-01 11:11:26 | INFO     | main | [5] Generating SEO metadata...
+2026-08-01 11:11:26 | INFO     | agents.seo_agent | Generating SEO metadata (attempt 1)...
+2026-08-01 11:11:31 | INFO     | agents.seo_agent | SEO title: 'T-Mobile outage is putting money back in pockets 💸'
+2026-08-01 11:11:31 | INFO     | main | Title: T-Mobile outage is putting money back in pockets 💸
+2026-08-01 11:11:31 | INFO     | main | [6] Uploading to YouTube...
+2026-08-01 11:11:31 | INFO     | agents.upload_agent | Refreshing YouTube token...
+2026-08-01 11:11:31 | INFO     | agents.upload_agent | Uploading 'T-Mobile outage is putting money back in pockets 💸' (attempt 1)...
+2026-08-01 11:11:31 | INFO     | agents.upload_agent | Upload progress: 3%
+2026-08-01 11:11:32 | INFO     | agents.upload_agent | Upload progress: 7%
+2026-08-01 11:11:32 | INFO     | agents.upload_agent | Upload progress: 11%
+2026-08-01 11:11:32 | INFO     | agents.upload_agent | Upload progress: 15%
+2026-08-01 11:11:32 | INFO     | agents.upload_agent | Upload progress: 19%
+2026-08-01 11:11:32 | INFO     | agents.upload_agent | Upload progress: 23%
+2026-08-01 11:11:32 | INFO     | agents.upload_agent | Upload progress: 27%
+2026-08-01 11:11:32 | INFO     | agents.upload_agent | Upload progress: 31%
+2026-08-01 11:11:32 | INFO     | agents.upload_agent | Upload progress: 35%
+2026-08-01 11:11:32 | INFO     | agents.upload_agent | Upload progress: 39%
+2026-08-01 11:11:32 | INFO     | agents.upload_agent | Upload progress: 43%
+2026-08-01 11:11:33 | INFO     | agents.upload_agent | Upload progress: 47%
+2026-08-01 11:11:33 | INFO     | agents.upload_agent | Upload progress: 51%
+2026-08-01 11:11:33 | INFO     | agents.upload_agent | Upload progress: 55%
+2026-08-01 11:11:33 | INFO     | agents.upload_agent | Upload progress: 59%
+2026-08-01 11:11:33 | INFO     | agents.upload_agent | Upload progress: 63%
+2026-08-01 11:11:33 | INFO     | agents.upload_agent | Upload progress: 67%
+2026-08-01 11:11:33 | INFO     | agents.upload_agent | Upload progress: 71%
+2026-08-01 11:11:33 | INFO     | agents.upload_agent | Upload progress: 75%
+2026-08-01 11:11:33 | INFO     | agents.upload_agent | Upload progress: 79%
+2026-08-01 11:11:34 | INFO     | agents.upload_agent | Upload progress: 83%
+2026-08-01 11:11:34 | INFO     | agents.upload_agent | Upload progress: 87%
+2026-08-01 11:11:34 | INFO     | agents.upload_agent | Upload progress: 91%
+2026-08-01 11:11:34 | INFO     | agents.upload_agent | Upload progress: 95%
+2026-08-01 11:11:34 | INFO     | agents.upload_agent | Upload progress: 99%
+2026-08-01 11:11:34 | INFO     | agents.upload_agent | Upload complete! Video ID: Nr6xpBv-0Ts
+2026-08-01 11:11:34 | INFO     | agents.upload_agent | URL: https://www.youtube.com/shorts/Nr6xpBv-0Ts
+2026-08-01 11:11:34 | INFO     | main | History saved: 57 titles
+2026-08-01 11:11:34 | INFO     | main | [7] Cross-posting to Instagram/Facebook...
+2026-08-01 11:11:36 | INFO     | agents.instagram_agent | Resolved IG account 17841414363117627 via page 'Unique Podcast' (page id 1262973056889436)
+2026-08-01 11:11:37 | INFO     | agents.instagram_agent | Video temporarily hosted: https://github.com/rkadel1488/youtube-shorts-agent/releases/download/reel-temp-1785582696/reel.mp4
+2026-08-01 11:11:37 | INFO     | agents.instagram_agent | Creating IG media container...
+2026-08-01 11:11:38 | INFO     | agents.instagram_agent | IG processing... (IN_PROGRESS)
+2026-08-01 11:11:49 | INFO     | agents.instagram_agent | IG processing... (IN_PROGRESS)
+2026-08-01 11:11:59 | INFO     | agents.instagram_agent | IG processing... (IN_PROGRESS)
+2026-08-01 11:12:20 | INFO     | agents.instagram_agent | Instagram Reel published: media id 18364475683242139
+2026-08-01 11:12:30 | INFO     | agents.instagram_agent | Facebook Reel published (native Reels feed): video id 2211991252981898
+2026-08-01 11:12:31 | INFO     | agents.instagram_agent | Temporary release cleaned up
+2026-08-01 11:12:31 | INFO     | main | ============================================================
+2026-08-01 11:12:31 | INFO     | main | SUCCESS: https://www.youtube.com/shorts/Nr6xpBv-0Ts
+2026-08-01 11:12:31 | INFO     | main | ============================================================
 
-Done! Watch at: https://www.youtube.com/shorts/71Gu68XCYrM
+Done! Watch at: https://www.youtube.com/shorts/Nr6xpBv-0Ts
