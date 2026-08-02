@@ -1,93 +1,86 @@
-2026-08-01 18:46:53 | INFO     | main | ============================================================
-2026-08-01 18:46:53 | INFO     | main | STARTING JOB: 20260801_184653
-2026-08-01 18:46:53 | INFO     | main | ============================================================
-2026-08-01 18:46:53 | INFO     | main | History: 57 used titles
-2026-08-01 18:46:53 | INFO     | agents.trend_agent | Google Trends: 10 items (top traffic: 20000)
-2026-08-01 18:46:53 | WARNING  | agents.trend_agent | Reddit fetch failed: 403 Client Error: Blocked for url: https://www.reddit.com/r/popular/hot.json?limit=15
-2026-08-01 18:46:53 | INFO     | agents.trend_agent | Selecting trend topic via Claude (attempt 1)...
-2026-08-01 18:46:58 | INFO     | agents.trend_agent | Trend topic selected: US Bars Companies From H-1B Visas (traffic-ranked)
-2026-08-01 18:46:58 | INFO     | main | [1] Generating script for 'US Bars Companies From H-1B Visas' [trending]...
-2026-08-01 18:46:58 | INFO     | agents.script_agent | Generating trend script for 'US Bars Companies From H-1B Visas' via Claude (attempt 1)...
-2026-08-01 18:47:03 | INFO     | agents.script_agent | Trend script generated: 'US Bars Companies From H-1B Visas'
-2026-08-01 18:47:03 | INFO     | main | [2] Generating AI images...
-2026-08-01 18:47:03 | INFO     | agents.image_agent | Fetching image 1/4 for 'government building exterior wide establishing' (attempt 1)...
-2026-08-01 18:47:03 | INFO     | agents.image_agent | Image 1 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260801_184653/temp/images/scene_00.jpg
-2026-08-01 18:47:04 | INFO     | agents.image_agent | Fetching image 2/4 for 'office workers at desks close-up detail' (attempt 1)...
-2026-08-01 18:47:05 | INFO     | agents.image_agent | Image 2 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260801_184653/temp/images/scene_01.jpg
-2026-08-01 18:47:06 | INFO     | agents.image_agent | Fetching image 3/4 for 'visa application documents dramatic moment' (attempt 1)...
-2026-08-01 18:47:06 | INFO     | agents.image_agent | Image 3 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260801_184653/temp/images/scene_02.jpg
-2026-08-01 18:47:07 | INFO     | agents.image_agent | Fetching image 4/4 for 'corporate headquarters powerful finale' (attempt 1)...
-2026-08-01 18:47:08 | INFO     | agents.image_agent | Image 4 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260801_184653/temp/images/scene_03.jpg
-2026-08-01 18:47:09 | INFO     | agents.image_agent | Generated 4/4 images successfully
-2026-08-01 18:47:09 | INFO     | main | [3] Generating voiceover...
-2026-08-01 18:47:09 | INFO     | agents.audio_agent | Generating voiceover with Gemini TTS (attempt 1)…
-2026-08-01 18:47:26 | INFO     | agents.audio_agent | Voiceover saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260801_184653/temp/voiceover.mp3 (302 KB)
-2026-08-01 18:47:26 | INFO     | main | [4] Assembling video...
-2026-08-01 18:47:26 | INFO     | agents.video_agent | Rendering AI video -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260801_184653/final_raw.mp4
-2026-08-01 18:49:39 | INFO     | agents.video_agent | AI video done: /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260801_184653/final_raw.mp4 (7.4 MB)
-2026-08-01 18:49:39 | INFO     | main | [4b] Enhancing with FFmpeg...
-2026-08-01 18:50:03 | INFO     | agents.video_editor | Color graded: graded_final_raw.mp4
-2026-08-01 18:50:28 | INFO     | agents.video_editor | Fade added: final.mp4
-2026-08-01 18:50:28 | INFO     | main | [5] Generating SEO metadata...
-2026-08-01 18:50:28 | INFO     | agents.seo_agent | Generating SEO metadata (attempt 1)...
-2026-08-01 18:50:32 | INFO     | agents.seo_agent | SEO title: '4 companies just got H-1B visa banned forever 🚨'
-2026-08-01 18:50:32 | INFO     | main | Title: 4 companies just got H-1B visa banned forever 🚨
-2026-08-01 18:50:32 | INFO     | main | [6] Uploading to YouTube...
-2026-08-01 18:50:32 | INFO     | agents.upload_agent | Refreshing YouTube token...
-2026-08-01 18:50:32 | INFO     | agents.upload_agent | Uploading '4 companies just got H-1B visa banned forever 🚨' (attempt 1)...
-2026-08-01 18:50:34 | INFO     | agents.upload_agent | Upload progress: 2%
-2026-08-01 18:50:34 | INFO     | agents.upload_agent | Upload progress: 5%
-2026-08-01 18:50:34 | INFO     | agents.upload_agent | Upload progress: 8%
-2026-08-01 18:50:34 | INFO     | agents.upload_agent | Upload progress: 10%
-2026-08-01 18:50:34 | INFO     | agents.upload_agent | Upload progress: 13%
-2026-08-01 18:50:34 | INFO     | agents.upload_agent | Upload progress: 16%
-2026-08-01 18:50:34 | INFO     | agents.upload_agent | Upload progress: 19%
-2026-08-01 18:50:34 | INFO     | agents.upload_agent | Upload progress: 21%
-2026-08-01 18:50:34 | INFO     | agents.upload_agent | Upload progress: 24%
-2026-08-01 18:50:34 | INFO     | agents.upload_agent | Upload progress: 27%
-2026-08-01 18:50:34 | INFO     | agents.upload_agent | Upload progress: 30%
-2026-08-01 18:50:34 | INFO     | agents.upload_agent | Upload progress: 32%
-2026-08-01 18:50:35 | INFO     | agents.upload_agent | Upload progress: 35%
-2026-08-01 18:50:35 | INFO     | agents.upload_agent | Upload progress: 38%
-2026-08-01 18:50:35 | INFO     | agents.upload_agent | Upload progress: 41%
-2026-08-01 18:50:35 | INFO     | agents.upload_agent | Upload progress: 43%
-2026-08-01 18:50:35 | INFO     | agents.upload_agent | Upload progress: 46%
-2026-08-01 18:50:35 | INFO     | agents.upload_agent | Upload progress: 49%
-2026-08-01 18:50:35 | INFO     | agents.upload_agent | Upload progress: 52%
-2026-08-01 18:50:35 | INFO     | agents.upload_agent | Upload progress: 54%
-2026-08-01 18:50:35 | INFO     | agents.upload_agent | Upload progress: 57%
-2026-08-01 18:50:35 | INFO     | agents.upload_agent | Upload progress: 60%
-2026-08-01 18:50:35 | INFO     | agents.upload_agent | Upload progress: 63%
-2026-08-01 18:50:35 | INFO     | agents.upload_agent | Upload progress: 65%
-2026-08-01 18:50:35 | INFO     | agents.upload_agent | Upload progress: 68%
-2026-08-01 18:50:35 | INFO     | agents.upload_agent | Upload progress: 71%
-2026-08-01 18:50:36 | INFO     | agents.upload_agent | Upload progress: 74%
-2026-08-01 18:50:36 | INFO     | agents.upload_agent | Upload progress: 76%
-2026-08-01 18:50:36 | INFO     | agents.upload_agent | Upload progress: 79%
-2026-08-01 18:50:36 | INFO     | agents.upload_agent | Upload progress: 82%
-2026-08-01 18:50:36 | INFO     | agents.upload_agent | Upload progress: 85%
-2026-08-01 18:50:36 | INFO     | agents.upload_agent | Upload progress: 87%
-2026-08-01 18:50:36 | INFO     | agents.upload_agent | Upload progress: 90%
-2026-08-01 18:50:36 | INFO     | agents.upload_agent | Upload progress: 93%
-2026-08-01 18:50:36 | INFO     | agents.upload_agent | Upload progress: 96%
-2026-08-01 18:50:36 | INFO     | agents.upload_agent | Upload progress: 98%
-2026-08-01 18:50:37 | INFO     | agents.upload_agent | Upload complete! Video ID: hIX0gwF6V3Q
-2026-08-01 18:50:37 | INFO     | agents.upload_agent | URL: https://www.youtube.com/shorts/hIX0gwF6V3Q
-2026-08-01 18:50:37 | INFO     | main | History saved: 58 titles
-2026-08-01 18:50:37 | INFO     | main | [7] Cross-posting to Instagram/Facebook...
-2026-08-01 18:50:38 | INFO     | agents.instagram_agent | Resolved IG account 17841414363117627 via page 'Unique Podcast' (page id 1262973056889436)
-2026-08-01 18:50:39 | INFO     | agents.instagram_agent | Video temporarily hosted: https://github.com/rkadel1488/youtube-shorts-agent/releases/download/reel-temp-1785610238/reel.mp4
-2026-08-01 18:50:39 | INFO     | agents.instagram_agent | Creating IG media container...
-2026-08-01 18:50:40 | INFO     | agents.instagram_agent | IG processing... (IN_PROGRESS)
-2026-08-01 18:50:51 | INFO     | agents.instagram_agent | IG processing... (IN_PROGRESS)
-2026-08-01 18:51:01 | INFO     | agents.instagram_agent | IG processing... (IN_PROGRESS)
-2026-08-01 18:51:11 | INFO     | agents.instagram_agent | IG processing... (IN_PROGRESS)
-2026-08-01 18:51:22 | INFO     | agents.instagram_agent | IG processing... (IN_PROGRESS)
-2026-08-01 18:51:39 | INFO     | agents.instagram_agent | Instagram Reel published: media id 18005558678766529
-2026-08-01 18:51:55 | INFO     | agents.instagram_agent | Facebook Reel published (native Reels feed): video id 1472828771532628
-2026-08-01 18:51:56 | INFO     | agents.instagram_agent | Temporary release cleaned up
-2026-08-01 18:51:56 | INFO     | main | ============================================================
-2026-08-01 18:51:56 | INFO     | main | SUCCESS: https://www.youtube.com/shorts/hIX0gwF6V3Q
-2026-08-01 18:51:56 | INFO     | main | ============================================================
+2026-08-02 11:09:08 | INFO     | main | ============================================================
+2026-08-02 11:09:08 | INFO     | main | STARTING JOB: 20260802_110908
+2026-08-02 11:09:08 | INFO     | main | ============================================================
+2026-08-02 11:09:08 | INFO     | main | History: 58 used titles
+2026-08-02 11:09:08 | INFO     | agents.trend_agent | Google Trends: 10 items (top traffic: 5000)
+2026-08-02 11:09:08 | WARNING  | agents.trend_agent | Reddit fetch failed: 403 Client Error: Blocked for url: https://www.reddit.com/r/popular/hot.json?limit=15
+2026-08-02 11:09:08 | INFO     | agents.trend_agent | Selecting trend topic via Claude (attempt 1)...
+2026-08-02 11:09:12 | INFO     | agents.trend_agent | Trend topic selected: Air Jordan 17 Black Patent Comeback (traffic-ranked)
+2026-08-02 11:09:12 | INFO     | main | [1] Generating script for 'Air Jordan 17 Black Patent Comeback' [trending]...
+2026-08-02 11:09:12 | INFO     | agents.script_agent | Generating trend script for 'Air Jordan 17 Black Patent Comeback' via Claude (attempt 1)...
+2026-08-02 11:09:18 | INFO     | agents.script_agent | Trend script generated: 'Air Jordan 17 Black Patent Comeback'
+2026-08-02 11:09:18 | INFO     | main | [2] Generating AI images...
+2026-08-02 11:09:18 | INFO     | agents.image_agent | Fetching image 1/4 for 'black patent leather sneakers close-up wide establishing' (attempt 1)...
+2026-08-02 11:09:19 | INFO     | agents.image_agent | Image 1 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260802_110908/temp/images/scene_00.jpg
+2026-08-02 11:09:20 | INFO     | agents.image_agent | Fetching image 2/4 for 'sneaker release display shelf close-up detail' (attempt 1)...
+2026-08-02 11:09:21 | INFO     | agents.image_agent | Image 2 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260802_110908/temp/images/scene_01.jpg
+2026-08-02 11:09:22 | INFO     | agents.image_agent | Fetching image 3/4 for 'glossy black shoe detail dramatic moment' (attempt 1)...
+2026-08-02 11:09:23 | INFO     | agents.image_agent | Image 3 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260802_110908/temp/images/scene_02.jpg
+2026-08-02 11:09:24 | INFO     | agents.image_agent | Fetching image 4/4 for 'sneaker store launch crowd powerful finale' (attempt 1)...
+2026-08-02 11:09:24 | INFO     | agents.image_agent | Image 4 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260802_110908/temp/images/scene_03.jpg
+2026-08-02 11:09:25 | INFO     | agents.image_agent | Generated 4/4 images successfully
+2026-08-02 11:09:25 | INFO     | main | [3] Generating voiceover...
+2026-08-02 11:09:25 | INFO     | agents.audio_agent | Generating voiceover with Gemini TTS (attempt 1)…
+2026-08-02 11:09:40 | INFO     | agents.audio_agent | Voiceover saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260802_110908/temp/voiceover.mp3 (285 KB)
+2026-08-02 11:09:40 | INFO     | main | [4] Assembling video...
+2026-08-02 11:09:40 | INFO     | agents.video_agent | Rendering AI video -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260802_110908/final_raw.mp4
+2026-08-02 11:11:43 | INFO     | agents.video_agent | AI video done: /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260802_110908/final_raw.mp4 (5.8 MB)
+2026-08-02 11:11:43 | INFO     | main | [4b] Enhancing with FFmpeg...
+2026-08-02 11:12:06 | INFO     | agents.video_editor | Color graded: graded_final_raw.mp4
+2026-08-02 11:12:29 | INFO     | agents.video_editor | Fade added: final.mp4
+2026-08-02 11:12:29 | INFO     | main | [5] Generating SEO metadata...
+2026-08-02 11:12:29 | INFO     | agents.seo_agent | Generating SEO metadata (attempt 1)...
+2026-08-02 11:12:34 | INFO     | agents.seo_agent | SEO title: 'Air Jordan 17 returns in black patent for 2026 🔥'
+2026-08-02 11:12:34 | INFO     | main | Title: Air Jordan 17 returns in black patent for 2026 🔥
+2026-08-02 11:12:34 | INFO     | main | [6] Uploading to YouTube...
+2026-08-02 11:12:34 | INFO     | agents.upload_agent | Refreshing YouTube token...
+2026-08-02 11:12:34 | INFO     | agents.upload_agent | Uploading 'Air Jordan 17 returns in black patent for 2026 🔥' (attempt 1)...
+2026-08-02 11:12:35 | INFO     | agents.upload_agent | Upload progress: 3%
+2026-08-02 11:12:35 | INFO     | agents.upload_agent | Upload progress: 6%
+2026-08-02 11:12:35 | INFO     | agents.upload_agent | Upload progress: 9%
+2026-08-02 11:12:35 | INFO     | agents.upload_agent | Upload progress: 13%
+2026-08-02 11:12:35 | INFO     | agents.upload_agent | Upload progress: 16%
+2026-08-02 11:12:35 | INFO     | agents.upload_agent | Upload progress: 19%
+2026-08-02 11:12:35 | INFO     | agents.upload_agent | Upload progress: 23%
+2026-08-02 11:12:36 | INFO     | agents.upload_agent | Upload progress: 26%
+2026-08-02 11:12:36 | INFO     | agents.upload_agent | Upload progress: 29%
+2026-08-02 11:12:36 | INFO     | agents.upload_agent | Upload progress: 33%
+2026-08-02 11:12:36 | INFO     | agents.upload_agent | Upload progress: 36%
+2026-08-02 11:12:36 | INFO     | agents.upload_agent | Upload progress: 39%
+2026-08-02 11:12:36 | INFO     | agents.upload_agent | Upload progress: 43%
+2026-08-02 11:12:36 | INFO     | agents.upload_agent | Upload progress: 46%
+2026-08-02 11:12:36 | INFO     | agents.upload_agent | Upload progress: 49%
+2026-08-02 11:12:36 | INFO     | agents.upload_agent | Upload progress: 52%
+2026-08-02 11:12:37 | INFO     | agents.upload_agent | Upload progress: 56%
+2026-08-02 11:12:37 | INFO     | agents.upload_agent | Upload progress: 59%
+2026-08-02 11:12:37 | INFO     | agents.upload_agent | Upload progress: 62%
+2026-08-02 11:12:37 | INFO     | agents.upload_agent | Upload progress: 66%
+2026-08-02 11:12:37 | INFO     | agents.upload_agent | Upload progress: 69%
+2026-08-02 11:12:37 | INFO     | agents.upload_agent | Upload progress: 72%
+2026-08-02 11:12:37 | INFO     | agents.upload_agent | Upload progress: 76%
+2026-08-02 11:12:37 | INFO     | agents.upload_agent | Upload progress: 79%
+2026-08-02 11:12:37 | INFO     | agents.upload_agent | Upload progress: 82%
+2026-08-02 11:12:38 | INFO     | agents.upload_agent | Upload progress: 86%
+2026-08-02 11:12:38 | INFO     | agents.upload_agent | Upload progress: 89%
+2026-08-02 11:12:38 | INFO     | agents.upload_agent | Upload progress: 92%
+2026-08-02 11:12:38 | INFO     | agents.upload_agent | Upload progress: 95%
+2026-08-02 11:12:38 | INFO     | agents.upload_agent | Upload progress: 99%
+2026-08-02 11:12:38 | INFO     | agents.upload_agent | Upload complete! Video ID: 8mtAHlH8rHM
+2026-08-02 11:12:38 | INFO     | agents.upload_agent | URL: https://www.youtube.com/shorts/8mtAHlH8rHM
+2026-08-02 11:12:38 | INFO     | main | History saved: 59 titles
+2026-08-02 11:12:38 | INFO     | main | [7] Cross-posting to Instagram/Facebook...
+2026-08-02 11:12:40 | INFO     | agents.instagram_agent | Resolved IG account 17841414363117627 via page 'Unique Podcast' (page id 1262973056889436)
+2026-08-02 11:12:42 | INFO     | agents.instagram_agent | Video temporarily hosted: https://github.com/rkadel1488/youtube-shorts-agent/releases/download/reel-temp-1785669160/reel.mp4
+2026-08-02 11:12:42 | INFO     | agents.instagram_agent | Creating IG media container...
+2026-08-02 11:12:45 | INFO     | agents.instagram_agent | IG processing... (IN_PROGRESS)
+2026-08-02 11:12:56 | INFO     | agents.instagram_agent | IG processing... (IN_PROGRESS)
+2026-08-02 11:13:07 | INFO     | agents.instagram_agent | IG processing... (IN_PROGRESS)
+2026-08-02 11:13:17 | INFO     | agents.instagram_agent | IG processing... (IN_PROGRESS)
+2026-08-02 11:13:40 | INFO     | agents.instagram_agent | Instagram Reel published: media id 18117338255491231
+2026-08-02 11:13:48 | INFO     | agents.instagram_agent | Facebook Reel published (native Reels feed): video id 2027108641502318
+2026-08-02 11:13:49 | INFO     | agents.instagram_agent | Temporary release cleaned up
+2026-08-02 11:13:49 | INFO     | main | ============================================================
+2026-08-02 11:13:49 | INFO     | main | SUCCESS: https://www.youtube.com/shorts/8mtAHlH8rHM
+2026-08-02 11:13:49 | INFO     | main | ============================================================
 
-Done! Watch at: https://www.youtube.com/shorts/hIX0gwF6V3Q
+Done! Watch at: https://www.youtube.com/shorts/8mtAHlH8rHM
