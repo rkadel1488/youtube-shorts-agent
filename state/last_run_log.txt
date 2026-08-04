@@ -1,94 +1,97 @@
-2026-08-03 19:13:29 | INFO     | main | ============================================================
-2026-08-03 19:13:29 | INFO     | main | STARTING JOB: 20260803_191329
-2026-08-03 19:13:29 | INFO     | main | ============================================================
-2026-08-03 19:13:29 | INFO     | main | History: 61 used titles
-2026-08-03 19:13:30 | INFO     | agents.trend_agent | Google Trends: 10 items (top traffic: 2000)
-2026-08-03 19:13:30 | WARNING  | agents.trend_agent | Reddit fetch failed: 403 Client Error: Blocked for url: https://www.reddit.com/r/popular/hot.json?limit=15
-2026-08-03 19:13:30 | INFO     | agents.trend_agent | Selecting trend topic via Claude (attempt 1)...
-2026-08-03 19:13:35 | WARNING  | agents.trend_agent | Duplicate topic 'iPhone 18 Rumors' — excluding and retrying
-2026-08-03 19:13:35 | INFO     | agents.trend_agent | Selecting trend topic via Claude (attempt 2)...
-2026-08-03 19:13:38 | WARNING  | agents.trend_agent | Duplicate topic 'iPhone 18 Rumors' — excluding and retrying
-2026-08-03 19:13:38 | INFO     | agents.trend_agent | Selecting trend topic via Claude (attempt 3)...
-2026-08-03 19:13:42 | WARNING  | agents.trend_agent | Duplicate topic 'iPhone 18 Rumors' — excluding and retrying
-2026-08-03 19:13:42 | INFO     | agents.trend_agent | Selecting trend topic via Claude (attempt 4)...
-2026-08-03 19:13:46 | WARNING  | agents.trend_agent | Duplicate topic 'iPhone 18 Release Date & Price Rumors' — excluding and retrying
-2026-08-03 19:13:46 | INFO     | agents.trend_agent | Selecting trend topic via Claude (attempt 5)...
-2026-08-03 19:13:53 | WARNING  | agents.trend_agent | Duplicate topic 'iPhone 18 Release Date & Colors' — excluding and retrying
-2026-08-03 19:13:53 | WARNING  | main | Trend topic failed (Trend topic selection failed after 5 attempts) — generating evergreen topic
-2026-08-03 19:13:53 | INFO     | agents.trend_agent | Generating evergreen fallback topic (attempt 1)...
-2026-08-03 19:13:59 | INFO     | agents.trend_agent | Evergreen topic: Your Stomach Gets a Whole New Lining Every 5 Days
-2026-08-03 19:13:59 | INFO     | main | [1] Generating script for 'Your Stomach Gets a Whole New Lining Every 5 Days' [evergreen]...
-2026-08-03 19:13:59 | INFO     | agents.script_agent | Generating trend script for 'Your Stomach Gets a Whole New Lining Every 5 Days' via Claude (attempt 1)...
-2026-08-03 19:14:05 | INFO     | agents.script_agent | Trend script generated: 'Your Stomach Gets a Whole New Lining Every 5 Days'
-2026-08-03 19:14:05 | INFO     | main | [2] Generating AI images...
-2026-08-03 19:14:05 | INFO     | agents.image_agent | Fetching image 1/4 for 'close-up stomach anatomy illustration wide establishing' (attempt 1)...
-2026-08-03 19:14:06 | INFO     | agents.image_agent | Image 1 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260803_191329/temp/images/scene_00.jpg
-2026-08-03 19:14:07 | INFO     | agents.image_agent | Fetching image 2/4 for 'human digestive system cross-section close-up detail' (attempt 1)...
-2026-08-03 19:14:08 | INFO     | agents.image_agent | Image 2 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260803_191329/temp/images/scene_01.jpg
-2026-08-03 19:14:09 | INFO     | agents.image_agent | Fetching image 3/4 for 'microscopic cell regeneration dramatic moment' (attempt 1)...
-2026-08-03 19:14:10 | INFO     | agents.image_agent | Image 3 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260803_191329/temp/images/scene_02.jpg
-2026-08-03 19:14:11 | INFO     | agents.image_agent | Fetching image 4/4 for 'stomach acid visualization powerful finale' (attempt 1)...
-2026-08-03 19:14:12 | INFO     | agents.image_agent | Image 4 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260803_191329/temp/images/scene_03.jpg
-2026-08-03 19:14:13 | INFO     | agents.image_agent | Generated 4/4 images successfully
-2026-08-03 19:14:13 | INFO     | main | [3] Generating voiceover...
-2026-08-03 19:14:13 | INFO     | agents.audio_agent | Generating voiceover with Gemini TTS (attempt 1)…
-2026-08-03 19:14:31 | INFO     | agents.audio_agent | Voiceover saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260803_191329/temp/voiceover.mp3 (353 KB)
-2026-08-03 19:14:31 | INFO     | main | [4] Assembling video...
-2026-08-03 19:14:32 | INFO     | agents.video_agent | Rendering AI video -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260803_191329/final_raw.mp4
-2026-08-03 19:16:40 | INFO     | agents.video_agent | AI video done: /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260803_191329/final_raw.mp4 (5.9 MB)
-2026-08-03 19:16:40 | INFO     | main | [4b] Enhancing with FFmpeg...
-2026-08-03 19:16:59 | INFO     | agents.video_editor | Color graded: graded_final_raw.mp4
-2026-08-03 19:17:19 | INFO     | agents.video_editor | Fade added: final.mp4
-2026-08-03 19:17:19 | INFO     | main | [5] Generating SEO metadata...
-2026-08-03 19:17:19 | INFO     | agents.seo_agent | Generating SEO metadata (attempt 1)...
-2026-08-03 19:17:24 | INFO     | agents.seo_agent | SEO title: 'Your stomach replaces its entire lining every 5 days 😳'
-2026-08-03 19:17:24 | INFO     | main | Title: Your stomach replaces its entire lining every 5 days 😳
-2026-08-03 19:17:24 | INFO     | main | [6] Uploading to YouTube...
-2026-08-03 19:17:24 | INFO     | agents.upload_agent | Refreshing YouTube token...
-2026-08-03 19:17:24 | INFO     | agents.upload_agent | Uploading 'Your stomach replaces its entire lining every 5 days 😳' (attempt 1)...
-2026-08-03 19:17:25 | INFO     | agents.upload_agent | Upload progress: 3%
-2026-08-03 19:17:25 | INFO     | agents.upload_agent | Upload progress: 6%
-2026-08-03 19:17:26 | INFO     | agents.upload_agent | Upload progress: 10%
-2026-08-03 19:17:26 | INFO     | agents.upload_agent | Upload progress: 13%
-2026-08-03 19:17:27 | INFO     | agents.upload_agent | Upload progress: 17%
-2026-08-03 19:17:27 | INFO     | agents.upload_agent | Upload progress: 20%
-2026-08-03 19:17:27 | INFO     | agents.upload_agent | Upload progress: 24%
-2026-08-03 19:17:28 | INFO     | agents.upload_agent | Upload progress: 27%
-2026-08-03 19:17:28 | INFO     | agents.upload_agent | Upload progress: 31%
-2026-08-03 19:17:28 | INFO     | agents.upload_agent | Upload progress: 34%
-2026-08-03 19:17:29 | INFO     | agents.upload_agent | Upload progress: 38%
-2026-08-03 19:17:29 | INFO     | agents.upload_agent | Upload progress: 41%
-2026-08-03 19:17:30 | INFO     | agents.upload_agent | Upload progress: 45%
-2026-08-03 19:17:30 | INFO     | agents.upload_agent | Upload progress: 48%
-2026-08-03 19:17:30 | INFO     | agents.upload_agent | Upload progress: 52%
-2026-08-03 19:17:31 | INFO     | agents.upload_agent | Upload progress: 55%
-2026-08-03 19:17:31 | INFO     | agents.upload_agent | Upload progress: 59%
-2026-08-03 19:17:32 | INFO     | agents.upload_agent | Upload progress: 62%
-2026-08-03 19:17:32 | INFO     | agents.upload_agent | Upload progress: 66%
-2026-08-03 19:17:32 | INFO     | agents.upload_agent | Upload progress: 69%
-2026-08-03 19:17:33 | INFO     | agents.upload_agent | Upload progress: 73%
-2026-08-03 19:17:33 | INFO     | agents.upload_agent | Upload progress: 76%
-2026-08-03 19:17:33 | INFO     | agents.upload_agent | Upload progress: 80%
-2026-08-03 19:17:34 | INFO     | agents.upload_agent | Upload progress: 83%
-2026-08-03 19:17:34 | INFO     | agents.upload_agent | Upload progress: 87%
-2026-08-03 19:17:35 | INFO     | agents.upload_agent | Upload progress: 90%
-2026-08-03 19:17:35 | INFO     | agents.upload_agent | Upload progress: 94%
-2026-08-03 19:17:35 | INFO     | agents.upload_agent | Upload progress: 97%
-2026-08-03 19:17:36 | INFO     | agents.upload_agent | Upload complete! Video ID: CP0dF87SEtQ
-2026-08-03 19:17:36 | INFO     | agents.upload_agent | URL: https://www.youtube.com/shorts/CP0dF87SEtQ
-2026-08-03 19:17:36 | INFO     | main | History saved: 62 titles
-2026-08-03 19:17:36 | INFO     | main | [7] Cross-posting to Instagram/Facebook...
-2026-08-03 19:17:37 | INFO     | agents.instagram_agent | Resolved IG account 17841414363117627 via page 'Unique Podcast' (page id 1262973056889436)
-2026-08-03 19:17:39 | INFO     | agents.instagram_agent | Video temporarily hosted: https://github.com/rkadel1488/youtube-shorts-agent/releases/download/reel-temp-1785784657/reel.mp4
-2026-08-03 19:17:39 | INFO     | agents.instagram_agent | Creating IG media container...
-2026-08-03 19:17:41 | INFO     | agents.instagram_agent | IG processing... (IN_PROGRESS)
-2026-08-03 19:17:51 | INFO     | agents.instagram_agent | IG processing... (IN_PROGRESS)
-2026-08-03 19:18:01 | INFO     | agents.instagram_agent | IG processing... (IN_PROGRESS)
-2026-08-03 19:18:19 | INFO     | agents.instagram_agent | Instagram Reel published: media id 17993597471816708
-2026-08-03 19:18:29 | INFO     | agents.instagram_agent | Facebook Reel published (native Reels feed): video id 2514592615671730
-2026-08-03 19:18:30 | INFO     | agents.instagram_agent | Temporary release cleaned up
-2026-08-03 19:18:30 | INFO     | main | ============================================================
-2026-08-03 19:18:30 | INFO     | main | SUCCESS: https://www.youtube.com/shorts/CP0dF87SEtQ
-2026-08-03 19:18:30 | INFO     | main | ============================================================
+2026-08-04 12:51:00 | INFO     | main | ============================================================
+2026-08-04 12:51:00 | INFO     | main | STARTING JOB: 20260804_125100
+2026-08-04 12:51:00 | INFO     | main | ============================================================
+2026-08-04 12:51:00 | INFO     | main | History: 62 used titles
+2026-08-04 12:51:01 | INFO     | agents.trend_agent | Google Trends: 10 items (top traffic: 2000)
+2026-08-04 12:51:01 | WARNING  | agents.trend_agent | Reddit fetch failed: 403 Client Error: Blocked for url: https://www.reddit.com/r/popular/hot.json?limit=15
+2026-08-04 12:51:01 | INFO     | agents.trend_agent | Selecting trend topic via Claude (attempt 1)...
+2026-08-04 12:51:06 | INFO     | agents.trend_agent | Trend topic selected: Bijan Robinson NFL's Highest-Paid RB (traffic-ranked)
+2026-08-04 12:51:06 | INFO     | main | [1] Generating script for 'Bijan Robinson NFL's Highest-Paid RB' [trending]...
+2026-08-04 12:51:06 | INFO     | agents.script_agent | Generating trend script for 'Bijan Robinson NFL's Highest-Paid RB' via Claude (attempt 1)...
+2026-08-04 12:51:11 | INFO     | agents.script_agent | Trend script generated: 'Bijan Robinson NFL's Highest-Paid RB'
+2026-08-04 12:51:11 | INFO     | main | [2] Generating AI images...
+2026-08-04 12:51:11 | INFO     | agents.image_agent | Fetching image 1/4 for 'football stadium wide establishing' (attempt 1)...
+2026-08-04 12:51:11 | INFO     | agents.image_agent | Image 1 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260804_125100/temp/images/scene_00.jpg
+2026-08-04 12:51:12 | INFO     | agents.image_agent | Fetching image 2/4 for 'contract signing close-up detail' (attempt 1)...
+2026-08-04 12:51:13 | INFO     | agents.image_agent | Image 2 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260804_125100/temp/images/scene_01.jpg
+2026-08-04 12:51:14 | INFO     | agents.image_agent | Fetching image 3/4 for 'NFL game action dramatic moment' (attempt 1)...
+2026-08-04 12:51:15 | INFO     | agents.image_agent | Image 3 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260804_125100/temp/images/scene_02.jpg
+2026-08-04 12:51:16 | INFO     | agents.image_agent | Fetching image 4/4 for 'running back silhouette powerful finale' (attempt 1)...
+2026-08-04 12:51:16 | INFO     | agents.image_agent | Image 4 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260804_125100/temp/images/scene_03.jpg
+2026-08-04 12:51:17 | INFO     | agents.image_agent | Generated 4/4 images successfully
+2026-08-04 12:51:17 | INFO     | main | [3] Generating voiceover...
+2026-08-04 12:51:17 | INFO     | agents.audio_agent | Generating voiceover with Gemini TTS (attempt 1)…
+2026-08-04 12:51:35 | INFO     | agents.audio_agent | Voiceover saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260804_125100/temp/voiceover.mp3 (347 KB)
+2026-08-04 12:51:35 | INFO     | main | [4] Assembling video...
+2026-08-04 12:51:36 | INFO     | agents.video_agent | Rendering AI video -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260804_125100/final_raw.mp4
+2026-08-04 12:53:43 | INFO     | agents.video_agent | AI video done: /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260804_125100/final_raw.mp4 (8.6 MB)
+2026-08-04 12:53:43 | INFO     | main | [4b] Enhancing with FFmpeg...
+2026-08-04 12:54:05 | INFO     | agents.video_editor | Color graded: graded_final_raw.mp4
+2026-08-04 12:54:26 | INFO     | agents.video_editor | Fade added: final.mp4
+2026-08-04 12:54:26 | INFO     | main | [5] Generating SEO metadata...
+2026-08-04 12:54:26 | INFO     | agents.seo_agent | Generating SEO metadata (attempt 1)...
+2026-08-04 12:54:31 | INFO     | agents.seo_agent | SEO title: 'Bijan Robinson just broke the RB pay ceiling 🤯'
+2026-08-04 12:54:31 | INFO     | main | Title: Bijan Robinson just broke the RB pay ceiling 🤯
+2026-08-04 12:54:31 | INFO     | main | [6] Uploading to YouTube...
+2026-08-04 12:54:31 | INFO     | agents.upload_agent | Refreshing YouTube token...
+2026-08-04 12:54:31 | INFO     | agents.upload_agent | Uploading 'Bijan Robinson just broke the RB pay ceiling 🤯' (attempt 1)...
+2026-08-04 12:54:32 | INFO     | agents.upload_agent | Upload progress: 2%
+2026-08-04 12:54:32 | INFO     | agents.upload_agent | Upload progress: 4%
+2026-08-04 12:54:32 | INFO     | agents.upload_agent | Upload progress: 7%
+2026-08-04 12:54:32 | INFO     | agents.upload_agent | Upload progress: 9%
+2026-08-04 12:54:33 | INFO     | agents.upload_agent | Upload progress: 12%
+2026-08-04 12:54:33 | INFO     | agents.upload_agent | Upload progress: 14%
+2026-08-04 12:54:33 | INFO     | agents.upload_agent | Upload progress: 17%
+2026-08-04 12:54:33 | INFO     | agents.upload_agent | Upload progress: 19%
+2026-08-04 12:54:33 | INFO     | agents.upload_agent | Upload progress: 21%
+2026-08-04 12:54:33 | INFO     | agents.upload_agent | Upload progress: 24%
+2026-08-04 12:54:33 | INFO     | agents.upload_agent | Upload progress: 26%
+2026-08-04 12:54:33 | INFO     | agents.upload_agent | Upload progress: 29%
+2026-08-04 12:54:33 | INFO     | agents.upload_agent | Upload progress: 31%
+2026-08-04 12:54:33 | INFO     | agents.upload_agent | Upload progress: 34%
+2026-08-04 12:54:33 | INFO     | agents.upload_agent | Upload progress: 36%
+2026-08-04 12:54:33 | INFO     | agents.upload_agent | Upload progress: 39%
+2026-08-04 12:54:34 | INFO     | agents.upload_agent | Upload progress: 41%
+2026-08-04 12:54:34 | INFO     | agents.upload_agent | Upload progress: 43%
+2026-08-04 12:54:34 | INFO     | agents.upload_agent | Upload progress: 46%
+2026-08-04 12:54:34 | INFO     | agents.upload_agent | Upload progress: 48%
+2026-08-04 12:54:34 | INFO     | agents.upload_agent | Upload progress: 51%
+2026-08-04 12:54:34 | INFO     | agents.upload_agent | Upload progress: 53%
+2026-08-04 12:54:34 | INFO     | agents.upload_agent | Upload progress: 56%
+2026-08-04 12:54:34 | INFO     | agents.upload_agent | Upload progress: 58%
+2026-08-04 12:54:34 | INFO     | agents.upload_agent | Upload progress: 61%
+2026-08-04 12:54:34 | INFO     | agents.upload_agent | Upload progress: 63%
+2026-08-04 12:54:34 | INFO     | agents.upload_agent | Upload progress: 65%
+2026-08-04 12:54:35 | INFO     | agents.upload_agent | Upload progress: 68%
+2026-08-04 12:54:35 | INFO     | agents.upload_agent | Upload progress: 70%
+2026-08-04 12:54:35 | INFO     | agents.upload_agent | Upload progress: 73%
+2026-08-04 12:54:35 | INFO     | agents.upload_agent | Upload progress: 75%
+2026-08-04 12:54:35 | INFO     | agents.upload_agent | Upload progress: 78%
+2026-08-04 12:54:35 | INFO     | agents.upload_agent | Upload progress: 80%
+2026-08-04 12:54:35 | INFO     | agents.upload_agent | Upload progress: 83%
+2026-08-04 12:54:35 | INFO     | agents.upload_agent | Upload progress: 85%
+2026-08-04 12:54:35 | INFO     | agents.upload_agent | Upload progress: 87%
+2026-08-04 12:54:35 | INFO     | agents.upload_agent | Upload progress: 90%
+2026-08-04 12:54:35 | INFO     | agents.upload_agent | Upload progress: 92%
+2026-08-04 12:54:35 | INFO     | agents.upload_agent | Upload progress: 95%
+2026-08-04 12:54:36 | INFO     | agents.upload_agent | Upload progress: 97%
+2026-08-04 12:54:36 | INFO     | agents.upload_agent | Upload complete! Video ID: t-jaejIMTgI
+2026-08-04 12:54:36 | INFO     | agents.upload_agent | URL: https://www.youtube.com/shorts/t-jaejIMTgI
+2026-08-04 12:54:36 | INFO     | main | History saved: 63 titles
+2026-08-04 12:54:36 | INFO     | main | [7] Cross-posting to Instagram/Facebook...
+2026-08-04 12:54:38 | INFO     | agents.instagram_agent | Resolved IG account 17841414363117627 via page 'Unique Podcast' (page id 1262973056889436)
+2026-08-04 12:54:40 | INFO     | agents.instagram_agent | Video temporarily hosted: https://github.com/rkadel1488/youtube-shorts-agent/releases/download/reel-temp-1785848078/reel.mp4
+2026-08-04 12:54:40 | INFO     | agents.instagram_agent | Creating IG media container...
+2026-08-04 12:54:41 | INFO     | agents.instagram_agent | IG processing... (IN_PROGRESS)
+2026-08-04 12:54:51 | INFO     | agents.instagram_agent | IG processing... (IN_PROGRESS)
+2026-08-04 12:55:02 | INFO     | agents.instagram_agent | IG processing... (IN_PROGRESS)
+2026-08-04 12:55:12 | INFO     | agents.instagram_agent | IG processing... (IN_PROGRESS)
+2026-08-04 12:55:22 | INFO     | agents.instagram_agent | IG processing... (IN_PROGRESS)
+2026-08-04 12:55:43 | INFO     | agents.instagram_agent | Instagram Reel published: media id 18578412526071001
+2026-08-04 12:55:56 | INFO     | agents.instagram_agent | Facebook Reel published (native Reels feed): video id 1343817027423842
+2026-08-04 12:55:57 | INFO     | agents.instagram_agent | Temporary release cleaned up
+2026-08-04 12:55:57 | INFO     | main | ============================================================
+2026-08-04 12:55:57 | INFO     | main | SUCCESS: https://www.youtube.com/shorts/t-jaejIMTgI
+2026-08-04 12:55:57 | INFO     | main | ============================================================
 
-Done! Watch at: https://www.youtube.com/shorts/CP0dF87SEtQ
+Done! Watch at: https://www.youtube.com/shorts/t-jaejIMTgI
