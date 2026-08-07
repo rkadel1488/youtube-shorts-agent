@@ -1,93 +1,89 @@
-2026-08-06 22:39:34 | INFO     | main | ============================================================
-2026-08-06 22:39:34 | INFO     | main | STARTING JOB: 20260806_223934
-2026-08-06 22:39:34 | INFO     | main | ============================================================
-2026-08-06 22:39:34 | INFO     | main | History: 67 used titles
-2026-08-06 22:39:34 | INFO     | agents.trend_agent | Google Trends: 10 items (top traffic: 10000)
-2026-08-06 22:39:34 | WARNING  | agents.trend_agent | Reddit fetch failed: 403 Client Error: Blocked for url: https://www.reddit.com/r/popular/hot.json?limit=15
-2026-08-06 22:39:34 | INFO     | agents.trend_agent | Selecting trend topic via Claude (attempt 1)...
-2026-08-06 22:39:38 | INFO     | agents.trend_agent | Trend topic selected: Infladating: The New Cheap Date Trend (traffic-ranked)
-2026-08-06 22:39:38 | INFO     | main | [1] Generating script for 'Infladating: The New Cheap Date Trend' [trending]...
-2026-08-06 22:39:38 | INFO     | agents.script_agent | Generating trend script for 'Infladating: The New Cheap Date Trend' via Claude (attempt 1)...
-2026-08-06 22:39:44 | INFO     | agents.script_agent | Trend script generated: 'Infladating: The New Cheap Date Trend'
-2026-08-06 22:39:44 | INFO     | main | [2] Generating AI images...
-2026-08-06 22:39:44 | INFO     | agents.image_agent | Fetching image 1/4 for 'couple on a picnic in a park wide establishing' (attempt 1)...
-2026-08-06 22:39:44 | INFO     | agents.image_agent | Image 1 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260806_223934/temp/images/scene_00.jpg
-2026-08-06 22:39:45 | INFO     | agents.image_agent | Fetching image 2/4 for 'coffee shop date close-up detail' (attempt 1)...
-2026-08-06 22:39:46 | INFO     | agents.image_agent | Image 2 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260806_223934/temp/images/scene_01.jpg
-2026-08-06 22:39:47 | INFO     | agents.image_agent | Fetching image 3/4 for 'budget meal at home dramatic moment' (attempt 1)...
-2026-08-06 22:39:48 | INFO     | agents.image_agent | Image 3 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260806_223934/temp/images/scene_02.jpg
-2026-08-06 22:39:49 | INFO     | agents.image_agent | Fetching image 4/4 for 'city walk at sunset powerful finale' (attempt 1)...
-2026-08-06 22:39:50 | INFO     | agents.image_agent | Image 4 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260806_223934/temp/images/scene_03.jpg
-2026-08-06 22:39:51 | INFO     | agents.image_agent | Generated 4/4 images successfully
-2026-08-06 22:39:51 | INFO     | main | [3] Generating voiceover...
-2026-08-06 22:39:51 | INFO     | agents.audio_agent | Generating voiceover with Gemini TTS (attempt 1)…
-2026-08-06 22:40:08 | INFO     | agents.audio_agent | Voiceover saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260806_223934/temp/voiceover.mp3 (317 KB)
-2026-08-06 22:40:08 | INFO     | main | [4] Assembling video...
-2026-08-06 22:40:09 | INFO     | agents.video_agent | Rendering AI video -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260806_223934/final_raw.mp4
-2026-08-06 22:42:23 | INFO     | agents.video_agent | AI video done: /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260806_223934/final_raw.mp4 (8.0 MB)
-2026-08-06 22:42:23 | INFO     | main | [4b] Enhancing with FFmpeg...
-2026-08-06 22:42:48 | INFO     | agents.video_editor | Color graded: graded_final_raw.mp4
-2026-08-06 22:43:14 | INFO     | agents.video_editor | Fade added: final.mp4
-2026-08-06 22:43:14 | INFO     | main | [5] Generating SEO metadata...
-2026-08-06 22:43:14 | INFO     | agents.seo_agent | Generating SEO metadata (attempt 1)...
-2026-08-06 22:43:19 | INFO     | agents.seo_agent | SEO title: 'Infladating is the new way people survive dates 👀'
-2026-08-06 22:43:19 | INFO     | main | Title: Infladating is the new way people survive dates 👀
-2026-08-06 22:43:19 | INFO     | main | [6] Uploading to YouTube...
-2026-08-06 22:43:19 | INFO     | agents.upload_agent | Refreshing YouTube token...
-2026-08-06 22:43:19 | INFO     | agents.upload_agent | Uploading 'Infladating is the new way people survive dates 👀' (attempt 1)...
-2026-08-06 22:43:20 | INFO     | agents.upload_agent | Upload progress: 2%
-2026-08-06 22:43:20 | INFO     | agents.upload_agent | Upload progress: 5%
-2026-08-06 22:43:20 | INFO     | agents.upload_agent | Upload progress: 7%
-2026-08-06 22:43:20 | INFO     | agents.upload_agent | Upload progress: 10%
-2026-08-06 22:43:20 | INFO     | agents.upload_agent | Upload progress: 13%
-2026-08-06 22:43:20 | INFO     | agents.upload_agent | Upload progress: 15%
-2026-08-06 22:43:21 | INFO     | agents.upload_agent | Upload progress: 18%
-2026-08-06 22:43:21 | INFO     | agents.upload_agent | Upload progress: 20%
-2026-08-06 22:43:21 | INFO     | agents.upload_agent | Upload progress: 23%
-2026-08-06 22:43:21 | INFO     | agents.upload_agent | Upload progress: 26%
-2026-08-06 22:43:21 | INFO     | agents.upload_agent | Upload progress: 28%
-2026-08-06 22:43:21 | INFO     | agents.upload_agent | Upload progress: 31%
-2026-08-06 22:43:21 | INFO     | agents.upload_agent | Upload progress: 33%
-2026-08-06 22:43:21 | INFO     | agents.upload_agent | Upload progress: 36%
-2026-08-06 22:43:21 | INFO     | agents.upload_agent | Upload progress: 39%
-2026-08-06 22:43:21 | INFO     | agents.upload_agent | Upload progress: 41%
-2026-08-06 22:43:22 | INFO     | agents.upload_agent | Upload progress: 44%
-2026-08-06 22:43:22 | INFO     | agents.upload_agent | Upload progress: 46%
-2026-08-06 22:43:22 | INFO     | agents.upload_agent | Upload progress: 49%
-2026-08-06 22:43:22 | INFO     | agents.upload_agent | Upload progress: 52%
-2026-08-06 22:43:22 | INFO     | agents.upload_agent | Upload progress: 54%
-2026-08-06 22:43:22 | INFO     | agents.upload_agent | Upload progress: 57%
-2026-08-06 22:43:22 | INFO     | agents.upload_agent | Upload progress: 59%
-2026-08-06 22:43:22 | INFO     | agents.upload_agent | Upload progress: 62%
-2026-08-06 22:43:22 | INFO     | agents.upload_agent | Upload progress: 65%
-2026-08-06 22:43:22 | INFO     | agents.upload_agent | Upload progress: 67%
-2026-08-06 22:43:23 | INFO     | agents.upload_agent | Upload progress: 70%
-2026-08-06 22:43:23 | INFO     | agents.upload_agent | Upload progress: 73%
-2026-08-06 22:43:23 | INFO     | agents.upload_agent | Upload progress: 75%
-2026-08-06 22:43:23 | INFO     | agents.upload_agent | Upload progress: 78%
-2026-08-06 22:43:23 | INFO     | agents.upload_agent | Upload progress: 80%
-2026-08-06 22:43:23 | INFO     | agents.upload_agent | Upload progress: 83%
-2026-08-06 22:43:23 | INFO     | agents.upload_agent | Upload progress: 86%
-2026-08-06 22:43:23 | INFO     | agents.upload_agent | Upload progress: 88%
-2026-08-06 22:43:23 | INFO     | agents.upload_agent | Upload progress: 91%
-2026-08-06 22:43:23 | INFO     | agents.upload_agent | Upload progress: 93%
-2026-08-06 22:43:23 | INFO     | agents.upload_agent | Upload progress: 96%
-2026-08-06 22:43:24 | INFO     | agents.upload_agent | Upload progress: 99%
-2026-08-06 22:43:24 | INFO     | agents.upload_agent | Upload complete! Video ID: 1Jc-aSHWiS8
-2026-08-06 22:43:24 | INFO     | agents.upload_agent | URL: https://www.youtube.com/shorts/1Jc-aSHWiS8
-2026-08-06 22:43:24 | INFO     | main | History saved: 68 titles
-2026-08-06 22:43:24 | INFO     | main | [7] Cross-posting to Instagram/Facebook...
-2026-08-06 22:43:26 | INFO     | agents.instagram_agent | Resolved IG account 17841414363117627 via page 'Unique Podcast' (page id 1262973056889436)
-2026-08-06 22:43:28 | INFO     | agents.instagram_agent | Video temporarily hosted: https://github.com/rkadel1488/youtube-shorts-agent/releases/download/reel-temp-1786056206/reel.mp4
-2026-08-06 22:43:28 | INFO     | agents.instagram_agent | Creating IG media container...
-2026-08-06 22:43:29 | INFO     | agents.instagram_agent | IG processing... (IN_PROGRESS)
-2026-08-06 22:43:39 | INFO     | agents.instagram_agent | IG processing... (IN_PROGRESS)
-2026-08-06 22:43:50 | INFO     | agents.instagram_agent | IG processing... (IN_PROGRESS)
-2026-08-06 22:44:10 | INFO     | agents.instagram_agent | Instagram Reel published: media id 17889975135420855
-2026-08-06 22:44:20 | INFO     | agents.instagram_agent | Facebook Reel published (native Reels feed): video id 1590750889369453
-2026-08-06 22:44:21 | INFO     | agents.instagram_agent | Temporary release cleaned up
-2026-08-06 22:44:21 | INFO     | main | ============================================================
-2026-08-06 22:44:21 | INFO     | main | SUCCESS: https://www.youtube.com/shorts/1Jc-aSHWiS8
-2026-08-06 22:44:21 | INFO     | main | ============================================================
+2026-08-07 11:35:37 | INFO     | main | ============================================================
+2026-08-07 11:35:37 | INFO     | main | STARTING JOB: 20260807_113537
+2026-08-07 11:35:37 | INFO     | main | ============================================================
+2026-08-07 11:35:37 | INFO     | main | History: 68 used titles
+2026-08-07 11:35:37 | INFO     | agents.trend_agent | Google Trends: 10 items (top traffic: 200)
+2026-08-07 11:35:37 | WARNING  | agents.trend_agent | Reddit fetch failed: 403 Client Error: Blocked for url: https://www.reddit.com/r/popular/hot.json?limit=15
+2026-08-07 11:35:37 | INFO     | agents.trend_agent | Selecting trend topic via Claude (attempt 1)...
+2026-08-07 11:35:43 | INFO     | agents.trend_agent | Trend topic selected: Oklo Small Nuclear Reactor Achieves Criticality (traffic-ranked)
+2026-08-07 11:35:43 | INFO     | main | [1] Generating script for 'Oklo Small Nuclear Reactor Achieves Criticality' [trending]...
+2026-08-07 11:35:43 | INFO     | agents.script_agent | Generating trend script for 'Oklo Small Nuclear Reactor Achieves Criticality' via Claude (attempt 1)...
+2026-08-07 11:35:48 | INFO     | agents.script_agent | Trend script generated: 'Oklo Small Nuclear Reactor Achieves Criticality'
+2026-08-07 11:35:48 | INFO     | main | [2] Generating AI images...
+2026-08-07 11:35:48 | INFO     | agents.image_agent | Fetching image 1/4 for 'nuclear reactor facility wide establishing' (attempt 1)...
+2026-08-07 11:35:49 | INFO     | agents.image_agent | Image 1 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260807_113537/temp/images/scene_00.jpg
+2026-08-07 11:35:50 | INFO     | agents.image_agent | Fetching image 2/4 for 'glowing control room close-up detail' (attempt 1)...
+2026-08-07 11:35:51 | INFO     | agents.image_agent | Image 2 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260807_113537/temp/images/scene_01.jpg
+2026-08-07 11:35:52 | INFO     | agents.image_agent | Fetching image 3/4 for 'energy grid infrastructure dramatic moment' (attempt 1)...
+2026-08-07 11:35:53 | INFO     | agents.image_agent | Image 3 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260807_113537/temp/images/scene_02.jpg
+2026-08-07 11:35:54 | INFO     | agents.image_agent | Fetching image 4/4 for 'compact power plant powerful finale' (attempt 1)...
+2026-08-07 11:35:55 | INFO     | agents.image_agent | Image 4 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260807_113537/temp/images/scene_03.jpg
+2026-08-07 11:35:56 | INFO     | agents.image_agent | Generated 4/4 images successfully
+2026-08-07 11:35:56 | INFO     | main | [3] Generating voiceover...
+2026-08-07 11:35:56 | INFO     | agents.audio_agent | Generating voiceover with Gemini TTS (attempt 1)…
+2026-08-07 11:36:16 | INFO     | agents.audio_agent | Voiceover saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260807_113537/temp/voiceover.mp3 (350 KB)
+2026-08-07 11:36:16 | INFO     | main | [4] Assembling video...
+2026-08-07 11:36:17 | INFO     | agents.video_agent | Rendering AI video -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260807_113537/final_raw.mp4
+2026-08-07 11:38:51 | INFO     | agents.video_agent | AI video done: /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260807_113537/final_raw.mp4 (6.7 MB)
+2026-08-07 11:38:51 | INFO     | main | [4b] Enhancing with FFmpeg...
+2026-08-07 11:39:19 | INFO     | agents.video_editor | Color graded: graded_final_raw.mp4
+2026-08-07 11:39:46 | INFO     | agents.video_editor | Fade added: final.mp4
+2026-08-07 11:39:46 | INFO     | main | [5] Generating SEO metadata...
+2026-08-07 11:39:46 | INFO     | agents.seo_agent | Generating SEO metadata (attempt 1)...
+2026-08-07 11:39:51 | INFO     | agents.seo_agent | SEO title: 'Oklo's small nuclear reactor just made history 🤯'
+2026-08-07 11:39:51 | INFO     | main | Title: Oklo's small nuclear reactor just made history 🤯
+2026-08-07 11:39:51 | INFO     | main | [6] Uploading to YouTube...
+2026-08-07 11:39:51 | INFO     | agents.upload_agent | Refreshing YouTube token...
+2026-08-07 11:39:51 | INFO     | agents.upload_agent | Uploading 'Oklo's small nuclear reactor just made history 🤯' (attempt 1)...
+2026-08-07 11:39:53 | INFO     | agents.upload_agent | Upload progress: 2%
+2026-08-07 11:39:53 | INFO     | agents.upload_agent | Upload progress: 5%
+2026-08-07 11:39:53 | INFO     | agents.upload_agent | Upload progress: 8%
+2026-08-07 11:39:53 | INFO     | agents.upload_agent | Upload progress: 11%
+2026-08-07 11:39:53 | INFO     | agents.upload_agent | Upload progress: 14%
+2026-08-07 11:39:53 | INFO     | agents.upload_agent | Upload progress: 17%
+2026-08-07 11:39:53 | INFO     | agents.upload_agent | Upload progress: 20%
+2026-08-07 11:39:54 | INFO     | agents.upload_agent | Upload progress: 23%
+2026-08-07 11:39:54 | INFO     | agents.upload_agent | Upload progress: 26%
+2026-08-07 11:39:54 | INFO     | agents.upload_agent | Upload progress: 29%
+2026-08-07 11:39:54 | INFO     | agents.upload_agent | Upload progress: 32%
+2026-08-07 11:39:54 | INFO     | agents.upload_agent | Upload progress: 34%
+2026-08-07 11:39:54 | INFO     | agents.upload_agent | Upload progress: 37%
+2026-08-07 11:39:54 | INFO     | agents.upload_agent | Upload progress: 40%
+2026-08-07 11:39:55 | INFO     | agents.upload_agent | Upload progress: 43%
+2026-08-07 11:39:55 | INFO     | agents.upload_agent | Upload progress: 46%
+2026-08-07 11:39:55 | INFO     | agents.upload_agent | Upload progress: 49%
+2026-08-07 11:39:55 | INFO     | agents.upload_agent | Upload progress: 52%
+2026-08-07 11:39:55 | INFO     | agents.upload_agent | Upload progress: 55%
+2026-08-07 11:39:55 | INFO     | agents.upload_agent | Upload progress: 58%
+2026-08-07 11:39:55 | INFO     | agents.upload_agent | Upload progress: 61%
+2026-08-07 11:39:56 | INFO     | agents.upload_agent | Upload progress: 64%
+2026-08-07 11:39:56 | INFO     | agents.upload_agent | Upload progress: 67%
+2026-08-07 11:39:56 | INFO     | agents.upload_agent | Upload progress: 69%
+2026-08-07 11:39:56 | INFO     | agents.upload_agent | Upload progress: 72%
+2026-08-07 11:39:56 | INFO     | agents.upload_agent | Upload progress: 75%
+2026-08-07 11:39:56 | INFO     | agents.upload_agent | Upload progress: 78%
+2026-08-07 11:39:56 | INFO     | agents.upload_agent | Upload progress: 81%
+2026-08-07 11:39:57 | INFO     | agents.upload_agent | Upload progress: 84%
+2026-08-07 11:39:57 | INFO     | agents.upload_agent | Upload progress: 87%
+2026-08-07 11:39:57 | INFO     | agents.upload_agent | Upload progress: 90%
+2026-08-07 11:39:57 | INFO     | agents.upload_agent | Upload progress: 93%
+2026-08-07 11:39:57 | INFO     | agents.upload_agent | Upload progress: 96%
+2026-08-07 11:39:57 | INFO     | agents.upload_agent | Upload progress: 99%
+2026-08-07 11:39:58 | INFO     | agents.upload_agent | Upload complete! Video ID: lDnxpJUnXGI
+2026-08-07 11:39:58 | INFO     | agents.upload_agent | URL: https://www.youtube.com/shorts/lDnxpJUnXGI
+2026-08-07 11:39:58 | INFO     | main | History saved: 69 titles
+2026-08-07 11:39:58 | INFO     | main | [7] Cross-posting to Instagram/Facebook...
+2026-08-07 11:39:59 | INFO     | agents.instagram_agent | Resolved IG account 17841414363117627 via page 'Unique Podcast' (page id 1262973056889436)
+2026-08-07 11:40:01 | INFO     | agents.instagram_agent | Video temporarily hosted: https://github.com/rkadel1488/youtube-shorts-agent/releases/download/reel-temp-1786102799/reel.mp4
+2026-08-07 11:40:01 | INFO     | agents.instagram_agent | Creating IG media container...
+2026-08-07 11:40:03 | INFO     | agents.instagram_agent | IG processing... (IN_PROGRESS)
+2026-08-07 11:40:13 | INFO     | agents.instagram_agent | IG processing... (IN_PROGRESS)
+2026-08-07 11:40:23 | INFO     | agents.instagram_agent | IG processing... (IN_PROGRESS)
+2026-08-07 11:40:43 | INFO     | agents.instagram_agent | Instagram Reel published: media id 17930194200371017
+2026-08-07 11:40:52 | INFO     | agents.instagram_agent | Facebook Reel published (native Reels feed): video id 2146538596269764
+2026-08-07 11:40:53 | INFO     | agents.instagram_agent | Temporary release cleaned up
+2026-08-07 11:40:53 | INFO     | main | ============================================================
+2026-08-07 11:40:53 | INFO     | main | SUCCESS: https://www.youtube.com/shorts/lDnxpJUnXGI
+2026-08-07 11:40:53 | INFO     | main | ============================================================
 
-Done! Watch at: https://www.youtube.com/shorts/1Jc-aSHWiS8
+Done! Watch at: https://www.youtube.com/shorts/lDnxpJUnXGI
