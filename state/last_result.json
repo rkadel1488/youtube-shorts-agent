@@ -1,14 +1,5 @@
 {
-  "job_id": "20260808_024702",
-  "status": "success",
-  "video_id": "9RwoWWmKPkM",
-  "url": "https://www.youtube.com/shorts/9RwoWWmKPkM",
-  "title": "3 midlife habits delay dementia by 13 years 😳",
-  "source": "Avoid 3 Things to Delay Dementia by 13 Years",
-  "topic_id": 0,
-  "category": "trending",
-  "instagram_id": "18122878067504387",
-  "instagram": "posted",
-  "facebook_id": "1408980461298602",
-  "facebook": "posted"
+  "job_id": "20260808_111741",
+  "status": "failed",
+  "error": "Trend script generation failed after 3 attempts"
 }
