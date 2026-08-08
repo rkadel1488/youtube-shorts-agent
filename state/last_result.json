@@ -1,5 +1,14 @@
 {
-  "job_id": "20260808_111741",
-  "status": "failed",
-  "error": "Trend script generation failed after 3 attempts"
+  "job_id": "20260808_181812",
+  "status": "success",
+  "video_id": "b5QSNCC5txE",
+  "url": "https://www.youtube.com/shorts/b5QSNCC5txE",
+  "title": "Fubo just partnered with Disney to survive 👀",
+  "source": "Fubo's New Era: Disney Ties & World Cup Boost",
+  "topic_id": 0,
+  "category": "trending",
+  "instagram_id": "17892428640395528",
+  "instagram": "posted",
+  "facebook_id": "2299172110625258",
+  "facebook": "posted"
 }
