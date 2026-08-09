@@ -1,85 +1,98 @@
-2026-08-09 11:17:50 | INFO     | main | ============================================================
-2026-08-09 11:17:50 | INFO     | main | STARTING JOB: 20260809_111750
-2026-08-09 11:17:50 | INFO     | main | ============================================================
-2026-08-09 11:17:50 | INFO     | main | History: 73 used titles
-2026-08-09 11:17:50 | INFO     | agents.trend_agent | Google Trends: 10 items (top traffic: 5000)
-2026-08-09 11:17:50 | WARNING  | agents.trend_agent | Reddit fetch failed: 403 Client Error: Blocked for url: https://www.reddit.com/r/popular/hot.json?limit=15
-2026-08-09 11:17:50 | INFO     | agents.trend_agent | Selecting trend topic via Claude (attempt 1)...
-2026-08-09 11:17:54 | INFO     | agents.trend_agent | Trend topic selected: Apple Speeding Up iOS Updates (traffic-ranked)
-2026-08-09 11:17:54 | INFO     | main | [1] Generating script for 'Apple Speeding Up iOS Updates' [trending]...
-2026-08-09 11:17:54 | INFO     | agents.script_agent | Generating trend script for 'Apple Speeding Up iOS Updates' via Claude (attempt 1)...
-2026-08-09 11:17:59 | INFO     | agents.script_agent | Trend script generated: 'Apple Speeding Up iOS Updates'
-2026-08-09 11:17:59 | INFO     | main | [2] Generating AI images...
-2026-08-09 11:17:59 | INFO     | agents.image_agent | Fetching image 1/4 for 'smartphone software update screen wide establishing' (attempt 1)...
-2026-08-09 11:18:00 | INFO     | agents.image_agent | Image 1 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260809_111750/temp/images/scene_00.jpg
-2026-08-09 11:18:01 | INFO     | agents.image_agent | Fetching image 2/4 for 'iPhone close-up close-up detail' (attempt 1)...
-2026-08-09 11:18:01 | INFO     | agents.image_agent | Image 2 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260809_111750/temp/images/scene_01.jpg
-2026-08-09 11:18:02 | INFO     | agents.image_agent | Fetching image 3/4 for 'tech news studio dramatic moment' (attempt 1)...
-2026-08-09 11:18:02 | INFO     | agents.image_agent | Image 3 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260809_111750/temp/images/scene_02.jpg
-2026-08-09 11:18:03 | INFO     | agents.image_agent | Fetching image 4/4 for 'mobile device settings menu powerful finale' (attempt 1)...
-2026-08-09 11:18:04 | INFO     | agents.image_agent | Image 4 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260809_111750/temp/images/scene_03.jpg
-2026-08-09 11:18:05 | INFO     | agents.image_agent | Generated 4/4 images successfully
-2026-08-09 11:18:05 | INFO     | main | [3] Generating voiceover...
-2026-08-09 11:18:05 | INFO     | agents.audio_agent | Generating voiceover with Gemini TTS (attempt 1)…
-2026-08-09 11:18:22 | INFO     | agents.audio_agent | Voiceover saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260809_111750/temp/voiceover.mp3 (394 KB)
-2026-08-09 11:18:22 | INFO     | main | [4] Assembling video...
-2026-08-09 11:18:22 | INFO     | agents.video_agent | Rendering AI video -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260809_111750/final_raw.mp4
-2026-08-09 11:21:09 | INFO     | agents.video_agent | AI video done: /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260809_111750/final_raw.mp4 (6.1 MB)
-2026-08-09 11:21:09 | INFO     | main | [4b] Enhancing with FFmpeg...
-2026-08-09 11:21:37 | INFO     | agents.video_editor | Color graded: graded_final_raw.mp4
-2026-08-09 11:22:04 | INFO     | agents.video_editor | Fade added: final.mp4
-2026-08-09 11:22:04 | INFO     | main | [5] Generating SEO metadata...
-2026-08-09 11:22:04 | INFO     | agents.seo_agent | Generating SEO metadata (attempt 1)...
-2026-08-09 11:22:09 | INFO     | agents.seo_agent | SEO title: 'Apple is pushing iOS updates faster than ever 🚨'
-2026-08-09 11:22:09 | INFO     | main | Title: Apple is pushing iOS updates faster than ever 🚨
-2026-08-09 11:22:09 | INFO     | main | [6] Uploading to YouTube...
-2026-08-09 11:22:09 | INFO     | agents.upload_agent | Refreshing YouTube token...
-2026-08-09 11:22:09 | INFO     | agents.upload_agent | Uploading 'Apple is pushing iOS updates faster than ever 🚨' (attempt 1)...
-2026-08-09 11:22:10 | INFO     | agents.upload_agent | Upload progress: 3%
-2026-08-09 11:22:10 | INFO     | agents.upload_agent | Upload progress: 6%
-2026-08-09 11:22:10 | INFO     | agents.upload_agent | Upload progress: 9%
-2026-08-09 11:22:10 | INFO     | agents.upload_agent | Upload progress: 12%
-2026-08-09 11:22:11 | INFO     | agents.upload_agent | Upload progress: 16%
-2026-08-09 11:22:11 | INFO     | agents.upload_agent | Upload progress: 19%
-2026-08-09 11:22:11 | INFO     | agents.upload_agent | Upload progress: 22%
-2026-08-09 11:22:11 | INFO     | agents.upload_agent | Upload progress: 25%
-2026-08-09 11:22:11 | INFO     | agents.upload_agent | Upload progress: 29%
-2026-08-09 11:22:11 | INFO     | agents.upload_agent | Upload progress: 32%
-2026-08-09 11:22:11 | INFO     | agents.upload_agent | Upload progress: 35%
-2026-08-09 11:22:11 | INFO     | agents.upload_agent | Upload progress: 38%
-2026-08-09 11:22:12 | INFO     | agents.upload_agent | Upload progress: 42%
-2026-08-09 11:22:12 | INFO     | agents.upload_agent | Upload progress: 45%
-2026-08-09 11:22:12 | INFO     | agents.upload_agent | Upload progress: 48%
-2026-08-09 11:22:12 | INFO     | agents.upload_agent | Upload progress: 51%
-2026-08-09 11:22:12 | INFO     | agents.upload_agent | Upload progress: 55%
-2026-08-09 11:22:12 | INFO     | agents.upload_agent | Upload progress: 58%
-2026-08-09 11:22:12 | INFO     | agents.upload_agent | Upload progress: 61%
-2026-08-09 11:22:12 | INFO     | agents.upload_agent | Upload progress: 64%
-2026-08-09 11:22:12 | INFO     | agents.upload_agent | Upload progress: 68%
-2026-08-09 11:22:12 | INFO     | agents.upload_agent | Upload progress: 71%
-2026-08-09 11:22:13 | INFO     | agents.upload_agent | Upload progress: 74%
-2026-08-09 11:22:13 | INFO     | agents.upload_agent | Upload progress: 77%
-2026-08-09 11:22:13 | INFO     | agents.upload_agent | Upload progress: 81%
-2026-08-09 11:22:13 | INFO     | agents.upload_agent | Upload progress: 84%
-2026-08-09 11:22:13 | INFO     | agents.upload_agent | Upload progress: 87%
-2026-08-09 11:22:13 | INFO     | agents.upload_agent | Upload progress: 90%
-2026-08-09 11:22:13 | INFO     | agents.upload_agent | Upload progress: 94%
-2026-08-09 11:22:14 | INFO     | agents.upload_agent | Upload progress: 97%
-2026-08-09 11:22:14 | INFO     | agents.upload_agent | Upload complete! Video ID: b4nhUpdVjNs
-2026-08-09 11:22:14 | INFO     | agents.upload_agent | URL: https://www.youtube.com/shorts/b4nhUpdVjNs
-2026-08-09 11:22:14 | INFO     | main | History saved: 74 titles
-2026-08-09 11:22:14 | INFO     | main | [7] Cross-posting to Instagram/Facebook...
-2026-08-09 11:22:15 | INFO     | agents.instagram_agent | Resolved IG account 17841414363117627 via page 'Unique Podcast' (page id 1262973056889436)
-2026-08-09 11:22:16 | INFO     | agents.instagram_agent | Video temporarily hosted: https://github.com/rkadel1488/youtube-shorts-agent/releases/download/reel-temp-1786274535/reel.mp4
-2026-08-09 11:22:16 | INFO     | agents.instagram_agent | Creating IG media container...
-2026-08-09 11:22:17 | INFO     | agents.instagram_agent | IG processing... (IN_PROGRESS)
-2026-08-09 11:22:28 | INFO     | agents.instagram_agent | IG processing... (IN_PROGRESS)
-2026-08-09 11:22:39 | INFO     | agents.instagram_agent | IG processing... (IN_PROGRESS)
-2026-08-09 11:22:58 | INFO     | agents.instagram_agent | Instagram Reel published: media id 18099188150261146
-2026-08-09 11:23:07 | INFO     | agents.instagram_agent | Facebook Reel published (native Reels feed): video id 2326046267929778
-2026-08-09 11:23:08 | INFO     | agents.instagram_agent | Temporary release cleaned up
-2026-08-09 11:23:08 | INFO     | main | ============================================================
-2026-08-09 11:23:08 | INFO     | main | SUCCESS: https://www.youtube.com/shorts/b4nhUpdVjNs
-2026-08-09 11:23:08 | INFO     | main | ============================================================
+2026-08-09 18:20:07 | INFO     | main | ============================================================
+2026-08-09 18:20:07 | INFO     | main | STARTING JOB: 20260809_182007
+2026-08-09 18:20:07 | INFO     | main | ============================================================
+2026-08-09 18:20:07 | INFO     | main | History: 74 used titles
+2026-08-09 18:20:07 | INFO     | agents.trend_agent | Google Trends: 10 items (top traffic: 5000)
+2026-08-09 18:20:07 | WARNING  | agents.trend_agent | Reddit fetch failed: 403 Client Error: Blocked for url: https://www.reddit.com/r/popular/hot.json?limit=15
+2026-08-09 18:20:07 | INFO     | agents.trend_agent | Selecting trend topic via Claude (attempt 1)...
+2026-08-09 18:20:12 | INFO     | agents.trend_agent | Trend topic selected: Beau Hossler Toddler Ruling (traffic-ranked)
+2026-08-09 18:20:12 | INFO     | main | [1] Generating script for 'Beau Hossler Toddler Ruling' [trending]...
+2026-08-09 18:20:12 | INFO     | agents.script_agent | Generating trend script for 'Beau Hossler Toddler Ruling' via Claude (attempt 1)...
+2026-08-09 18:20:18 | INFO     | agents.script_agent | Trend script generated: 'Beau Hossler Toddler Ruling'
+2026-08-09 18:20:18 | INFO     | main | [2] Generating AI images...
+2026-08-09 18:20:18 | INFO     | agents.image_agent | Fetching image 1/4 for 'golf course green closeup wide establishing' (attempt 1)...
+2026-08-09 18:20:19 | INFO     | agents.image_agent | Image 1 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260809_182007/temp/images/scene_00.jpg
+2026-08-09 18:20:20 | INFO     | agents.image_agent | Fetching image 2/4 for 'lightning storm over stadium close-up detail' (attempt 1)...
+2026-08-09 18:20:20 | INFO     | agents.image_agent | Image 2 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260809_182007/temp/images/scene_01.jpg
+2026-08-09 18:20:21 | INFO     | agents.image_agent | Fetching image 3/4 for 'golf ball marker on grass dramatic moment' (attempt 1)...
+2026-08-09 18:20:22 | INFO     | agents.image_agent | Image 3 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260809_182007/temp/images/scene_02.jpg
+2026-08-09 18:20:23 | INFO     | agents.image_agent | Fetching image 4/4 for 'professional golf tournament crowd powerful finale' (attempt 1)...
+2026-08-09 18:20:24 | INFO     | agents.image_agent | Image 4 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260809_182007/temp/images/scene_03.jpg
+2026-08-09 18:20:25 | INFO     | agents.image_agent | Generated 4/4 images successfully
+2026-08-09 18:20:25 | INFO     | main | [3] Generating voiceover...
+2026-08-09 18:20:25 | INFO     | agents.audio_agent | Generating voiceover with Gemini TTS (attempt 1)…
+2026-08-09 18:20:41 | INFO     | agents.audio_agent | Voiceover saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260809_182007/temp/voiceover.mp3 (312 KB)
+2026-08-09 18:20:41 | INFO     | main | [4] Assembling video...
+2026-08-09 18:20:42 | INFO     | agents.video_agent | Rendering AI video -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260809_182007/final_raw.mp4
+2026-08-09 18:22:55 | INFO     | agents.video_agent | AI video done: /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260809_182007/final_raw.mp4 (8.5 MB)
+2026-08-09 18:22:55 | INFO     | main | [4b] Enhancing with FFmpeg...
+2026-08-09 18:23:19 | INFO     | agents.video_editor | Color graded: graded_final_raw.mp4
+2026-08-09 18:23:43 | INFO     | agents.video_editor | Fade added: final.mp4
+2026-08-09 18:23:43 | INFO     | main | [5] Generating SEO metadata...
+2026-08-09 18:23:43 | INFO     | agents.seo_agent | Generating SEO metadata (attempt 1)...
+2026-08-09 18:23:48 | INFO     | agents.seo_agent | SEO title: 'Beau Hossler lost a shot because of a toddler 😳'
+2026-08-09 18:23:48 | INFO     | main | Title: Beau Hossler lost a shot because of a toddler 😳
+2026-08-09 18:23:48 | INFO     | main | [6] Uploading to YouTube...
+2026-08-09 18:23:48 | INFO     | agents.upload_agent | Refreshing YouTube token...
+2026-08-09 18:23:48 | INFO     | agents.upload_agent | Uploading 'Beau Hossler lost a shot because of a toddler 😳' (attempt 1)...
+2026-08-09 18:23:49 | INFO     | agents.upload_agent | Upload progress: 2%
+2026-08-09 18:23:49 | INFO     | agents.upload_agent | Upload progress: 4%
+2026-08-09 18:23:50 | INFO     | agents.upload_agent | Upload progress: 7%
+2026-08-09 18:23:50 | INFO     | agents.upload_agent | Upload progress: 9%
+2026-08-09 18:23:50 | INFO     | agents.upload_agent | Upload progress: 12%
+2026-08-09 18:23:50 | INFO     | agents.upload_agent | Upload progress: 14%
+2026-08-09 18:23:50 | INFO     | agents.upload_agent | Upload progress: 17%
+2026-08-09 18:23:50 | INFO     | agents.upload_agent | Upload progress: 19%
+2026-08-09 18:23:50 | INFO     | agents.upload_agent | Upload progress: 22%
+2026-08-09 18:23:50 | INFO     | agents.upload_agent | Upload progress: 24%
+2026-08-09 18:23:50 | INFO     | agents.upload_agent | Upload progress: 27%
+2026-08-09 18:23:50 | INFO     | agents.upload_agent | Upload progress: 29%
+2026-08-09 18:23:50 | INFO     | agents.upload_agent | Upload progress: 32%
+2026-08-09 18:23:50 | INFO     | agents.upload_agent | Upload progress: 34%
+2026-08-09 18:23:51 | INFO     | agents.upload_agent | Upload progress: 37%
+2026-08-09 18:23:51 | INFO     | agents.upload_agent | Upload progress: 39%
+2026-08-09 18:23:51 | INFO     | agents.upload_agent | Upload progress: 42%
+2026-08-09 18:23:51 | INFO     | agents.upload_agent | Upload progress: 44%
+2026-08-09 18:23:51 | INFO     | agents.upload_agent | Upload progress: 47%
+2026-08-09 18:23:51 | INFO     | agents.upload_agent | Upload progress: 49%
+2026-08-09 18:23:51 | INFO     | agents.upload_agent | Upload progress: 52%
+2026-08-09 18:23:51 | INFO     | agents.upload_agent | Upload progress: 54%
+2026-08-09 18:23:51 | INFO     | agents.upload_agent | Upload progress: 57%
+2026-08-09 18:23:51 | INFO     | agents.upload_agent | Upload progress: 59%
+2026-08-09 18:23:51 | INFO     | agents.upload_agent | Upload progress: 62%
+2026-08-09 18:23:51 | INFO     | agents.upload_agent | Upload progress: 64%
+2026-08-09 18:23:51 | INFO     | agents.upload_agent | Upload progress: 66%
+2026-08-09 18:23:52 | INFO     | agents.upload_agent | Upload progress: 69%
+2026-08-09 18:23:52 | INFO     | agents.upload_agent | Upload progress: 71%
+2026-08-09 18:23:52 | INFO     | agents.upload_agent | Upload progress: 74%
+2026-08-09 18:23:52 | INFO     | agents.upload_agent | Upload progress: 76%
+2026-08-09 18:23:52 | INFO     | agents.upload_agent | Upload progress: 79%
+2026-08-09 18:23:52 | INFO     | agents.upload_agent | Upload progress: 81%
+2026-08-09 18:23:52 | INFO     | agents.upload_agent | Upload progress: 84%
+2026-08-09 18:23:52 | INFO     | agents.upload_agent | Upload progress: 86%
+2026-08-09 18:23:52 | INFO     | agents.upload_agent | Upload progress: 89%
+2026-08-09 18:23:52 | INFO     | agents.upload_agent | Upload progress: 91%
+2026-08-09 18:23:52 | INFO     | agents.upload_agent | Upload progress: 94%
+2026-08-09 18:23:52 | INFO     | agents.upload_agent | Upload progress: 96%
+2026-08-09 18:23:53 | INFO     | agents.upload_agent | Upload progress: 99%
+2026-08-09 18:23:53 | INFO     | agents.upload_agent | Upload complete! Video ID: j6rQC3mVkxI
+2026-08-09 18:23:53 | INFO     | agents.upload_agent | URL: https://www.youtube.com/shorts/j6rQC3mVkxI
+2026-08-09 18:23:53 | INFO     | main | History saved: 75 titles
+2026-08-09 18:23:53 | INFO     | main | [7] Cross-posting to Instagram/Facebook...
+2026-08-09 18:23:55 | INFO     | agents.instagram_agent | Resolved IG account 17841414363117627 via page 'Unique Podcast' (page id 1262973056889436)
+2026-08-09 18:23:56 | INFO     | agents.instagram_agent | Video temporarily hosted: https://github.com/rkadel1488/youtube-shorts-agent/releases/download/reel-temp-1786299835/reel.mp4
+2026-08-09 18:23:56 | INFO     | agents.instagram_agent | Creating IG media container...
+2026-08-09 18:23:58 | INFO     | agents.instagram_agent | IG processing... (IN_PROGRESS)
+2026-08-09 18:24:09 | INFO     | agents.instagram_agent | IG processing... (IN_PROGRESS)
+2026-08-09 18:24:20 | INFO     | agents.instagram_agent | IG processing... (IN_PROGRESS)
+2026-08-09 18:24:30 | INFO     | agents.instagram_agent | IG processing... (IN_PROGRESS)
+2026-08-09 18:24:41 | INFO     | agents.instagram_agent | IG processing... (IN_PROGRESS)
+2026-08-09 18:24:52 | INFO     | agents.instagram_agent | IG processing... (IN_PROGRESS)
+2026-08-09 18:25:14 | INFO     | agents.instagram_agent | Instagram Reel published: media id 18129767278638799
+2026-08-09 18:25:24 | INFO     | agents.instagram_agent | Facebook Reel published (native Reels feed): video id 1103242892367051
+2026-08-09 18:25:25 | INFO     | agents.instagram_agent | Temporary release cleaned up
+2026-08-09 18:25:25 | INFO     | main | ============================================================
+2026-08-09 18:25:25 | INFO     | main | SUCCESS: https://www.youtube.com/shorts/j6rQC3mVkxI
+2026-08-09 18:25:25 | INFO     | main | ============================================================
 
-Done! Watch at: https://www.youtube.com/shorts/b4nhUpdVjNs
+Done! Watch at: https://www.youtube.com/shorts/j6rQC3mVkxI
