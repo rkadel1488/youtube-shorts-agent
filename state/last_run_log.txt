@@ -1,85 +1,84 @@
-2026-08-10 11:38:57 | INFO     | main | ============================================================
-2026-08-10 11:38:57 | INFO     | main | STARTING JOB: 20260810_113857
-2026-08-10 11:38:57 | INFO     | main | ============================================================
-2026-08-10 11:38:57 | INFO     | main | History: 75 used titles
-2026-08-10 11:38:57 | INFO     | agents.trend_agent | Google Trends: 10 items (top traffic: 5000)
-2026-08-10 11:38:58 | WARNING  | agents.trend_agent | Reddit fetch failed: 403 Client Error: Blocked for url: https://www.reddit.com/r/popular/hot.json?limit=15
-2026-08-10 11:38:58 | INFO     | agents.trend_agent | Selecting trend topic via Claude (attempt 1)...
-2026-08-10 11:39:05 | INFO     | agents.trend_agent | Trend topic selected: iOS 27 Lock Screen Overhaul (traffic-ranked)
-2026-08-10 11:39:05 | INFO     | main | [1] Generating script for 'iOS 27 Lock Screen Overhaul' [trending]...
-2026-08-10 11:39:05 | INFO     | agents.script_agent | Generating trend script for 'iOS 27 Lock Screen Overhaul' via Claude (attempt 1)...
-2026-08-10 11:39:10 | INFO     | agents.script_agent | Trend script generated: 'iOS 27 Lock Screen Overhaul'
-2026-08-10 11:39:10 | INFO     | main | [2] Generating AI images...
-2026-08-10 11:39:10 | INFO     | agents.image_agent | Fetching image 1/4 for 'iPhone lock screen close-up wide establishing' (attempt 1)...
-2026-08-10 11:39:11 | INFO     | agents.image_agent | Image 1 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260810_113857/temp/images/scene_00.jpg
-2026-08-10 11:39:12 | INFO     | agents.image_agent | Fetching image 2/4 for 'minimalist clock display close-up detail' (attempt 1)...
-2026-08-10 11:39:13 | INFO     | agents.image_agent | Image 2 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260810_113857/temp/images/scene_01.jpg
-2026-08-10 11:39:14 | INFO     | agents.image_agent | Fetching image 3/4 for 'smartphone wallpaper dramatic moment' (attempt 1)...
-2026-08-10 11:39:14 | INFO     | agents.image_agent | Image 3 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260810_113857/temp/images/scene_02.jpg
-2026-08-10 11:39:15 | INFO     | agents.image_agent | Fetching image 4/4 for 'iOS interface design powerful finale' (attempt 1)...
-2026-08-10 11:39:16 | INFO     | agents.image_agent | Image 4 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260810_113857/temp/images/scene_03.jpg
-2026-08-10 11:39:17 | INFO     | agents.image_agent | Generated 4/4 images successfully
-2026-08-10 11:39:17 | INFO     | main | [3] Generating voiceover...
-2026-08-10 11:39:17 | INFO     | agents.audio_agent | Generating voiceover with Gemini TTS (attempt 1)…
-2026-08-10 11:39:35 | INFO     | agents.audio_agent | Voiceover saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260810_113857/temp/voiceover.mp3 (353 KB)
-2026-08-10 11:39:35 | INFO     | main | [4] Assembling video...
-2026-08-10 11:39:36 | INFO     | agents.video_agent | Rendering AI video -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260810_113857/final_raw.mp4
-2026-08-10 11:41:57 | INFO     | agents.video_agent | AI video done: /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260810_113857/final_raw.mp4 (5.5 MB)
-2026-08-10 11:41:57 | INFO     | main | [4b] Enhancing with FFmpeg...
-2026-08-10 11:42:22 | INFO     | agents.video_editor | Color graded: graded_final_raw.mp4
-2026-08-10 11:42:48 | INFO     | agents.video_editor | Fade added: final.mp4
-2026-08-10 11:42:48 | INFO     | main | [5] Generating SEO metadata...
-2026-08-10 11:42:48 | INFO     | agents.seo_agent | Generating SEO metadata (attempt 1)...
-2026-08-10 11:42:52 | INFO     | agents.seo_agent | SEO title: 'iOS 27 lock screen just changed everything 🤯'
-2026-08-10 11:42:52 | INFO     | main | Title: iOS 27 lock screen just changed everything 🤯
-2026-08-10 11:42:52 | INFO     | main | [6] Uploading to YouTube...
-2026-08-10 11:42:52 | INFO     | agents.upload_agent | Refreshing YouTube token...
-2026-08-10 11:42:52 | INFO     | agents.upload_agent | Uploading 'iOS 27 lock screen just changed everything 🤯' (attempt 1)...
-2026-08-10 11:42:53 | INFO     | agents.upload_agent | Upload progress: 3%
-2026-08-10 11:42:53 | INFO     | agents.upload_agent | Upload progress: 6%
-2026-08-10 11:42:53 | INFO     | agents.upload_agent | Upload progress: 9%
-2026-08-10 11:42:53 | INFO     | agents.upload_agent | Upload progress: 13%
-2026-08-10 11:42:53 | INFO     | agents.upload_agent | Upload progress: 16%
-2026-08-10 11:42:53 | INFO     | agents.upload_agent | Upload progress: 19%
-2026-08-10 11:42:53 | INFO     | agents.upload_agent | Upload progress: 23%
-2026-08-10 11:42:53 | INFO     | agents.upload_agent | Upload progress: 26%
-2026-08-10 11:42:53 | INFO     | agents.upload_agent | Upload progress: 29%
-2026-08-10 11:42:54 | INFO     | agents.upload_agent | Upload progress: 33%
-2026-08-10 11:42:54 | INFO     | agents.upload_agent | Upload progress: 36%
-2026-08-10 11:42:54 | INFO     | agents.upload_agent | Upload progress: 39%
-2026-08-10 11:42:54 | INFO     | agents.upload_agent | Upload progress: 42%
-2026-08-10 11:42:54 | INFO     | agents.upload_agent | Upload progress: 46%
-2026-08-10 11:42:54 | INFO     | agents.upload_agent | Upload progress: 49%
-2026-08-10 11:42:54 | INFO     | agents.upload_agent | Upload progress: 52%
-2026-08-10 11:42:54 | INFO     | agents.upload_agent | Upload progress: 56%
-2026-08-10 11:42:54 | INFO     | agents.upload_agent | Upload progress: 59%
-2026-08-10 11:42:54 | INFO     | agents.upload_agent | Upload progress: 62%
-2026-08-10 11:42:54 | INFO     | agents.upload_agent | Upload progress: 66%
-2026-08-10 11:42:55 | INFO     | agents.upload_agent | Upload progress: 69%
-2026-08-10 11:42:55 | INFO     | agents.upload_agent | Upload progress: 72%
-2026-08-10 11:42:55 | INFO     | agents.upload_agent | Upload progress: 75%
-2026-08-10 11:42:55 | INFO     | agents.upload_agent | Upload progress: 79%
-2026-08-10 11:42:55 | INFO     | agents.upload_agent | Upload progress: 82%
-2026-08-10 11:42:55 | INFO     | agents.upload_agent | Upload progress: 85%
-2026-08-10 11:42:55 | INFO     | agents.upload_agent | Upload progress: 89%
-2026-08-10 11:42:55 | INFO     | agents.upload_agent | Upload progress: 92%
-2026-08-10 11:42:55 | INFO     | agents.upload_agent | Upload progress: 95%
-2026-08-10 11:42:55 | INFO     | agents.upload_agent | Upload progress: 99%
-2026-08-10 11:42:56 | INFO     | agents.upload_agent | Upload complete! Video ID: Q2xUA09mPpM
-2026-08-10 11:42:56 | INFO     | agents.upload_agent | URL: https://www.youtube.com/shorts/Q2xUA09mPpM
-2026-08-10 11:42:56 | INFO     | main | History saved: 76 titles
-2026-08-10 11:42:56 | INFO     | main | [7] Cross-posting to Instagram/Facebook...
-2026-08-10 11:42:58 | INFO     | agents.instagram_agent | Resolved IG account 17841414363117627 via page 'Unique Podcast' (page id 1262973056889436)
-2026-08-10 11:42:59 | INFO     | agents.instagram_agent | Video temporarily hosted: https://github.com/rkadel1488/youtube-shorts-agent/releases/download/reel-temp-1786362178/reel.mp4
-2026-08-10 11:42:59 | INFO     | agents.instagram_agent | Creating IG media container...
-2026-08-10 11:43:01 | INFO     | agents.instagram_agent | IG processing... (IN_PROGRESS)
-2026-08-10 11:43:11 | INFO     | agents.instagram_agent | IG processing... (IN_PROGRESS)
-2026-08-10 11:43:22 | INFO     | agents.instagram_agent | IG processing... (IN_PROGRESS)
-2026-08-10 11:43:42 | INFO     | agents.instagram_agent | Instagram Reel published: media id 18101977232186018
-2026-08-10 11:43:50 | INFO     | agents.instagram_agent | Facebook Reel published (native Reels feed): video id 1407682111233907
-2026-08-10 11:43:51 | INFO     | agents.instagram_agent | Temporary release cleaned up
-2026-08-10 11:43:51 | INFO     | main | ============================================================
-2026-08-10 11:43:51 | INFO     | main | SUCCESS: https://www.youtube.com/shorts/Q2xUA09mPpM
-2026-08-10 11:43:51 | INFO     | main | ============================================================
+2026-08-10 19:45:49 | INFO     | main | ============================================================
+2026-08-10 19:45:49 | INFO     | main | STARTING JOB: 20260810_194549
+2026-08-10 19:45:49 | INFO     | main | ============================================================
+2026-08-10 19:45:49 | INFO     | main | History: 76 used titles
+2026-08-10 19:45:49 | INFO     | agents.trend_agent | Google Trends: 10 items (top traffic: 10000)
+2026-08-10 19:45:49 | WARNING  | agents.trend_agent | Reddit fetch failed: 403 Client Error: Blocked for url: https://www.reddit.com/r/popular/hot.json?limit=15
+2026-08-10 19:45:49 | INFO     | agents.trend_agent | Selecting trend topic via Claude (attempt 1)...
+2026-08-10 19:45:54 | INFO     | agents.trend_agent | Trend topic selected: Stockard Channing's Reclusive Life After Loss (traffic-ranked)
+2026-08-10 19:45:54 | INFO     | main | [1] Generating script for 'Stockard Channing's Reclusive Life After Loss' [trending]...
+2026-08-10 19:45:54 | INFO     | agents.script_agent | Generating trend script for 'Stockard Channing's Reclusive Life After Loss' via Claude (attempt 1)...
+2026-08-10 19:45:59 | INFO     | agents.script_agent | Trend script generated: 'Stockard Channing's Reclusive Life After Loss'
+2026-08-10 19:45:59 | INFO     | main | [2] Generating AI images...
+2026-08-10 19:45:59 | INFO     | agents.image_agent | Fetching image 1/4 for 'empty red carpet wide establishing' (attempt 1)...
+2026-08-10 19:46:01 | INFO     | agents.image_agent | Image 1 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260810_194549/temp/images/scene_00.jpg
+2026-08-10 19:46:02 | INFO     | agents.image_agent | Fetching image 2/4 for 'vintage cinema marquee close-up detail' (attempt 1)...
+2026-08-10 19:46:03 | INFO     | agents.image_agent | Image 2 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260810_194549/temp/images/scene_01.jpg
+2026-08-10 19:46:04 | INFO     | agents.image_agent | Fetching image 3/4 for 'quiet suburban home exterior dramatic moment' (attempt 1)...
+2026-08-10 19:46:04 | INFO     | agents.image_agent | Image 3 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260810_194549/temp/images/scene_02.jpg
+2026-08-10 19:46:05 | INFO     | agents.image_agent | Fetching image 4/4 for 'solitary figure at window powerful finale' (attempt 1)...
+2026-08-10 19:46:06 | INFO     | agents.image_agent | Image 4 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260810_194549/temp/images/scene_03.jpg
+2026-08-10 19:46:07 | INFO     | agents.image_agent | Generated 4/4 images successfully
+2026-08-10 19:46:07 | INFO     | main | [3] Generating voiceover...
+2026-08-10 19:46:08 | INFO     | agents.audio_agent | Generating voiceover with Gemini TTS (attempt 1)…
+2026-08-10 19:46:29 | INFO     | agents.audio_agent | Voiceover saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260810_194549/temp/voiceover.mp3 (298 KB)
+2026-08-10 19:46:29 | INFO     | main | [4] Assembling video...
+2026-08-10 19:46:30 | INFO     | agents.video_agent | Rendering AI video -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260810_194549/final_raw.mp4
+2026-08-10 19:48:43 | INFO     | agents.video_agent | AI video done: /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260810_194549/final_raw.mp4 (6.0 MB)
+2026-08-10 19:48:43 | INFO     | main | [4b] Enhancing with FFmpeg...
+2026-08-10 19:49:08 | INFO     | agents.video_editor | Color graded: graded_final_raw.mp4
+2026-08-10 19:49:32 | INFO     | agents.video_editor | Fade added: final.mp4
+2026-08-10 19:49:32 | INFO     | main | [5] Generating SEO metadata...
+2026-08-10 19:49:32 | INFO     | agents.seo_agent | Generating SEO metadata (attempt 1)...
+2026-08-10 19:49:36 | INFO     | agents.seo_agent | SEO title: 'Why Stockard Channing vanished from Hollywood 👀'
+2026-08-10 19:49:36 | INFO     | main | Title: Why Stockard Channing vanished from Hollywood 👀
+2026-08-10 19:49:36 | INFO     | main | [6] Uploading to YouTube...
+2026-08-10 19:49:36 | INFO     | agents.upload_agent | Refreshing YouTube token...
+2026-08-10 19:49:36 | INFO     | agents.upload_agent | Uploading 'Why Stockard Channing vanished from Hollywood 👀' (attempt 1)...
+2026-08-10 19:49:37 | INFO     | agents.upload_agent | Upload progress: 3%
+2026-08-10 19:49:37 | INFO     | agents.upload_agent | Upload progress: 6%
+2026-08-10 19:49:37 | INFO     | agents.upload_agent | Upload progress: 10%
+2026-08-10 19:49:37 | INFO     | agents.upload_agent | Upload progress: 13%
+2026-08-10 19:49:37 | INFO     | agents.upload_agent | Upload progress: 16%
+2026-08-10 19:49:37 | INFO     | agents.upload_agent | Upload progress: 20%
+2026-08-10 19:49:37 | INFO     | agents.upload_agent | Upload progress: 23%
+2026-08-10 19:49:37 | INFO     | agents.upload_agent | Upload progress: 26%
+2026-08-10 19:49:38 | INFO     | agents.upload_agent | Upload progress: 30%
+2026-08-10 19:49:38 | INFO     | agents.upload_agent | Upload progress: 33%
+2026-08-10 19:49:38 | INFO     | agents.upload_agent | Upload progress: 37%
+2026-08-10 19:49:38 | INFO     | agents.upload_agent | Upload progress: 40%
+2026-08-10 19:49:38 | INFO     | agents.upload_agent | Upload progress: 43%
+2026-08-10 19:49:38 | INFO     | agents.upload_agent | Upload progress: 47%
+2026-08-10 19:49:38 | INFO     | agents.upload_agent | Upload progress: 50%
+2026-08-10 19:49:38 | INFO     | agents.upload_agent | Upload progress: 53%
+2026-08-10 19:49:38 | INFO     | agents.upload_agent | Upload progress: 57%
+2026-08-10 19:49:38 | INFO     | agents.upload_agent | Upload progress: 60%
+2026-08-10 19:49:38 | INFO     | agents.upload_agent | Upload progress: 63%
+2026-08-10 19:49:38 | INFO     | agents.upload_agent | Upload progress: 67%
+2026-08-10 19:49:38 | INFO     | agents.upload_agent | Upload progress: 70%
+2026-08-10 19:49:38 | INFO     | agents.upload_agent | Upload progress: 74%
+2026-08-10 19:49:38 | INFO     | agents.upload_agent | Upload progress: 77%
+2026-08-10 19:49:38 | INFO     | agents.upload_agent | Upload progress: 80%
+2026-08-10 19:49:38 | INFO     | agents.upload_agent | Upload progress: 84%
+2026-08-10 19:49:38 | INFO     | agents.upload_agent | Upload progress: 87%
+2026-08-10 19:49:38 | INFO     | agents.upload_agent | Upload progress: 90%
+2026-08-10 19:49:38 | INFO     | agents.upload_agent | Upload progress: 94%
+2026-08-10 19:49:38 | INFO     | agents.upload_agent | Upload progress: 97%
+2026-08-10 19:49:39 | INFO     | agents.upload_agent | Upload complete! Video ID: cFa7AxpX92M
+2026-08-10 19:49:39 | INFO     | agents.upload_agent | URL: https://www.youtube.com/shorts/cFa7AxpX92M
+2026-08-10 19:49:39 | INFO     | main | History saved: 77 titles
+2026-08-10 19:49:39 | INFO     | main | [7] Cross-posting to Instagram/Facebook...
+2026-08-10 19:49:40 | INFO     | agents.instagram_agent | Resolved IG account 17841414363117627 via page 'Unique Podcast' (page id 1262973056889436)
+2026-08-10 19:49:43 | INFO     | agents.instagram_agent | Video temporarily hosted: https://github.com/rkadel1488/youtube-shorts-agent/releases/download/reel-temp-1786391380/reel.mp4
+2026-08-10 19:49:43 | INFO     | agents.instagram_agent | Creating IG media container...
+2026-08-10 19:49:46 | INFO     | agents.instagram_agent | IG processing... (IN_PROGRESS)
+2026-08-10 19:49:57 | INFO     | agents.instagram_agent | IG processing... (IN_PROGRESS)
+2026-08-10 19:50:08 | INFO     | agents.instagram_agent | IG processing... (IN_PROGRESS)
+2026-08-10 19:50:26 | INFO     | agents.instagram_agent | Instagram Reel published: media id 18074956307491003
+2026-08-10 19:50:36 | INFO     | agents.instagram_agent | Facebook Reel published (native Reels feed): video id 1443133917861086
+2026-08-10 19:50:37 | INFO     | agents.instagram_agent | Temporary release cleaned up
+2026-08-10 19:50:37 | INFO     | main | ============================================================
+2026-08-10 19:50:37 | INFO     | main | SUCCESS: https://www.youtube.com/shorts/cFa7AxpX92M
+2026-08-10 19:50:37 | INFO     | main | ============================================================
 
-Done! Watch at: https://www.youtube.com/shorts/Q2xUA09mPpM
+Done! Watch at: https://www.youtube.com/shorts/cFa7AxpX92M
