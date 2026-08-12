@@ -1,88 +1,87 @@
-2026-08-11 18:41:55 | INFO     | main | ============================================================
-2026-08-11 18:41:55 | INFO     | main | STARTING JOB: 20260811_184155
-2026-08-11 18:41:55 | INFO     | main | ============================================================
-2026-08-11 18:41:55 | INFO     | main | History: 79 used titles
-2026-08-11 18:41:56 | INFO     | agents.trend_agent | Google Trends: 10 items (top traffic: 2000)
-2026-08-11 18:41:56 | WARNING  | agents.trend_agent | Reddit fetch failed: 403 Client Error: Blocked for url: https://www.reddit.com/r/popular/hot.json?limit=15
-2026-08-11 18:41:56 | INFO     | agents.trend_agent | Selecting trend topic via Claude (attempt 1)...
-2026-08-11 18:42:02 | INFO     | agents.trend_agent | Trend topic selected: Overwatch Season 4 New Hero & Battle Pass Revamp (traffic-ranked)
-2026-08-11 18:42:02 | INFO     | main | [1] Generating script for 'Overwatch Season 4 New Hero & Battle Pass Revamp' [trending]...
-2026-08-11 18:42:02 | INFO     | agents.script_agent | Generating trend script for 'Overwatch Season 4 New Hero & Battle Pass Revamp' via Claude (attempt 1)...
-2026-08-11 18:42:09 | INFO     | agents.script_agent | Trend script generated: 'Overwatch Season 4 New Hero & Battle Pass Revamp'
-2026-08-11 18:42:09 | INFO     | main | [2] Generating AI images...
-2026-08-11 18:42:09 | INFO     | agents.image_agent | Fetching image 1/4 for 'futuristic gaming arena wide establishing' (attempt 1)...
-2026-08-11 18:42:10 | INFO     | agents.image_agent | Image 1 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260811_184155/temp/images/scene_00.jpg
-2026-08-11 18:42:11 | INFO     | agents.image_agent | Fetching image 2/4 for 'armored tank character concept art close-up detail' (attempt 1)...
-2026-08-11 18:42:12 | INFO     | agents.image_agent | Image 2 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260811_184155/temp/images/scene_01.jpg
-2026-08-11 18:42:13 | INFO     | agents.image_agent | Fetching image 3/4 for 'battle pass reward screen dramatic moment' (attempt 1)...
-2026-08-11 18:42:13 | INFO     | agents.image_agent | Image 3 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260811_184155/temp/images/scene_02.jpg
-2026-08-11 18:42:14 | INFO     | agents.image_agent | Fetching image 4/4 for 'neon city skyline powerful finale' (attempt 1)...
-2026-08-11 18:42:15 | INFO     | agents.image_agent | Image 4 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260811_184155/temp/images/scene_03.jpg
-2026-08-11 18:42:16 | INFO     | agents.image_agent | Generated 4/4 images successfully
-2026-08-11 18:42:16 | INFO     | main | [3] Generating voiceover...
-2026-08-11 18:42:16 | INFO     | agents.audio_agent | Generating voiceover with Gemini TTS (attempt 1)…
-2026-08-11 18:46:06 | INFO     | agents.audio_agent | Voiceover saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260811_184155/temp/voiceover.mp3 (325 KB)
-2026-08-11 18:46:06 | INFO     | main | [4] Assembling video...
-2026-08-11 18:46:06 | INFO     | agents.video_agent | Rendering AI video -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260811_184155/final_raw.mp4
-2026-08-11 18:48:25 | INFO     | agents.video_agent | AI video done: /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260811_184155/final_raw.mp4 (6.7 MB)
-2026-08-11 18:48:25 | INFO     | main | [4b] Enhancing with FFmpeg...
-2026-08-11 18:48:50 | INFO     | agents.video_editor | Color graded: graded_final_raw.mp4
-2026-08-11 18:49:14 | INFO     | agents.video_editor | Fade added: final.mp4
-2026-08-11 18:49:14 | INFO     | main | [5] Generating SEO metadata...
-2026-08-11 18:49:14 | INFO     | agents.seo_agent | Generating SEO metadata (attempt 1)...
-2026-08-11 18:49:19 | INFO     | agents.seo_agent | SEO title: 'Overwatch Season 4 just changed the game 🤯'
-2026-08-11 18:49:19 | INFO     | main | Title: Overwatch Season 4 just changed the game 🤯
-2026-08-11 18:49:19 | INFO     | main | [6] Uploading to YouTube...
-2026-08-11 18:49:19 | INFO     | agents.upload_agent | Refreshing YouTube token...
-2026-08-11 18:49:19 | INFO     | agents.upload_agent | Uploading 'Overwatch Season 4 just changed the game 🤯' (attempt 1)...
-2026-08-11 18:49:20 | INFO     | agents.upload_agent | Upload progress: 2%
-2026-08-11 18:49:21 | INFO     | agents.upload_agent | Upload progress: 5%
-2026-08-11 18:49:21 | INFO     | agents.upload_agent | Upload progress: 8%
-2026-08-11 18:49:21 | INFO     | agents.upload_agent | Upload progress: 11%
-2026-08-11 18:49:21 | INFO     | agents.upload_agent | Upload progress: 14%
-2026-08-11 18:49:21 | INFO     | agents.upload_agent | Upload progress: 17%
-2026-08-11 18:49:21 | INFO     | agents.upload_agent | Upload progress: 20%
-2026-08-11 18:49:21 | INFO     | agents.upload_agent | Upload progress: 23%
-2026-08-11 18:49:21 | INFO     | agents.upload_agent | Upload progress: 26%
-2026-08-11 18:49:21 | INFO     | agents.upload_agent | Upload progress: 29%
-2026-08-11 18:49:21 | INFO     | agents.upload_agent | Upload progress: 32%
-2026-08-11 18:49:21 | INFO     | agents.upload_agent | Upload progress: 35%
-2026-08-11 18:49:21 | INFO     | agents.upload_agent | Upload progress: 38%
-2026-08-11 18:49:22 | INFO     | agents.upload_agent | Upload progress: 41%
-2026-08-11 18:49:22 | INFO     | agents.upload_agent | Upload progress: 44%
-2026-08-11 18:49:22 | INFO     | agents.upload_agent | Upload progress: 47%
-2026-08-11 18:49:22 | INFO     | agents.upload_agent | Upload progress: 50%
-2026-08-11 18:49:22 | INFO     | agents.upload_agent | Upload progress: 53%
-2026-08-11 18:49:22 | INFO     | agents.upload_agent | Upload progress: 56%
-2026-08-11 18:49:22 | INFO     | agents.upload_agent | Upload progress: 59%
-2026-08-11 18:49:22 | INFO     | agents.upload_agent | Upload progress: 62%
-2026-08-11 18:49:22 | INFO     | agents.upload_agent | Upload progress: 65%
-2026-08-11 18:49:22 | INFO     | agents.upload_agent | Upload progress: 68%
-2026-08-11 18:49:22 | INFO     | agents.upload_agent | Upload progress: 71%
-2026-08-11 18:49:22 | INFO     | agents.upload_agent | Upload progress: 74%
-2026-08-11 18:49:22 | INFO     | agents.upload_agent | Upload progress: 77%
-2026-08-11 18:49:23 | INFO     | agents.upload_agent | Upload progress: 80%
-2026-08-11 18:49:23 | INFO     | agents.upload_agent | Upload progress: 83%
-2026-08-11 18:49:23 | INFO     | agents.upload_agent | Upload progress: 86%
-2026-08-11 18:49:23 | INFO     | agents.upload_agent | Upload progress: 89%
-2026-08-11 18:49:23 | INFO     | agents.upload_agent | Upload progress: 92%
-2026-08-11 18:49:23 | INFO     | agents.upload_agent | Upload progress: 95%
-2026-08-11 18:49:23 | INFO     | agents.upload_agent | Upload progress: 98%
-2026-08-11 18:49:23 | INFO     | agents.upload_agent | Upload complete! Video ID: 3xWoqRSQEuY
-2026-08-11 18:49:23 | INFO     | agents.upload_agent | URL: https://www.youtube.com/shorts/3xWoqRSQEuY
-2026-08-11 18:49:23 | INFO     | main | History saved: 80 titles
-2026-08-11 18:49:23 | INFO     | main | [7] Cross-posting to Instagram/Facebook...
-2026-08-11 18:49:26 | INFO     | agents.instagram_agent | Resolved IG account 17841414363117627 via page 'Unique Podcast' (page id 1262973056889436)
-2026-08-11 18:49:28 | INFO     | agents.instagram_agent | Video temporarily hosted: https://github.com/rkadel1488/youtube-shorts-agent/releases/download/reel-temp-1786474166/reel.mp4
-2026-08-11 18:49:28 | INFO     | agents.instagram_agent | Creating IG media container...
-2026-08-11 18:49:30 | INFO     | agents.instagram_agent | IG processing... (IN_PROGRESS)
-2026-08-11 18:49:41 | INFO     | agents.instagram_agent | IG processing... (IN_PROGRESS)
-2026-08-11 18:49:52 | INFO     | agents.instagram_agent | IG processing... (IN_PROGRESS)
-2026-08-11 18:50:14 | INFO     | agents.instagram_agent | Instagram Reel published: media id 18106850383874064
-2026-08-11 18:50:26 | INFO     | agents.instagram_agent | Facebook Reel published (native Reels feed): video id 1976523063050861
-2026-08-11 18:50:27 | INFO     | agents.instagram_agent | Temporary release cleaned up
-2026-08-11 18:50:27 | INFO     | main | ============================================================
-2026-08-11 18:50:27 | INFO     | main | SUCCESS: https://www.youtube.com/shorts/3xWoqRSQEuY
-2026-08-11 18:50:27 | INFO     | main | ============================================================
+2026-08-12 11:36:32 | INFO     | main | ============================================================
+2026-08-12 11:36:32 | INFO     | main | STARTING JOB: 20260812_113632
+2026-08-12 11:36:32 | INFO     | main | ============================================================
+2026-08-12 11:36:32 | INFO     | main | History: 80 used titles
+2026-08-12 11:36:33 | INFO     | agents.trend_agent | Google Trends: 10 items (top traffic: 2000)
+2026-08-12 11:36:33 | WARNING  | agents.trend_agent | Reddit fetch failed: 403 Client Error: Blocked for url: https://www.reddit.com/r/popular/hot.json?limit=15
+2026-08-12 11:36:33 | INFO     | agents.trend_agent | Selecting trend topic via Claude (attempt 1)...
+2026-08-12 11:36:36 | INFO     | agents.trend_agent | Trend topic selected: Zelda Ocarina of Time Remake Officially Announced (traffic-ranked)
+2026-08-12 11:36:36 | INFO     | main | [1] Generating script for 'Zelda Ocarina of Time Remake Officially Announced' [trending]...
+2026-08-12 11:36:37 | INFO     | agents.script_agent | Generating trend script for 'Zelda Ocarina of Time Remake Officially Announced' via Claude (attempt 1)...
+2026-08-12 11:36:42 | INFO     | agents.script_agent | Trend script generated: 'Zelda Ocarina of Time Remake Officially Announced'
+2026-08-12 11:36:42 | INFO     | main | [2] Generating AI images...
+2026-08-12 11:36:42 | INFO     | agents.image_agent | Fetching image 1/4 for 'fantasy video game castle wide establishing' (attempt 1)...
+2026-08-12 11:36:42 | INFO     | agents.image_agent | Image 1 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260812_113632/temp/images/scene_00.jpg
+2026-08-12 11:36:43 | INFO     | agents.image_agent | Fetching image 2/4 for 'ancient sword glowing close-up detail' (attempt 1)...
+2026-08-12 11:36:44 | INFO     | agents.image_agent | Image 2 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260812_113632/temp/images/scene_01.jpg
+2026-08-12 11:36:45 | INFO     | agents.image_agent | Fetching image 3/4 for 'mystical dungeon interior dramatic moment' (attempt 1)...
+2026-08-12 11:36:46 | INFO     | agents.image_agent | Image 3 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260812_113632/temp/images/scene_02.jpg
+2026-08-12 11:36:47 | INFO     | agents.image_agent | Fetching image 4/4 for 'retro gaming controller powerful finale' (attempt 1)...
+2026-08-12 11:36:48 | INFO     | agents.image_agent | Image 4 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260812_113632/temp/images/scene_03.jpg
+2026-08-12 11:36:49 | INFO     | agents.image_agent | Generated 4/4 images successfully
+2026-08-12 11:36:49 | INFO     | main | [3] Generating voiceover...
+2026-08-12 11:36:49 | INFO     | agents.audio_agent | Generating voiceover with Gemini TTS (attempt 1)…
+2026-08-12 11:37:32 | INFO     | agents.audio_agent | Voiceover saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260812_113632/temp/voiceover.mp3 (290 KB)
+2026-08-12 11:37:32 | INFO     | main | [4] Assembling video...
+2026-08-12 11:37:33 | INFO     | agents.video_agent | Rendering AI video -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260812_113632/final_raw.mp4
+2026-08-12 11:40:32 | INFO     | agents.video_agent | AI video done: /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260812_113632/final_raw.mp4 (7.0 MB)
+2026-08-12 11:40:32 | INFO     | main | [4b] Enhancing with FFmpeg...
+2026-08-12 11:40:57 | INFO     | agents.video_editor | Color graded: graded_final_raw.mp4
+2026-08-12 11:41:23 | INFO     | agents.video_editor | Fade added: final.mp4
+2026-08-12 11:41:23 | INFO     | main | [5] Generating SEO metadata...
+2026-08-12 11:41:23 | INFO     | agents.seo_agent | Generating SEO metadata (attempt 1)...
+2026-08-12 11:41:28 | INFO     | agents.seo_agent | SEO title: 'Ocarina of Time remake is officially happening 🤯'
+2026-08-12 11:41:28 | INFO     | main | Title: Ocarina of Time remake is officially happening 🤯
+2026-08-12 11:41:28 | INFO     | main | [6] Uploading to YouTube...
+2026-08-12 11:41:28 | INFO     | agents.upload_agent | Refreshing YouTube token...
+2026-08-12 11:41:28 | INFO     | agents.upload_agent | Uploading 'Ocarina of Time remake is officially happening 🤯' (attempt 1)...
+2026-08-12 11:41:30 | INFO     | agents.upload_agent | Upload progress: 3%
+2026-08-12 11:41:30 | INFO     | agents.upload_agent | Upload progress: 6%
+2026-08-12 11:41:30 | INFO     | agents.upload_agent | Upload progress: 9%
+2026-08-12 11:41:31 | INFO     | agents.upload_agent | Upload progress: 12%
+2026-08-12 11:41:31 | INFO     | agents.upload_agent | Upload progress: 15%
+2026-08-12 11:41:31 | INFO     | agents.upload_agent | Upload progress: 18%
+2026-08-12 11:41:32 | INFO     | agents.upload_agent | Upload progress: 21%
+2026-08-12 11:41:32 | INFO     | agents.upload_agent | Upload progress: 24%
+2026-08-12 11:41:32 | INFO     | agents.upload_agent | Upload progress: 28%
+2026-08-12 11:41:33 | INFO     | agents.upload_agent | Upload progress: 31%
+2026-08-12 11:41:33 | INFO     | agents.upload_agent | Upload progress: 34%
+2026-08-12 11:41:33 | INFO     | agents.upload_agent | Upload progress: 37%
+2026-08-12 11:41:34 | INFO     | agents.upload_agent | Upload progress: 40%
+2026-08-12 11:41:34 | INFO     | agents.upload_agent | Upload progress: 43%
+2026-08-12 11:41:34 | INFO     | agents.upload_agent | Upload progress: 46%
+2026-08-12 11:41:35 | INFO     | agents.upload_agent | Upload progress: 49%
+2026-08-12 11:41:35 | INFO     | agents.upload_agent | Upload progress: 53%
+2026-08-12 11:41:35 | INFO     | agents.upload_agent | Upload progress: 56%
+2026-08-12 11:41:36 | INFO     | agents.upload_agent | Upload progress: 59%
+2026-08-12 11:41:36 | INFO     | agents.upload_agent | Upload progress: 62%
+2026-08-12 11:41:36 | INFO     | agents.upload_agent | Upload progress: 65%
+2026-08-12 11:41:37 | INFO     | agents.upload_agent | Upload progress: 68%
+2026-08-12 11:41:37 | INFO     | agents.upload_agent | Upload progress: 71%
+2026-08-12 11:41:37 | INFO     | agents.upload_agent | Upload progress: 74%
+2026-08-12 11:41:38 | INFO     | agents.upload_agent | Upload progress: 78%
+2026-08-12 11:41:38 | INFO     | agents.upload_agent | Upload progress: 81%
+2026-08-12 11:41:38 | INFO     | agents.upload_agent | Upload progress: 84%
+2026-08-12 11:41:39 | INFO     | agents.upload_agent | Upload progress: 87%
+2026-08-12 11:41:39 | INFO     | agents.upload_agent | Upload progress: 90%
+2026-08-12 11:41:39 | INFO     | agents.upload_agent | Upload progress: 93%
+2026-08-12 11:41:39 | INFO     | agents.upload_agent | Upload progress: 96%
+2026-08-12 11:41:40 | INFO     | agents.upload_agent | Upload progress: 99%
+2026-08-12 11:41:40 | INFO     | agents.upload_agent | Upload complete! Video ID: t59VOvkcqF4
+2026-08-12 11:41:40 | INFO     | agents.upload_agent | URL: https://www.youtube.com/shorts/t59VOvkcqF4
+2026-08-12 11:41:40 | INFO     | main | History saved: 81 titles
+2026-08-12 11:41:40 | INFO     | main | [7] Cross-posting to Instagram/Facebook...
+2026-08-12 11:41:41 | INFO     | agents.instagram_agent | Resolved IG account 17841414363117627 via page 'Unique Podcast' (page id 1262973056889436)
+2026-08-12 11:41:44 | INFO     | agents.instagram_agent | Video temporarily hosted: https://github.com/rkadel1488/youtube-shorts-agent/releases/download/reel-temp-1786534901/reel.mp4
+2026-08-12 11:41:44 | INFO     | agents.instagram_agent | Creating IG media container...
+2026-08-12 11:41:45 | INFO     | agents.instagram_agent | IG processing... (IN_PROGRESS)
+2026-08-12 11:41:55 | INFO     | agents.instagram_agent | IG processing... (IN_PROGRESS)
+2026-08-12 11:42:06 | INFO     | agents.instagram_agent | IG processing... (IN_PROGRESS)
+2026-08-12 11:42:27 | INFO     | agents.instagram_agent | Instagram Reel published: media id 18028918823845566
+2026-08-12 11:42:36 | INFO     | agents.instagram_agent | Facebook Reel published (native Reels feed): video id 1525267798850436
+2026-08-12 11:42:37 | INFO     | agents.instagram_agent | Temporary release cleaned up
+2026-08-12 11:42:37 | INFO     | main | ============================================================
+2026-08-12 11:42:37 | INFO     | main | SUCCESS: https://www.youtube.com/shorts/t59VOvkcqF4
+2026-08-12 11:42:37 | INFO     | main | ============================================================
 
-Done! Watch at: https://www.youtube.com/shorts/3xWoqRSQEuY
+Done! Watch at: https://www.youtube.com/shorts/t59VOvkcqF4
