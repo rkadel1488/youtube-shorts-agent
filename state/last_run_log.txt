@@ -1,82 +1,93 @@
-2026-08-13 18:43:26 | INFO     | main | ============================================================
-2026-08-13 18:43:26 | INFO     | main | STARTING JOB: 20260813_184326
-2026-08-13 18:43:26 | INFO     | main | ============================================================
-2026-08-13 18:43:26 | INFO     | main | History: 83 used titles
-2026-08-13 18:43:26 | INFO     | agents.trend_agent | Google Trends: 10 items (top traffic: 5000)
-2026-08-13 18:43:26 | WARNING  | agents.trend_agent | Reddit fetch failed: 403 Client Error: Blocked for url: https://www.reddit.com/r/popular/hot.json?limit=15
-2026-08-13 18:43:26 | INFO     | agents.trend_agent | Selecting trend topic via Claude (attempt 1)...
-2026-08-13 18:43:30 | INFO     | agents.trend_agent | Trend topic selected: Google Gemini 3.7 Flash (traffic-ranked)
-2026-08-13 18:43:30 | INFO     | main | [1] Generating script for 'Google Gemini 3.7 Flash' [trending]...
-2026-08-13 18:43:30 | INFO     | agents.script_agent | Generating trend script for 'Google Gemini 3.7 Flash' via Claude (attempt 1)...
-2026-08-13 18:43:39 | INFO     | agents.script_agent | Trend script generated: 'Google Gemini 3.7 Flash'
-2026-08-13 18:43:39 | INFO     | main | [2] Generating AI images...
-2026-08-13 18:43:39 | INFO     | agents.image_agent | Fetching image 1/4 for 'futuristic AI interface wide establishing' (attempt 1)...
-2026-08-13 18:43:40 | INFO     | agents.image_agent | Image 1 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260813_184326/temp/images/scene_00.jpg
-2026-08-13 18:43:41 | INFO     | agents.image_agent | Fetching image 2/4 for 'computer coding screen close-up detail' (attempt 1)...
-2026-08-13 18:43:42 | INFO     | agents.image_agent | Image 2 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260813_184326/temp/images/scene_01.jpg
-2026-08-13 18:43:43 | INFO     | agents.image_agent | Fetching image 3/4 for 'tech lab environment dramatic moment' (attempt 1)...
-2026-08-13 18:43:43 | INFO     | agents.image_agent | Image 3 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260813_184326/temp/images/scene_02.jpg
-2026-08-13 18:43:44 | INFO     | agents.image_agent | Fetching image 4/4 for 'digital workflow diagram powerful finale' (attempt 1)...
-2026-08-13 18:43:45 | INFO     | agents.image_agent | Image 4 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260813_184326/temp/images/scene_03.jpg
-2026-08-13 18:43:46 | INFO     | agents.image_agent | Generated 4/4 images successfully
-2026-08-13 18:43:46 | INFO     | main | [3] Generating voiceover...
-2026-08-13 18:43:46 | INFO     | agents.audio_agent | Generating voiceover with Gemini TTS (attempt 1)…
-2026-08-13 18:44:02 | INFO     | agents.audio_agent | Voiceover saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260813_184326/temp/voiceover.mp3 (349 KB)
-2026-08-13 18:44:02 | INFO     | main | [4] Assembling video...
-2026-08-13 18:44:02 | INFO     | agents.video_agent | Rendering AI video -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260813_184326/final_raw.mp4
-2026-08-13 18:46:35 | INFO     | agents.video_agent | AI video done: /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260813_184326/final_raw.mp4 (5.8 MB)
-2026-08-13 18:46:35 | INFO     | main | [4b] Enhancing with FFmpeg...
-2026-08-13 18:47:00 | INFO     | agents.video_editor | Color graded: graded_final_raw.mp4
-2026-08-13 18:47:25 | INFO     | agents.video_editor | Fade added: final.mp4
-2026-08-13 18:47:25 | INFO     | main | [5] Generating SEO metadata...
-2026-08-13 18:47:25 | INFO     | agents.seo_agent | Generating SEO metadata (attempt 1)...
-2026-08-13 18:47:33 | INFO     | agents.seo_agent | SEO title: 'Google Gemini 2.0 Flash just changed everything 🤯'
-2026-08-13 18:47:33 | INFO     | main | Title: Google Gemini 2.0 Flash just changed everything 🤯
-2026-08-13 18:47:33 | INFO     | main | [6] Uploading to YouTube...
-2026-08-13 18:47:33 | INFO     | agents.upload_agent | Refreshing YouTube token...
-2026-08-13 18:47:33 | INFO     | agents.upload_agent | Uploading 'Google Gemini 2.0 Flash just changed everything 🤯' (attempt 1)...
-2026-08-13 18:47:34 | INFO     | agents.upload_agent | Upload progress: 3%
-2026-08-13 18:47:35 | INFO     | agents.upload_agent | Upload progress: 7%
-2026-08-13 18:47:35 | INFO     | agents.upload_agent | Upload progress: 10%
-2026-08-13 18:47:35 | INFO     | agents.upload_agent | Upload progress: 14%
-2026-08-13 18:47:35 | INFO     | agents.upload_agent | Upload progress: 17%
-2026-08-13 18:47:35 | INFO     | agents.upload_agent | Upload progress: 21%
-2026-08-13 18:47:35 | INFO     | agents.upload_agent | Upload progress: 25%
-2026-08-13 18:47:36 | INFO     | agents.upload_agent | Upload progress: 28%
-2026-08-13 18:47:36 | INFO     | agents.upload_agent | Upload progress: 32%
-2026-08-13 18:47:36 | INFO     | agents.upload_agent | Upload progress: 35%
-2026-08-13 18:47:36 | INFO     | agents.upload_agent | Upload progress: 39%
-2026-08-13 18:47:36 | INFO     | agents.upload_agent | Upload progress: 42%
-2026-08-13 18:47:36 | INFO     | agents.upload_agent | Upload progress: 46%
-2026-08-13 18:47:37 | INFO     | agents.upload_agent | Upload progress: 50%
-2026-08-13 18:47:37 | INFO     | agents.upload_agent | Upload progress: 53%
-2026-08-13 18:47:37 | INFO     | agents.upload_agent | Upload progress: 57%
-2026-08-13 18:47:37 | INFO     | agents.upload_agent | Upload progress: 60%
-2026-08-13 18:47:38 | INFO     | agents.upload_agent | Upload progress: 64%
-2026-08-13 18:47:38 | INFO     | agents.upload_agent | Upload progress: 68%
-2026-08-13 18:47:38 | INFO     | agents.upload_agent | Upload progress: 71%
-2026-08-13 18:47:38 | INFO     | agents.upload_agent | Upload progress: 75%
-2026-08-13 18:47:38 | INFO     | agents.upload_agent | Upload progress: 78%
-2026-08-13 18:47:39 | INFO     | agents.upload_agent | Upload progress: 82%
-2026-08-13 18:47:39 | INFO     | agents.upload_agent | Upload progress: 85%
-2026-08-13 18:47:39 | INFO     | agents.upload_agent | Upload progress: 89%
-2026-08-13 18:47:39 | INFO     | agents.upload_agent | Upload progress: 93%
-2026-08-13 18:47:39 | INFO     | agents.upload_agent | Upload progress: 96%
-2026-08-13 18:47:40 | INFO     | agents.upload_agent | Upload complete! Video ID: 9CMkxIEzwoI
-2026-08-13 18:47:40 | INFO     | agents.upload_agent | URL: https://www.youtube.com/shorts/9CMkxIEzwoI
-2026-08-13 18:47:40 | INFO     | main | History saved: 84 titles
-2026-08-13 18:47:40 | INFO     | main | [7] Cross-posting to Instagram/Facebook...
-2026-08-13 18:47:41 | INFO     | agents.instagram_agent | Resolved IG account 17841414363117627 via page 'Unique Podcast' (page id 1262973056889436)
-2026-08-13 18:47:43 | INFO     | agents.instagram_agent | Video temporarily hosted: https://github.com/rkadel1488/youtube-shorts-agent/releases/download/reel-temp-1786646861/reel.mp4
-2026-08-13 18:47:43 | INFO     | agents.instagram_agent | Creating IG media container...
-2026-08-13 18:47:44 | INFO     | agents.instagram_agent | IG processing... (IN_PROGRESS)
-2026-08-13 18:47:55 | INFO     | agents.instagram_agent | IG processing... (IN_PROGRESS)
-2026-08-13 18:48:06 | INFO     | agents.instagram_agent | IG processing... (IN_PROGRESS)
-2026-08-13 18:48:27 | INFO     | agents.instagram_agent | Instagram Reel published: media id 17946948156082865
-2026-08-13 18:48:37 | INFO     | agents.instagram_agent | Facebook Reel published (native Reels feed): video id 1366635171676115
-2026-08-13 18:48:38 | INFO     | agents.instagram_agent | Temporary release cleaned up
-2026-08-13 18:48:38 | INFO     | main | ============================================================
-2026-08-13 18:48:38 | INFO     | main | SUCCESS: https://www.youtube.com/shorts/9CMkxIEzwoI
-2026-08-13 18:48:38 | INFO     | main | ============================================================
+2026-08-14 11:34:23 | INFO     | main | ============================================================
+2026-08-14 11:34:23 | INFO     | main | STARTING JOB: 20260814_113423
+2026-08-14 11:34:23 | INFO     | main | ============================================================
+2026-08-14 11:34:23 | INFO     | main | History: 84 used titles
+2026-08-14 11:34:23 | INFO     | agents.trend_agent | Google Trends: 10 items (top traffic: 2000)
+2026-08-14 11:34:23 | WARNING  | agents.trend_agent | Reddit fetch failed: 403 Client Error: Blocked for url: https://www.reddit.com/r/popular/hot.json?limit=15
+2026-08-14 11:34:23 | INFO     | agents.trend_agent | Selecting trend topic via Claude (attempt 1)...
+2026-08-14 11:34:27 | INFO     | agents.trend_agent | Trend topic selected: Instagram's First Major Logo Redesign in Over 10 Years (traffic-ranked)
+2026-08-14 11:34:27 | INFO     | main | [1] Generating script for 'Instagram's First Major Logo Redesign in Over 10 Years' [trending]...
+2026-08-14 11:34:27 | INFO     | agents.script_agent | Generating trend script for 'Instagram's First Major Logo Redesign in Over 10 Years' via Claude (attempt 1)...
+2026-08-14 11:34:32 | INFO     | agents.script_agent | Trend script generated: 'Instagram's First Major Logo Redesign in Over 10 Years'
+2026-08-14 11:34:32 | INFO     | main | [2] Generating AI images...
+2026-08-14 11:34:32 | INFO     | agents.image_agent | Fetching image 1/4 for 'smartphone screen with app icons wide establishing' (attempt 1)...
+2026-08-14 11:34:33 | INFO     | agents.image_agent | Image 1 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260814_113423/temp/images/scene_00.jpg
+2026-08-14 11:34:34 | INFO     | agents.image_agent | Fetching image 2/4 for 'social media logo redesign concept close-up detail' (attempt 1)...
+2026-08-14 11:34:35 | INFO     | agents.image_agent | Image 2 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260814_113423/temp/images/scene_01.jpg
+2026-08-14 11:34:36 | INFO     | agents.image_agent | Fetching image 3/4 for 'camera icon close-up dramatic moment' (attempt 1)...
+2026-08-14 11:34:36 | INFO     | agents.image_agent | Image 3 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260814_113423/temp/images/scene_02.jpg
+2026-08-14 11:34:37 | INFO     | agents.image_agent | Fetching image 4/4 for 'digital branding evolution powerful finale' (attempt 1)...
+2026-08-14 11:34:38 | INFO     | agents.image_agent | Image 4 saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260814_113423/temp/images/scene_03.jpg
+2026-08-14 11:34:39 | INFO     | agents.image_agent | Generated 4/4 images successfully
+2026-08-14 11:34:39 | INFO     | main | [3] Generating voiceover...
+2026-08-14 11:34:39 | INFO     | agents.audio_agent | Generating voiceover with Gemini TTS (attempt 1)…
+Direct use of automatic function calling (AFC) in Models.generate_content is not recommended. Instead, we recommend to use AFC in Chat.send_message. Similarly, direct use of AFC in Models.generate_content_stream is not recommended. Instead, we recommend to use AFC in Chat.send_message_stream.
+2026-08-14 11:34:59 | INFO     | agents.audio_agent | Voiceover saved -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260814_113423/temp/voiceover.mp3 (323 KB)
+2026-08-14 11:34:59 | INFO     | main | [4] Assembling video...
+2026-08-14 11:35:00 | INFO     | agents.video_agent | Rendering AI video -> /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260814_113423/final_raw.mp4
+2026-08-14 11:37:16 | INFO     | agents.video_agent | AI video done: /home/runner/work/youtube-shorts-agent/youtube-shorts-agent/output/20260814_113423/final_raw.mp4 (7.2 MB)
+2026-08-14 11:37:16 | INFO     | main | [4b] Enhancing with FFmpeg...
+2026-08-14 11:37:40 | INFO     | agents.video_editor | Color graded: graded_final_raw.mp4
+2026-08-14 11:38:06 | INFO     | agents.video_editor | Fade added: final.mp4
+2026-08-14 11:38:06 | INFO     | main | [5] Generating SEO metadata...
+2026-08-14 11:38:06 | INFO     | agents.seo_agent | Generating SEO metadata (attempt 1)...
+2026-08-14 11:38:10 | INFO     | agents.seo_agent | SEO title: 'Instagram's logo just changed for the first time in 10 years 👀'
+2026-08-14 11:38:10 | INFO     | main | Title: Instagram's logo just changed for the first time in 10 years 👀
+2026-08-14 11:38:10 | INFO     | main | [6] Uploading to YouTube...
+2026-08-14 11:38:10 | INFO     | agents.upload_agent | Refreshing YouTube token...
+2026-08-14 11:38:10 | INFO     | agents.upload_agent | Uploading 'Instagram's logo just changed for the first time in 10 years 👀' (attempt 1)...
+2026-08-14 11:38:11 | INFO     | agents.upload_agent | Upload progress: 2%
+2026-08-14 11:38:12 | INFO     | agents.upload_agent | Upload progress: 5%
+2026-08-14 11:38:12 | INFO     | agents.upload_agent | Upload progress: 7%
+2026-08-14 11:38:12 | INFO     | agents.upload_agent | Upload progress: 10%
+2026-08-14 11:38:12 | INFO     | agents.upload_agent | Upload progress: 13%
+2026-08-14 11:38:12 | INFO     | agents.upload_agent | Upload progress: 15%
+2026-08-14 11:38:12 | INFO     | agents.upload_agent | Upload progress: 18%
+2026-08-14 11:38:12 | INFO     | agents.upload_agent | Upload progress: 21%
+2026-08-14 11:38:12 | INFO     | agents.upload_agent | Upload progress: 23%
+2026-08-14 11:38:13 | INFO     | agents.upload_agent | Upload progress: 26%
+2026-08-14 11:38:13 | INFO     | agents.upload_agent | Upload progress: 29%
+2026-08-14 11:38:13 | INFO     | agents.upload_agent | Upload progress: 31%
+2026-08-14 11:38:13 | INFO     | agents.upload_agent | Upload progress: 34%
+2026-08-14 11:38:13 | INFO     | agents.upload_agent | Upload progress: 37%
+2026-08-14 11:38:13 | INFO     | agents.upload_agent | Upload progress: 39%
+2026-08-14 11:38:13 | INFO     | agents.upload_agent | Upload progress: 42%
+2026-08-14 11:38:14 | INFO     | agents.upload_agent | Upload progress: 45%
+2026-08-14 11:38:14 | INFO     | agents.upload_agent | Upload progress: 47%
+2026-08-14 11:38:14 | INFO     | agents.upload_agent | Upload progress: 50%
+2026-08-14 11:38:14 | INFO     | agents.upload_agent | Upload progress: 53%
+2026-08-14 11:38:14 | INFO     | agents.upload_agent | Upload progress: 55%
+2026-08-14 11:38:14 | INFO     | agents.upload_agent | Upload progress: 58%
+2026-08-14 11:38:15 | INFO     | agents.upload_agent | Upload progress: 61%
+2026-08-14 11:38:15 | INFO     | agents.upload_agent | Upload progress: 63%
+2026-08-14 11:38:15 | INFO     | agents.upload_agent | Upload progress: 66%
+2026-08-14 11:38:15 | INFO     | agents.upload_agent | Upload progress: 69%
+2026-08-14 11:38:15 | INFO     | agents.upload_agent | Upload progress: 71%
+2026-08-14 11:38:15 | INFO     | agents.upload_agent | Upload progress: 74%
+2026-08-14 11:38:15 | INFO     | agents.upload_agent | Upload progress: 77%
+2026-08-14 11:38:16 | INFO     | agents.upload_agent | Upload progress: 79%
+2026-08-14 11:38:16 | INFO     | agents.upload_agent | Upload progress: 82%
+2026-08-14 11:38:16 | INFO     | agents.upload_agent | Upload progress: 85%
+2026-08-14 11:38:16 | INFO     | agents.upload_agent | Upload progress: 87%
+2026-08-14 11:38:16 | INFO     | agents.upload_agent | Upload progress: 90%
+2026-08-14 11:38:16 | INFO     | agents.upload_agent | Upload progress: 93%
+2026-08-14 11:38:16 | INFO     | agents.upload_agent | Upload progress: 95%
+2026-08-14 11:38:16 | INFO     | agents.upload_agent | Upload progress: 98%
+2026-08-14 11:38:17 | INFO     | agents.upload_agent | Upload complete! Video ID: nOoxd50Xw_c
+2026-08-14 11:38:17 | INFO     | agents.upload_agent | URL: https://www.youtube.com/shorts/nOoxd50Xw_c
+2026-08-14 11:38:17 | INFO     | main | History saved: 85 titles
+2026-08-14 11:38:17 | INFO     | main | [7] Cross-posting to Instagram/Facebook...
+2026-08-14 11:38:18 | INFO     | agents.instagram_agent | Resolved IG account 17841414363117627 via page 'Unique Podcast' (page id 1262973056889436)
+2026-08-14 11:38:20 | INFO     | agents.instagram_agent | Video temporarily hosted: https://github.com/rkadel1488/youtube-shorts-agent/releases/download/reel-temp-1786707498/reel.mp4
+2026-08-14 11:38:20 | INFO     | agents.instagram_agent | Creating IG media container...
+2026-08-14 11:38:21 | INFO     | agents.instagram_agent | IG processing... (IN_PROGRESS)
+2026-08-14 11:38:32 | INFO     | agents.instagram_agent | IG processing... (IN_PROGRESS)
+2026-08-14 11:38:42 | INFO     | agents.instagram_agent | IG processing... (IN_PROGRESS)
+2026-08-14 11:39:02 | INFO     | agents.instagram_agent | Instagram Reel published: media id 18115952774480793
+2026-08-14 11:39:14 | INFO     | agents.instagram_agent | Facebook Reel published (native Reels feed): video id 27645979971760113
+2026-08-14 11:39:15 | INFO     | agents.instagram_agent | Temporary release cleaned up
+2026-08-14 11:39:15 | INFO     | main | ============================================================
+2026-08-14 11:39:15 | INFO     | main | SUCCESS: https://www.youtube.com/shorts/nOoxd50Xw_c
+2026-08-14 11:39:15 | INFO     | main | ============================================================
 
-Done! Watch at: https://www.youtube.com/shorts/9CMkxIEzwoI
+Done! Watch at: https://www.youtube.com/shorts/nOoxd50Xw_c
