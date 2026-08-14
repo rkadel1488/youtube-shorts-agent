@@ -15,19 +15,22 @@ GOOGLE_AI_STUDIO_API_KEY: str = os.getenv("GOOGLE_AI_STUDIO_API_KEY", "")
 PEXELS_API_KEY: str = os.getenv("PEXELS_API_KEY", "")
 
 # Gemini TTS voice — options: Zephyr, Puck, Charon, Kore, Fenrir, Leda, Orus, Aoede
-GEMINI_TTS_VOICE: str = os.getenv("GEMINI_TTS_VOICE", "Puck")
+GEMINI_TTS_VOICE: str = os.getenv("GEMINI_TTS_VOICE", "Charon")
 
 # YouTube OAuth files
 YOUTUBE_CLIENT_SECRETS_FILE: str = os.getenv("YOUTUBE_CLIENT_SECRETS_FILE", "client_secrets.json")
 YOUTUBE_TOKEN_FILE: str = os.getenv("YOUTUBE_TOKEN_FILE", "youtube_token.json")
-YOUTUBE_SCOPES = ["https://www.googleapis.com/auth/youtube.upload"]
+YOUTUBE_SCOPES = [
+    "https://www.googleapis.com/auth/youtube.upload",
+    "https://www.googleapis.com/auth/youtubepartner",
+]
 
 # Posting schedule — 4 slots per day (02:00, 08:00, 14:00, 20:00 UTC by default)
-POSTING_TIMES: list[str] = os.getenv("POSTING_TIMES", "00:00,08:00,16:00").split(",")
+POSTING_TIMES: list[str] = os.getenv("POSTING_TIMES", "02:00,08:00,14:00,20:00").split(",")
 
-# Video output settings
-VIDEO_WIDTH = 1080
-VIDEO_HEIGHT = 1920
+# Video output settings (landscape 16:9 for regular long-form YouTube videos)
+VIDEO_WIDTH = 1920
+VIDEO_HEIGHT = 1080
 VIDEO_FPS = 30
 
 # Claude model
@@ -37,4 +40,3 @@ MADE_FOR_KIDS: bool = os.getenv("MADE_FOR_KIDS", "false").lower() == "true"
 
 # Default YouTube category for uploads (22 = People & Blogs)
 YOUTUBE_CATEGORY_ID: str = os.getenv("YOUTUBE_CATEGORY_ID", "22")
-

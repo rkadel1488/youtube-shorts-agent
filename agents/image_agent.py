@@ -1,11 +1,9 @@
 """
-Generates 4 cinematic images per Short by fetching keyword-matched stock photos
+Generates 8 cinematic images per video by fetching keyword-matched stock photos
 from the Pexels Photo API (free, requires PEXELS_API_KEY).
 
-Pollinations.ai's free image generation now requires payment (402 errors), so
-this agent uses real stock photography instead — reliable and no extra cost.
-
 Each image matches a scene/mood derived from the script topic and keywords.
+8 images cover a ~2-minute video with ~15s per scene.
 """
 import random
 import time
@@ -21,21 +19,30 @@ log = get_logger(__name__)
 
 PEXELS_PHOTO_URL = "https://api.pexels.com/v1/search"
 
-SCENE_MOODS = ["wide establishing", "close-up detail", "dramatic moment", "powerful finale"]
+SCENE_MOODS = [
+    "wide establishing shot",
+    "close-up dramatic detail",
+    "tense atmospheric scene",
+    "mysterious dark moment",
+    "action intense",
+    "cinematic silhouette",
+    "emotional powerful moment",
+    "dramatic finale reveal",
+]
 
 
 def _build_queries(topic: str, keywords: list[str]) -> list[str]:
-    """Build 4 search queries tailored to the topic/keywords for visual variety."""
-    base_terms = [k for k in (keywords or []) if k][:4] or [topic]
+    """Build 8 search queries tailored to the topic/keywords for visual variety."""
+    base_terms = [k for k in (keywords or []) if k][:8] or [topic]
     queries = []
-    for i in range(4):
+    for i in range(8):
         term = base_terms[i % len(base_terms)]
         queries.append(f"{term} {SCENE_MOODS[i]}")
     return queries
 
 
-def _crop_portrait(img: Image.Image) -> Image.Image:
-    """Center-crop a PIL image to the 1080x1920 portrait aspect ratio."""
+def _crop_landscape(img: Image.Image) -> Image.Image:
+    """Center-crop a PIL image to the 1920x1080 landscape aspect ratio."""
     target_ratio = VIDEO_WIDTH / VIDEO_HEIGHT
     w, h = img.size
     if w / h > target_ratio:
@@ -57,7 +64,7 @@ def generate_images(
     **_kwargs,
 ) -> list[Path]:
     """
-    Fetch 4 keyword-matched stock photos from Pexels, cropped to 1080x1920 portrait.
+    Fetch 8 keyword-matched stock photos from Pexels, cropped to 1920x1080 landscape.
     Returns a list of saved JPEG image paths.
     """
     output_dir.mkdir(parents=True, exist_ok=True)
@@ -78,7 +85,7 @@ def generate_images(
                 resp = requests.get(
                     PEXELS_PHOTO_URL,
                     headers={"Authorization": PEXELS_API_KEY},
-                    params={"query": query, "per_page": 15, "orientation": "portrait"},
+                    params={"query": query, "per_page": 15, "orientation": "landscape"},
                     timeout=30,
                 )
                 resp.raise_for_status()
@@ -101,7 +108,7 @@ def generate_images(
                     f.write(img_resp.content)
 
                 img = Image.open(tmp_path).convert("RGB")
-                img = _crop_portrait(img)
+                img = _crop_landscape(img)
                 img.save(img_path, "JPEG", quality=90)
                 tmp_path.unlink(missing_ok=True)
 
