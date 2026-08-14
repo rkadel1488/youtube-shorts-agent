@@ -1,32 +1,25 @@
 """
-YouTube Shorts Trend Agent
-===========================
-Turns live trending topics into AI-narrated YouTube Shorts:
-trends → factual script → AI images → Gemini TTS voiceover →
-MoviePy video → FFmpeg enhancement → SEO → upload.
-
-Topics come from Google Trends (with real news headlines) and Reddit,
-deduped against state/history.json. If all trend sources fail, an
-evergreen well-established-facts topic is generated instead, so a
-scheduled run never fails for lack of a topic.
+YouTube Story Video Agent
+==========================
+Posts ~2-minute landscape YouTube videos from a fixed pool of 200 story topics.
 
 Pipeline:
-  0. Load history (used titles/topics)
-  1. Pick a trending topic (evergreen fallback)
-  2. Generate factual script via Claude + Gemini TTS voiceover
-  3. Generate AI images + assemble video
+  0. Load history (used titles) + topic queue position
+  1. Pick the next unused story topic (round-robin, no repeats)
+  2. Generate ~2-min script via Claude + Gemini TTS voiceover
+  3. Generate 8 landscape stock images (Pexels) + assemble video
   4. FFmpeg color grade + fade enhancement
-  5. Generate SEO metadata
-  6. Upload to YouTube
+  5. Generate SEO metadata + custom thumbnail
+  6. Upload video + thumbnail to YouTube
   7. Save updated history + topic queue position
 
 Usage:
     python main.py               # Start scheduler (runs 4x daily)
     python main.py --run-now     # Run once immediately for testing
+    python main.py --run-now --slot 2   # slot 0=night 1=morning 2=afternoon 3=evening
 """
 import argparse
 import json
-import os
 import shutil
 import sys
 import time
@@ -36,19 +29,21 @@ import schedule
 
 from agents.audio_agent import generate_voiceover
 from agents.image_agent import generate_images
-from agents.script_agent import generate_trend_script
-from agents.trend_agent import get_evergreen_topic, get_trend_topic
+from agents.script_agent import generate_story_script
 from agents.seo_agent import generate_seo
-from agents.upload_agent import upload_video_from_files
+from agents.thumbnail_agent import create_thumbnail
+from agents.upload_agent import upload_thumbnail, upload_video
 from agents.video_agent import create_ai_video
 from agents.video_editor import enhance_video
-from config import OUTPUT_DIR, POSTING_TIMES, YOUTUBE_CATEGORY_ID, YOUTUBE_TOKEN_FILE
+from config import OUTPUT_DIR, POSTING_TIMES, YOUTUBE_CATEGORY_ID
+from story_topics import STORY_TOPICS
 from utils.logger import get_logger
 
 log = get_logger("main")
 
 HISTORY_PATH = Path(__file__).parent / "state" / "history.json"
-HISTORY_MAX = 400  # ~100 days of topics at 4/day — dedupe memory
+TOPIC_STATE_PATH = Path(__file__).parent / "state" / "topic_state.json"
+HISTORY_MAX = 150
 
 
 # ── history helpers ───────────────────────────────────────────────────────────
@@ -82,24 +77,44 @@ def _update_history(history: dict, title: str, topic: str):
     _save_history(history)
 
 
-# ── topic selection ───────────────────────────────────────────────────────────
+# ── topic queue helpers ────────────────────────────────────────────────────────
 
-def _next_topic(history: dict) -> dict:
-    """Live trending topic; evergreen established-facts topic as fallback."""
-    recent = history.get("topics", [])
+def _load_next_topic_index() -> int:
     try:
-        return get_trend_topic(recent_topics=recent)
+        if TOPIC_STATE_PATH.exists():
+            with open(TOPIC_STATE_PATH, encoding="utf-8") as f:
+                return json.load(f).get("next_index", 0)
     except Exception as exc:
-        log.warning("Trend topic failed (%s) — generating evergreen topic", exc)
-    return get_evergreen_topic(recent_topics=recent)
+        log.warning("Could not load topic state: %s — starting from 0", exc)
+    return 0
+
+
+def _save_next_topic_index(next_index: int):
+    TOPIC_STATE_PATH.parent.mkdir(parents=True, exist_ok=True)
+    with open(TOPIC_STATE_PATH, "w", encoding="utf-8") as f:
+        json.dump({"next_index": next_index}, f, indent=2)
+
+
+def _next_story_topic() -> dict:
+    """Pop the next unused topic from the fixed pool. Raises once exhausted."""
+    next_index = _load_next_topic_index()
+    if next_index >= len(STORY_TOPICS):
+        raise RuntimeError(
+            f"All {len(STORY_TOPICS)} story topics have been used — add more topics "
+            f"to story_topics.STORY_TOPICS before the pipeline can continue."
+        )
+    topic = STORY_TOPICS[next_index]
+    _save_next_topic_index(next_index + 1)
+    log.info("Selected topic #%d/%d: %s", topic["id"], len(STORY_TOPICS), topic["title"])
+    return topic
 
 
 # ── main pipeline ─────────────────────────────────────────────────────────────
 
-def run_pipeline() -> dict:
-    """Run one full pipeline for the next trending/evergreen topic."""
+def run_pipeline(slot: int = 0) -> dict:
+    """Run one full pipeline for the next story topic in the queue."""
     timestamp = time.strftime("%Y%m%d_%H%M%S")
-    job_id    = timestamp
+    job_id    = f"{timestamp}_slot{slot}"
     job_dir   = OUTPUT_DIR / job_id
     temp_dir  = job_dir / "temp"
     job_dir.mkdir(parents=True, exist_ok=True)
@@ -113,23 +128,23 @@ def run_pipeline() -> dict:
     history = _load_history()
 
     try:
-        topic = _next_topic(history)
+        topic = _next_story_topic()
 
-        log.info("[1] Generating script for '%s' [%s]...", topic["title"], topic["category"])
-        script_data = generate_trend_script(topic, used_titles=history.get("titles", []))
+        log.info("[1] Generating story script for '%s'...", topic["title"])
+        script_data = generate_story_script(topic, used_titles=history.get("titles", []))
         _save_json(job_dir / "script.json", script_data)
 
         images_dir = temp_dir / "images"
         vo_path = temp_dir / "voiceover.mp3"
 
-        log.info("[2] Generating AI images...")
+        log.info("[2] Generating images...")
         images = generate_images(
             topic=script_data["topic"],
             keywords=script_data["keywords"],
             output_dir=images_dir,
         )
         if not images:
-            raise RuntimeError("AI image generation returned no images")
+            raise RuntimeError("Image generation returned no images")
 
         log.info("[3] Generating voiceover...")
         generate_voiceover(script_data["script"], vo_path)
@@ -157,48 +172,50 @@ def run_pipeline() -> dict:
         seo_data = generate_seo(
             topic=script_data["topic"],
             hook=script_data["hook"],
-            niche="trending news",
+            niche="story",
             used_titles=history.get("titles", []),
         )
         _save_json(job_dir / "seo.json", seo_data)
         log.info("Title: %s", seo_data["title"])
 
+        log.info("[5b] Generating thumbnail...")
+        thumb_path = job_dir / "thumbnail.jpg"
+        try:
+            create_thumbnail(
+                title=seo_data["title"],
+                hook=script_data["hook"],
+                image_paths=images,
+                output_path=thumb_path,
+            )
+        except Exception as exc:
+            log.warning("Thumbnail generation failed: %s — continuing without", exc)
+            thumb_path = None
+
         log.info("[6] Uploading to YouTube...")
-        video_id = upload_video_from_files(
+        video_id = upload_video(
             video_path=final_path,
             title=seo_data["title"],
             description=seo_data["description"],
             tags=seo_data["tags"],
             hashtags=seo_data["hashtags"],
             category_id=YOUTUBE_CATEGORY_ID,
-            token_file=YOUTUBE_TOKEN_FILE,
         )
+
+        if thumb_path and thumb_path.exists():
+            log.info("[6b] Uploading thumbnail...")
+            upload_thumbnail(video_id, thumb_path)
 
         _update_history(history, seo_data["title"], script_data["topic"])
 
         result.update({
             "status":   "success",
             "video_id": video_id,
-            "url":      f"https://www.youtube.com/shorts/{video_id}",
+            "url":      f"https://www.youtube.com/watch?v={video_id}",
             "title":    seo_data["title"],
             "source":   script_data["topic"],
-            "topic_id": topic.get("id", 0),
+            "topic_id": topic["id"],
             "category": topic["category"],
         })
-
-        # [7] Cross-post to Instagram + Facebook (optional, never fatal)
-        if (os.getenv("INSTAGRAM_ENABLED", "true").lower() == "true"
-                or os.getenv("FACEBOOK_ENABLED", "true").lower() == "true"):
-            try:
-                from agents.instagram_agent import crosspost
-                log.info("[7] Cross-posting to Instagram/Facebook...")
-                caption = f"{seo_data['title']}\n\n" + " ".join(seo_data.get("hashtags", []))
-                result.update(crosspost(final_path, caption,
-                                        access_token=os.getenv("IG_ACCESS_TOKEN", "")))
-            except Exception as exc:
-                log.warning("Meta cross-post skipped/failed (non-fatal): %s", exc)
-                result["meta_crosspost"] = f"failed: {exc}"
-
         _save_json(job_dir / "result.json", result)
 
         log.info("=" * 60)
@@ -219,11 +236,11 @@ def run_pipeline() -> dict:
 
 def _post_slot(slot: int):
     log.info("Scheduler fired — slot %d", slot)
-    run_pipeline()
+    run_pipeline(slot=slot)
 
 
 def start_scheduler():
-    if len(POSTING_TIMES) < 3:
+    if len(POSTING_TIMES) < 4:
         log.warning("Only %d posting times configured", len(POSTING_TIMES))
     for i, t in enumerate(sorted(POSTING_TIMES)):
         schedule.every().day.at(t).do(_post_slot, slot=i)
@@ -240,13 +257,15 @@ def _save_json(path: Path, data: dict):
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="YouTube Shorts Trend Bot")
+    parser = argparse.ArgumentParser(description="YouTube Story Video Bot")
     parser.add_argument("--run-now", action="store_true",
-                        help="Run one Short immediately and exit")
+                        help="Run one video immediately and exit")
+    parser.add_argument("--slot", type=int, default=0, choices=[0, 1, 2, 3],
+                        help="Slot to run (0=night, 1=morning, 2=afternoon, 3=evening)")
     args = parser.parse_args()
 
     if args.run_now:
-        r = run_pipeline()
+        r = run_pipeline(slot=args.slot)
         if r.get("status") == "success":
             print(f"\nDone! Watch at: {r['url']}")
             sys.exit(0)

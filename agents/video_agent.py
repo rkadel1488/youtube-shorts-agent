@@ -1,9 +1,9 @@
 """
-Assembles the final YouTube Short from AI-generated images + voiceover:
+Assembles the final YouTube video from stock images + voiceover:
   1. Ken Burns zoom/pan effect alternating per image
   2. Title card + on-screen hook caption overlays
   3. Mux voiceover audio
-  4. Export 1080x1920 MP4
+  4. Export 1920x1080 landscape MP4
 """
 import textwrap
 from pathlib import Path
@@ -26,9 +26,9 @@ from utils.logger import get_logger
 
 log = get_logger(__name__)
 
-TITLE_FONT_SIZE = 50
+TITLE_FONT_SIZE = 48
 TITLE_Y_RATIO   = 0.04
-TITLE_PADDING   = 18
+TITLE_PADDING   = 16
 
 FONT_CANDIDATES = [
     "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",
@@ -48,9 +48,9 @@ def _load_font(size: int):
 
 
 def _title_overlay(text: str, duration: float) -> ImageClip:
-    """Red banner at the top showing the match title for the first 6 seconds."""
+    """Dark banner at the top showing the story title for the first 6 seconds."""
     font    = _load_font(TITLE_FONT_SIZE)
-    wrapped = textwrap.fill(text[:60], width=28)
+    wrapped = textwrap.fill(text[:80], width=50)
     lines   = wrapped.split("\n")
 
     dummy  = Image.new("RGBA", (1, 1))
@@ -66,7 +66,7 @@ def _title_overlay(text: str, duration: float) -> ImageClip:
     draw = ImageDraw.Draw(img)
     x0   = (VIDEO_WIDTH - box_w) // 2
     draw.rounded_rectangle([x0, TITLE_PADDING, x0 + box_w, TITLE_PADDING + box_h],
-                           radius=14, fill=(190, 0, 0, 220))
+                           radius=12, fill=(20, 20, 20, 210))
     y_cur = TITLE_PADDING * 2
     for line, bbox in zip(lines, bboxes):
         lx = (VIDEO_WIDTH - (bbox[2] - bbox[0])) // 2
@@ -84,9 +84,9 @@ def _title_overlay(text: str, duration: float) -> ImageClip:
 
 def _hook_overlay(text: str, duration: float) -> ImageClip:
     """Large centred text overlay for the opening hook — visible to silent viewers."""
-    font_size = 72
+    font_size = 64
     font = _load_font(font_size)
-    wrapped = textwrap.fill(text[:50], width=14)
+    wrapped = textwrap.fill(text[:60], width=30)
     lines = wrapped.split("\n")
 
     dummy = Image.new("RGBA", (1, 1))
@@ -100,23 +100,20 @@ def _hook_overlay(text: str, duration: float) -> ImageClip:
 
     img = Image.new("RGBA", (img_w, img_h), (0, 0, 0, 0))
     draw = ImageDraw.Draw(img)
-    # Semi-transparent black background strip
     draw.rectangle([0, pad, img_w, img_h - pad], fill=(0, 0, 0, 180))
     y_cur = pad * 2
     for line, bbox in zip(lines, bboxes):
         lw = bbox[2] - bbox[0]
         lx = (img_w - lw) // 2
-        # Shadow
         draw.text((lx + 3, y_cur + 3), line, font=font, fill=(0, 0, 0, 200))
-        # White text
         draw.text((lx, y_cur), line, font=font, fill=(255, 255, 255, 255))
         y_cur += line_h + pad
 
-    y_pos = int(VIDEO_HEIGHT * 0.38) - img_h // 2
+    y_pos = int(VIDEO_HEIGHT * 0.42) - img_h // 2
     return (
         ImageClip(np.array(img), ismask=False)
         .set_start(0)
-        .set_duration(min(3.5, duration))
+        .set_duration(min(4.0, duration))
         .set_position(("center", max(0, y_pos)))
     )
 
@@ -132,7 +129,7 @@ def create_ai_video(
     on_screen_hook: str | None = None,
 ) -> Path:
     """
-    Assemble a YouTube Short from AI-generated images + voiceover.
+    Assemble a landscape YouTube video from stock images + voiceover.
     Applies Ken Burns zoom effect to each image, muxes voiceover audio.
     """
     from moviepy.editor import concatenate_videoclips
@@ -141,10 +138,10 @@ def create_ai_video(
     output_path.parent.mkdir(parents=True, exist_ok=True)
 
     if not image_paths:
-        raise RuntimeError("No images provided for AI video")
+        raise RuntimeError("No images provided for video assembly")
 
     voiceover = AudioFileClip(str(voiceover_path))
-    total_duration = max(voiceover.duration, 10.0)
+    total_duration = max(voiceover.duration, 20.0)
     seg_duration = total_duration / len(image_paths)
     clips = []
 
@@ -155,8 +152,8 @@ def create_ai_video(
         arr = np.array(img)
 
         zoom_in = (i % 2 == 0)
-        start_scale = 1.0 if zoom_in else 1.12
-        end_scale = 1.12 if zoom_in else 1.0
+        start_scale = 1.0 if zoom_in else 1.08
+        end_scale = 1.08 if zoom_in else 1.0
 
         def _make_zoom(s, e, d):
             return lambda t: s + (e - s) * (t / d)
@@ -183,7 +180,7 @@ def create_ai_video(
         layers.append(_hook_overlay(on_screen_hook, total_duration))
     final = CompositeVideoClip(layers, size=(VIDEO_WIDTH, VIDEO_HEIGHT))
 
-    log.info("Rendering AI video -> %s", output_path)
+    log.info("Rendering video -> %s", output_path)
     final.write_videofile(
         str(output_path),
         fps=VIDEO_FPS,
@@ -201,5 +198,5 @@ def create_ai_video(
     for c in clips:
         c.close()
 
-    log.info("AI video done: %s (%.1f MB)", output_path, output_path.stat().st_size / 1e6)
+    log.info("Video done: %s (%.1f MB)", output_path, output_path.stat().st_size / 1e6)
     return output_path

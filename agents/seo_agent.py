@@ -19,11 +19,11 @@ from utils.logger import get_logger
 
 log = get_logger(__name__)
 
-SYSTEM_PROMPT = """You are a YouTube Shorts growth expert for factual news/tech/science channels. You have studied the top 0.1% of factual Shorts channels and know exactly what titles, hooks, and tags drive algorithmic push and high CTR while staying credible.
-Your titles create genuine curiosity about a real event — never vague clickbait that overpromises.
+SYSTEM_PROMPT = """You are a viral YouTube growth expert in 2025. You have studied the top 0.1% of story/narrative channels and know exactly what titles, hooks, and tags drive algorithmic push and high CTR for 2-minute videos.
+Your titles must be so compelling that viewers click immediately.
 Always respond with valid JSON only — no markdown fences, no extra commentary."""
 
-SEO_TEMPLATE = """Generate maximum-CTR YouTube Shorts metadata for this factual video about a trending topic.
+SEO_TEMPLATE = """Generate maximum-CTR YouTube video metadata for this ~2-minute story video.
 
 Topic: {topic}
 Hook (opening line): {hook}
@@ -32,57 +32,58 @@ Trending tags to draw style from: {trending_tags}
 Trending hashtags to draw style from: {trending_hashtags}
 
 TITLE rules (this is the #1 factor for views):
-- 45-58 characters max (shorter titles get more impressions on mobile)
-- Must reference the ACTUAL subject (a name, thing, or number from the topic) — specific beats vague
-- PROVEN high-CTR formats for factual content — pick the best fit:
-    • "[Subject] just changed everything 🤯"
-    • "Why everyone is talking about [subject]"
-    • "[Number/scale fact] — and it's real 😳"
-    • "[Subject] just broke the internet"
-    • "The truth about [subject]"
-- Use at most ONE emoji (🤯 😳 🔥 🚨 👀) — at the END only
-- Start with a strong noun or verb — never start with "The" or "A" unless using "The truth about"
-- Never use ALL-CAPS, never promise what the video doesn't deliver
+- 50-65 characters max
+- PROVEN high-CTR formats — pick the best fit:
+    • "You won't believe what happens next 😱"
+    • "This story will haunt you tonight 👀"
+    • "Nobody saw this twist coming 🤯"
+    • "I can't stop thinking about this story 💥"
+    • "POV: this actually happened to someone 🔥"
+    • "This 2-minute story will change how you think 👁"
+- Use ONE emoji (😱 🤯 💥 🔥 👀 👁) — at the END only
+- Start with a strong noun or verb — never start with "The" or "A"
+- Never use ALL-CAPS
 
 DESCRIPTION rules:
 - Line 1: restate the hook with more urgency (different words)
-- Lines 2-3: add one concrete detail from the topic that hooks readers further
-- Line 4: "Follow for more trending stories."
-- End with: #Shorts
+- Lines 2-4: add vivid details that tease the story without spoiling the twist
+- Line 5: "Follow for more stories like this."
 
-TAGS (plain English, no #, exactly 20):
-- Start with the 10 most relevant trending tags above
-- Add 10 specific to this exact topic: names, category, related terms people search
+TAGS (plain English, no #, exactly 25):
+- Mix broad high-traffic terms + niche story-specific terms for max reach:
+    BROAD (5): always include some of: story, horror story, scary story, thriller, mystery, plot twist, mind blowing, true story, scary, creepy
+    GENRE (5): specific to this story's category (sci-fi, comedy, emotional, suspense, etc.)
+    MOOD (5): atmospheric words — eerie, haunting, chilling, heartwarming, shocking, unexpected, dark, surreal
+    THEME (5): the core concept — mirror, reflection, time loop, AI, ghost, letter, door, stranger, etc.
+    VIRAL HOOKS (5): you won't believe, wait for the twist, insane ending, mind blown, must watch, viral story
 
-HASHTAGS (with #, exactly 5):
-- Always include #Shorts
-- Prefer hashtags matching the topic's category (#Tech #AI #Science #Space #News #Money)
+HASHTAGS (with #, exactly 8):
+- Always include: #StoryTime #Thriller #MysteryStory #PlotTwist
+- Add 4 more specific to this story's genre/mood
+- Do NOT include #Shorts
 
 Return ONLY this JSON:
 {{
   "title": "...",
   "description": "...",
   "tags": ["tag1", ...],
-  "hashtags": ["#Shorts", "#tag2", "#tag3", "#tag4", "#tag5"]
+  "hashtags": ["#StoryTime", "#Thriller", "#MysteryStory", "#PlotTwist", "#tag5", "#tag6", "#tag7", "#tag8"]
 }}"""
 
 
-def generate_seo(topic: str, hook: str, niche: str = "trending news", trend_data: dict = None,
+def generate_seo(topic: str, hook: str, niche: str = "story", trend_data: dict = None,
                  used_titles: list = None, retries: int = 3) -> dict:
     """
-    Call Claude to generate SEO metadata for a story Short.
+    Call Claude to generate SEO metadata for a story video.
     Returns a dict with keys: title, description, tags, hashtags.
-    trend_data: optional dict with "tags"/"hashtags" lists to steer style.
-    used_titles: list of previously used titles Claude must not repeat.
     """
     if trend_data and trend_data.get("tags"):
         trending_tags_str = ", ".join(trend_data["tags"][:20])
         trending_hashtags_str = ", ".join(trend_data["hashtags"][:8])
     else:
-        trending_tags_str = "shorts, viral, trending, news, breaking, tech, ai, science, 2026, explained"
-        trending_hashtags_str = "#Shorts, #Viral, #Trending, #News, #Tech"
+        trending_tags_str = "viral, story, plot twist, trending, 2025, narrative, mystery, thriller"
+        trending_hashtags_str = "#Viral, #StoryTime, #MysteryStory, #Thriller, #MindBlown"
 
-    # Build avoid-duplicate instruction
     avoid_str = ""
     if used_titles:
         recent = used_titles[-20:]
@@ -105,7 +106,7 @@ def generate_seo(topic: str, hook: str, niche: str = "trending news", trend_data
             log.info("Generating SEO metadata (attempt %d)...", attempt)
             message = client.messages.create(
                 model=CLAUDE_MODEL,
-                max_tokens=800,
+                max_tokens=900,
                 system=SYSTEM_PROMPT,
                 messages=[{"role": "user", "content": prompt}],
             )
@@ -121,13 +122,12 @@ def generate_seo(topic: str, hook: str, niche: str = "trending news", trend_data
                 if brand_tag not in result["tags"]:
                     result["tags"].append(brand_tag)
 
-            # Enforce #Shorts and brand hashtag always present
-            for brand_ht in ("#Shorts", "#aaryankelvin"):
-                if brand_ht not in result["hashtags"]:
-                    result["hashtags"].insert(0, brand_ht)
+            # Enforce brand hashtag always present (at end)
+            if "#aaryankelvin" not in result["hashtags"]:
+                result["hashtags"].append("#aaryankelvin")
 
-            result["hashtags"] = result["hashtags"][:6]
-            result["tags"] = result["tags"][:22]
+            result["hashtags"] = result["hashtags"][:9]
+            result["tags"] = result["tags"][:25]
 
             log.info("SEO title: '%s'", result["title"])
             return result

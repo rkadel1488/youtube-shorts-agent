@@ -1,21 +1,22 @@
-name: Post YouTube Shorts
+name: Post YouTube Videos
 
 on:
   schedule:
-    - cron: '0 * * * *'      # every hour — the best-time check below decides if it actually posts
-  workflow_dispatch:
+    - cron: '0 2 * * *'    #  2 AM UTC — Slot 0 (night)
+    - cron: '0 8 * * *'    #  8 AM UTC — Slot 1 (morning)
+    - cron: '0 14 * * *'   #  2 PM UTC — Slot 2 (afternoon)
+    - cron: '0 20 * * *'   #  8 PM UTC — Slot 3 (evening)
+  workflow_dispatch:        # Manual trigger from GitHub UI
     inputs:
       slot:
-        description: 'Slot label for this manual run (cosmetic only)'
+        description: 'Which slot to run (0=night, 1=morning, 2=afternoon, 3=evening)'
         required: false
-        default: '0'
+        default: '1'
 
 jobs:
-  post-short:
+  post-video:
     runs-on: ubuntu-latest
-    timeout-minutes: 45
-    permissions:
-      contents: write
+    timeout-minutes: 60
 
     env:
       FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
@@ -24,67 +25,58 @@ jobs:
       PEXELS_API_KEY: ${{ secrets.PEXELS_API_KEY }}
       YOUTUBE_CLIENT_SECRETS_FILE: client_secrets.json
       YOUTUBE_TOKEN_FILE: youtube_token.json
+      POSTING_TIMES: "02:00,08:00,14:00,20:00"
       MADE_FOR_KIDS: "false"
       GEMINI_TTS_VOICE: "Charon"
-      TREND_REGION: "US"
-      AUDIENCE_TIMEZONE: "America/New_York"
-      INSTAGRAM_ENABLED: "true"
-      FACEBOOK_ENABLED: "true"
-      IG_THUMB_OFFSET_MS: "2000"
-      IG_USER_ID: ${{ secrets.IG_USER_ID }}
-      IG_ACCESS_TOKEN: ${{ secrets.IG_ACCESS_TOKEN }}
-      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Check if now is a good time to post
-        id: besttime
-        run: |
-          RESULT=$(python3 scripts/should_post_now.py)
-          echo "should_run=$RESULT" >> $GITHUB_OUTPUT
-
       - name: Set up Python 3.11
-        if: steps.besttime.outputs.should_run == 'true' || github.event_name == 'workflow_dispatch'
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
           cache: 'pip'
 
       - name: Install system fonts
-        if: steps.besttime.outputs.should_run == 'true' || github.event_name == 'workflow_dispatch'
         run: sudo apt-get install -y fonts-dejavu-core
 
       - name: Install Python dependencies
-        if: steps.besttime.outputs.should_run == 'true' || github.event_name == 'workflow_dispatch'
         run: pip install -r requirements.txt
 
       - name: Restore credentials
-        if: steps.besttime.outputs.should_run == 'true' || github.event_name == 'workflow_dispatch'
         run: |
           echo '${{ secrets.YOUTUBE_CLIENT_SECRETS }}' > client_secrets.json
           echo '${{ secrets.YOUTUBE_TOKEN }}' > youtube_token.json
 
-      - name: Run pipeline
-        if: steps.besttime.outputs.should_run == 'true' || github.event_name == 'workflow_dispatch'
+      - name: Determine slot from schedule
+        id: slot
         run: |
-          set -o pipefail
-          python main.py --run-now 2>&1 | tee pipeline.log
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "slot=${{ github.event.inputs.slot }}" >> $GITHUB_OUTPUT
+          else
+            HOUR=$(date -u +%H | sed 's/^0//')
+            if [ "${HOUR:-0}" -lt 5 ]; then
+              echo "slot=0" >> $GITHUB_OUTPUT
+            elif [ "${HOUR:-0}" -lt 11 ]; then
+              echo "slot=1" >> $GITHUB_OUTPUT
+            elif [ "${HOUR:-0}" -lt 17 ]; then
+              echo "slot=2" >> $GITHUB_OUTPUT
+            else
+              echo "slot=3" >> $GITHUB_OUTPUT
+            fi
+          fi
 
-      - name: Save debug info to state
-        if: always() && (steps.besttime.outputs.should_run == 'true' || github.event_name == 'workflow_dispatch')
-        run: |
-          mkdir -p state
-          tail -n 200 pipeline.log > state/last_run_log.txt || true
-          cp output/*/result.json state/last_result.json 2>/dev/null || true
+      - name: Run pipeline
+        run: python main.py --run-now --slot ${{ steps.slot.outputs.slot }}
 
       - name: Commit updated history
-        if: always() && (steps.besttime.outputs.should_run == 'true' || github.event_name == 'workflow_dispatch')
+        if: always()
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add state/
+          git add state/history.json state/topic_state.json
           if git diff --cached --quiet; then
             echo "No history changes to commit"
           else
@@ -93,13 +85,13 @@ jobs:
           fi
 
       - name: Upload result as artifact
-        if: always() && (steps.besttime.outputs.should_run == 'true' || github.event_name == 'workflow_dispatch')
+        if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: short-output-${{ github.run_number }}
+          name: video-output-${{ github.run_number }}
           path: |
             output/**/result.json
             output/**/seo.json
             output/**/script.json
-            pipeline.log
+            output/**/thumbnail.jpg
           retention-days: 30
