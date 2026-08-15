@@ -12,6 +12,10 @@ on:
         description: 'Which slot to run (0=night, 1=morning, 2=afternoon, 3=evening)'
         required: false
         default: '1'
+      content_type:
+        description: 'Pipeline mode: story or kids'
+        required: false
+        default: 'story'
 
 jobs:
   post-video:
@@ -28,7 +32,7 @@ jobs:
       POSTING_TIMES: "02:00,08:00,14:00,20:00"
       MADE_FOR_KIDS: "false"
       GEMINI_TTS_VOICE: "Charon"
-      CONTENT_TYPE: ${{ vars.CONTENT_TYPE || 'story' }}
+      CONTENT_TYPE: ${{ github.event.inputs.content_type || vars.CONTENT_TYPE || 'story' }}
 
     steps:
       - name: Checkout code
