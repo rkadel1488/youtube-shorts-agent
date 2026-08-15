@@ -98,6 +98,67 @@ Return ONLY this JSON (no markdown):
 }}"""
 
 
+def generate_animated_kids_script(storyboard: dict, retries: int = 3) -> dict:
+    """
+    Generate a voiceover script from a storyboard — concatenates narration lines
+    into a single flowing script with a warm narrator intro and outro.
+    Returns dict with: topic, hook, on_screen_hook, script, keywords.
+    """
+    scenes = storyboard.get("scenes", [])
+    narrations = [s.get("narration", "") for s in scenes if s.get("narration")]
+    full_narration = " ".join(narrations)
+    title = storyboard.get("title", "")
+    character = storyboard.get("character", "a friendly animal friend")
+
+    prompt = f"""We have a children's animated video called "{title}" featuring {character}.
+Here is the scene-by-scene narration already written:
+
+{full_narration}
+
+Your job: rewrite this as a smooth, warm, flowing voiceover script for a friendly narrator.
+- Keep the same facts and story beats but make transitions between scenes natural
+- Add a warm opening ("Hello little learners! Today we're going to discover...")
+- Add an encouraging closing ("Great job learning today! See you next time!")
+- Keep vocabulary simple (ages 3-8), short sentences, enthusiastic tone
+- Total: ~200-240 words
+
+Return ONLY this JSON:
+{{
+  "topic": "{title}",
+  "hook": "the opening greeting sentence (10-15 words)",
+  "on_screen_hook": "SHORT CAPS TEXT (max 5 words)",
+  "script": "the full polished voiceover script",
+  "keywords": ["4-6 visual keywords describing the scenes"]
+}}"""
+
+    client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
+    for attempt in range(1, retries + 1):
+        try:
+            log.info("Generating animated kids voiceover script (attempt %d)...", attempt)
+            message = client.messages.create(
+                model=CLAUDE_MODEL,
+                max_tokens=900,
+                system=KIDS_SYSTEM_PROMPT,
+                messages=[{"role": "user", "content": prompt}],
+            )
+            raw = message.content[0].text.strip()
+            result = json.loads(raw)
+            for key in ("topic", "hook", "script", "keywords"):
+                if key not in result:
+                    raise ValueError(f"Missing key '{key}'")
+            result.setdefault("on_screen_hook", result["hook"][:30].upper())
+            log.info("Animated kids script ready: '%s'", result["topic"])
+            return result
+        except json.JSONDecodeError as exc:
+            log.warning("JSON parse error on attempt %d: %s", attempt, exc)
+        except Exception as exc:
+            log.warning("Animated kids script error on attempt %d: %s", attempt, exc)
+        if attempt < retries:
+            time.sleep(2 ** attempt)
+
+    raise RuntimeError(f"Animated kids script generation failed after {retries} attempts")
+
+
 def generate_kids_script(topic: dict, retries: int = 3) -> dict:
     """
     Generate a ~2-minute children's educational video script.

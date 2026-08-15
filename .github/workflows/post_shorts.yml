@@ -13,7 +13,7 @@ on:
         required: false
         default: '1'
       content_type:
-        description: 'Pipeline mode: story or kids'
+        description: 'Pipeline mode: story, kids, or animated_kids'
         required: false
         default: 'story'
 

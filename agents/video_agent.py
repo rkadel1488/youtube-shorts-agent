@@ -188,6 +188,153 @@ def create_veo_video(
     return output_path
 
 
+# ── animated kids video assembler ────────────────────────────────────────────
+
+def _kids_caption_overlay(text: str, start: float, duration: float,
+                           color: tuple = (255, 220, 0)) -> ImageClip:
+    """Large colourful caption bar at the bottom for kids — word-wrapped, bold."""
+    font_size = 72
+    font = _load_font(font_size)
+    wrapped = textwrap.fill(text, width=28)
+    lines = wrapped.split("\n")
+
+    dummy = Image.new("RGBA", (1, 1))
+    draw = ImageDraw.Draw(dummy)
+    bboxes = [draw.textbbox((0, 0), l, font=font) for l in lines]
+    line_h = max(b[3] - b[1] for b in bboxes) if bboxes else font_size
+    pad = 28
+    img_h = line_h * len(lines) + pad * (len(lines) + 1)
+    img_w = VIDEO_WIDTH
+
+    img = Image.new("RGBA", (img_w, img_h), (0, 0, 0, 0))
+    draw = ImageDraw.Draw(img)
+    # Rounded dark background pill
+    draw.rectangle([0, 0, img_w, img_h], fill=(20, 20, 20, 210))
+    y_cur = pad
+    for line, bbox in zip(lines, bboxes):
+        lw = bbox[2] - bbox[0]
+        lx = (img_w - lw) // 2
+        # Shadow
+        draw.text((lx + 3, y_cur + 3), line, font=font, fill=(0, 0, 0, 200))
+        # Main colourful text
+        draw.text((lx, y_cur), line, font=font, fill=color + (255,))
+        y_cur += line_h + pad
+
+    y_pos = VIDEO_HEIGHT - img_h - 24
+    return (
+        ImageClip(np.array(img))
+        .with_start(start)
+        .with_duration(duration)
+        .with_position(("center", y_pos))
+    )
+
+
+def create_animated_kids_video(
+    storyboard: dict,
+    image_paths: list[Path],
+    voiceover_path: Path,
+    output_path: Path,
+    temp_dir: Path,
+) -> Path:
+    """
+    Assemble animated kids video:
+    - One image per storyboard scene with Ken Burns zoom
+    - Colourful caption overlay per scene (narration text)
+    - Voiceover audio muxed in
+    """
+    temp_dir.mkdir(parents=True, exist_ok=True)
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+
+    scenes = storyboard.get("scenes", [])
+    if not image_paths:
+        raise RuntimeError("No cartoon images provided for animated video assembly")
+
+    voiceover = AudioFileClip(str(voiceover_path))
+    total_duration = max(voiceover.duration, 20.0)
+
+    # Distribute time evenly across scenes we have images for
+    n = min(len(image_paths), len(scenes))
+    if n == 0:
+        raise RuntimeError("No scenes with images to assemble")
+    seg_duration = total_duration / n
+
+    # Rotating caption colours for visual variety
+    caption_colors = [
+        (255, 220, 0),   # yellow
+        (100, 220, 255), # sky blue
+        (180, 255, 100), # lime green
+        (255, 160, 80),  # orange
+        (220, 140, 255), # purple
+        (255, 120, 160), # pink
+        (80, 255, 200),  # mint
+    ]
+
+    clips = []
+    caption_layers = []
+
+    for i in range(n):
+        img_path = image_paths[i]
+        img = Image.open(img_path).convert("RGB").resize(
+            (VIDEO_WIDTH, VIDEO_HEIGHT), Image.LANCZOS
+        )
+        arr = np.array(img)
+
+        zoom_in = (i % 2 == 0)
+        s, e = (1.0, 1.06) if zoom_in else (1.06, 1.0)
+
+        clip = (
+            ImageClip(arr)
+            .with_duration(seg_duration)
+            .resized(lambda t, s=s, e=e, d=seg_duration: s + (e - s) * (t / d))
+            .cropped(x_center=VIDEO_WIDTH // 2, y_center=VIDEO_HEIGHT // 2,
+                     width=VIDEO_WIDTH, height=VIDEO_HEIGHT)
+            .resized((VIDEO_WIDTH, VIDEO_HEIGHT))
+        )
+        clips.append(clip)
+
+        # Caption from storyboard narration
+        if i < len(scenes):
+            narration = scenes[i].get("narration", "")
+            if narration:
+                color = caption_colors[i % len(caption_colors)]
+                start_t = i * seg_duration
+                caption_layers.append(
+                    _kids_caption_overlay(narration, start_t, seg_duration, color)
+                )
+
+    video = concatenate_videoclips(clips, method="compose")
+    if video.duration > total_duration:
+        video = video.subclipped(0, total_duration)
+    video = video.with_audio(voiceover)
+
+    # Title overlay for first 5 seconds
+    title_clip = _title_overlay(storyboard.get("title", ""), min(5.0, total_duration))
+    layers = [video, title_clip] + caption_layers
+    final = CompositeVideoClip(layers, size=(VIDEO_WIDTH, VIDEO_HEIGHT))
+
+    log.info("Rendering animated kids video -> %s", output_path)
+    final.write_videofile(
+        str(output_path),
+        fps=VIDEO_FPS,
+        codec="libx264",
+        audio_codec="aac",
+        temp_audiofile=str(temp_dir / "tmp_audio.m4a"),
+        remove_temp=True,
+        logger=None,
+        threads=4,
+        preset="fast",
+    )
+
+    final.close()
+    video.close()
+    for c in clips:
+        c.close()
+
+    log.info("Animated kids video done: %s (%.1f MB)",
+             output_path, output_path.stat().st_size / 1e6)
+    return output_path
+
+
 # ── main entry ───────────────────────────────────────────────────────────────
 
 def create_ai_video(

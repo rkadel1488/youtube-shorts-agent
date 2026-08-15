@@ -29,12 +29,14 @@ import schedule
 
 from agents.audio_agent import generate_voiceover
 from agents.image_agent import generate_images
-from agents.script_agent import generate_kids_script, generate_story_script
-from agents.seo_agent import generate_kids_seo, generate_seo
+from agents.cartoon_image_agent import generate_cartoon_images
+from agents.script_agent import generate_animated_kids_script, generate_kids_script, generate_story_script
+from agents.seo_agent import generate_animated_kids_seo, generate_kids_seo, generate_seo
+from agents.storyboard_agent import generate_storyboard
 from agents.thumbnail_agent import create_thumbnail
 from agents.upload_agent import upload_thumbnail, upload_video
 from agents.veo_agent import generate_veo_clips
-from agents.video_agent import create_ai_video, create_veo_video
+from agents.video_agent import create_ai_video, create_animated_kids_video, create_veo_video
 from agents.video_editor import enhance_video
 from config import CONTENT_TYPE, OUTPUT_DIR, POSTING_TIMES, YOUTUBE_CATEGORY_ID
 from kids_topics import KIDS_TOPICS
@@ -135,6 +137,114 @@ def _next_story_topic() -> dict:
     _save_next_topic_index(next_index + 1)
     log.info("Selected topic #%d/%d: %s", topic["id"], len(STORY_TOPICS), topic["title"])
     return topic
+
+
+# ── animated kids pipeline ───────────────────────────────────────────────────
+
+def _run_animated_kids_pipeline(job_id, job_dir, temp_dir, result, history, slot) -> dict:
+    """Animated kids pipeline: storyboard → cartoon images → voiceover → video."""
+    try:
+        topic = _next_kids_topic()
+
+        log.info("[1] Generating storyboard for '%s'...", topic["title"])
+        storyboard = generate_storyboard(topic)
+        _save_json(job_dir / "storyboard.json", storyboard)
+
+        log.info("[2] Generating voiceover script from storyboard...")
+        script_data = generate_animated_kids_script(storyboard)
+        _save_json(job_dir / "script.json", script_data)
+
+        images_dir = temp_dir / "cartoon_images"
+        vo_path = temp_dir / "voiceover.mp3"
+
+        log.info("[3] Generating %d cartoon scene images...", len(storyboard["scenes"]))
+        image_paths = generate_cartoon_images(storyboard["scenes"], images_dir)
+        if not image_paths:
+            raise RuntimeError("Cartoon image generation returned no images")
+
+        log.info("[4] Generating voiceover...")
+        generate_voiceover(script_data["script"], vo_path)
+
+        log.info("[5] Assembling animated video...")
+        raw_path = job_dir / "final_raw.mp4"
+        create_animated_kids_video(
+            storyboard=storyboard,
+            image_paths=image_paths,
+            voiceover_path=vo_path,
+            output_path=raw_path,
+            temp_dir=temp_dir,
+        )
+
+        log.info("[5b] Enhancing with FFmpeg...")
+        final_path = job_dir / "final.mp4"
+        try:
+            enhance_video(raw_path, final_path, temp_dir)
+        except Exception as exc:
+            log.warning("Enhancement failed: %s — using raw", exc)
+            shutil.copy2(raw_path, final_path)
+
+        log.info("[6] Generating SEO metadata...")
+        seo_data = generate_animated_kids_seo(
+            topic=script_data["topic"],
+            hook=script_data["hook"],
+        )
+        _save_json(job_dir / "seo.json", seo_data)
+
+        log.info("[6b] Generating thumbnail...")
+        thumb_path = job_dir / "thumbnail.jpg"
+        try:
+            create_thumbnail(
+                title=seo_data["title"],
+                hook=script_data["hook"],
+                image_paths=image_paths,
+                output_path=thumb_path,
+            )
+        except Exception as exc:
+            log.warning("Thumbnail failed: %s — continuing without", exc)
+            thumb_path = None
+
+        log.info("[7] Uploading to YouTube...")
+        video_id = upload_video(
+            video_path=final_path,
+            title=seo_data["title"],
+            description=seo_data["description"],
+            tags=seo_data["tags"],
+            hashtags=seo_data["hashtags"],
+            category_id="27",  # Education
+        )
+
+        if thumb_path and thumb_path.exists():
+            log.info("[7b] Uploading thumbnail...")
+            upload_thumbnail(video_id, thumb_path)
+
+        _update_history(history, seo_data["title"], script_data["topic"])
+
+        result.update({
+            "status":   "success",
+            "video_id": video_id,
+            "url":      f"https://www.youtube.com/watch?v={video_id}",
+            "title":    seo_data["title"],
+            "source":   script_data["topic"],
+            "topic_id": topic["id"],
+            "category": topic["category"],
+            "scenes":   len(storyboard["scenes"]),
+        })
+        _save_json(job_dir / "result.json", result)
+
+        log.info("=" * 60)
+        log.info("SUCCESS (animated kids): %s", result["url"])
+        log.info("=" * 60)
+
+    except Exception as exc:
+        result["error"] = str(exc)
+        _save_json(job_dir / "result.json", result)
+        log.error("ANIMATED KIDS JOB FAILED (%s): %s", job_id, exc, exc_info=True)
+
+    finally:
+        if temp_dir.exists():
+            shutil.rmtree(temp_dir, ignore_errors=True)
+
+    return result
 
 
 # ── kids pipeline ─────────────────────────────────────────────────────────────
@@ -267,6 +377,8 @@ def run_pipeline(slot: int = 0) -> dict:
     history = _load_history()
 
     try:
+        if CONTENT_TYPE == "animated_kids":
+            return _run_animated_kids_pipeline(job_id, job_dir, temp_dir, result, history, slot)
         if CONTENT_TYPE == "kids":
             return _run_kids_pipeline(job_id, job_dir, temp_dir, result, history, slot)
 
