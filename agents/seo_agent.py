@@ -71,6 +71,85 @@ Return ONLY this JSON:
 }}"""
 
 
+KIDS_SEO_TEMPLATE = """Generate YouTube video metadata for a children's educational video.
+
+Topic: {topic}
+Opening line: {hook}
+
+TITLE rules:
+- 50-65 characters max
+- Child-friendly and educational, e.g.:
+    • "Learn About {topic} with Fun Facts for Kids! 🌟"
+    • "Amazing {topic} Facts Kids Will Love! 🎉"
+    • "Let's Explore {topic} Together! Fun for Kids 🌈"
+- Use ONE emoji at the END
+- Never use ALL-CAPS, scary words, or clickbait
+
+DESCRIPTION rules:
+- Line 1: what kids will learn from this video
+- Lines 2-4: fun highlights from the video (tease 2-3 facts)
+- Line 5: "Subscribe for more fun educational videos for kids!"
+
+TAGS (plain English, no #, exactly 20):
+- Include: kids learning, educational video for kids, children's videos, fun facts for kids, learning for toddlers
+- Add topic-specific terms
+
+HASHTAGS (with #, exactly 8):
+- Always include: #KidsLearn #EducationalVideo #ChildrensVideos #FunForKids
+- Add 4 more matching the topic
+
+Return ONLY this JSON:
+{{
+  "title": "...",
+  "description": "...",
+  "tags": ["tag1", ...],
+  "hashtags": ["#KidsLearn", "#EducationalVideo", "#ChildrensVideos", "#FunForKids", "#tag5", "#tag6", "#tag7", "#tag8"]
+}}"""
+
+
+def generate_kids_seo(topic: str, hook: str, retries: int = 3) -> dict:
+    """Generate SEO metadata for a children's educational video."""
+    client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
+    prompt = KIDS_SEO_TEMPLATE.format(topic=topic, hook=hook)
+
+    for attempt in range(1, retries + 1):
+        try:
+            log.info("Generating kids SEO metadata (attempt %d)...", attempt)
+            message = client.messages.create(
+                model=CLAUDE_MODEL,
+                max_tokens=800,
+                system="You are a children's YouTube channel SEO expert. Always respond with valid JSON only — no markdown fences.",
+                messages=[{"role": "user", "content": prompt}],
+            )
+            raw = message.content[0].text.strip()
+            result = json.loads(raw)
+
+            for key in ("title", "description", "tags", "hashtags"):
+                if key not in result:
+                    raise ValueError(f"Missing key '{key}' in SEO response")
+
+            for brand_tag in ("aaryankelvin", "aaryan kelvin"):
+                if brand_tag not in result["tags"]:
+                    result["tags"].append(brand_tag)
+            if "#aaryankelvin" not in result["hashtags"]:
+                result["hashtags"].append("#aaryankelvin")
+
+            result["tags"] = result["tags"][:25]
+            result["hashtags"] = result["hashtags"][:9]
+            log.info("Kids SEO title: '%s'", result["title"])
+            return result
+
+        except json.JSONDecodeError as exc:
+            log.warning("JSON parse error on attempt %d: %s", attempt, exc)
+        except Exception as exc:
+            log.warning("Kids SEO generation error on attempt %d: %s", attempt, exc)
+
+        if attempt < retries:
+            time.sleep(2 ** attempt)
+
+    raise RuntimeError(f"Kids SEO generation failed after {retries} attempts")
+
+
 def generate_seo(topic: str, hook: str, niche: str = "story", trend_data: dict = None,
                  used_titles: list = None, retries: int = 3) -> dict:
     """

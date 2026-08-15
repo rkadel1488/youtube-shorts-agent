@@ -65,6 +65,83 @@ def _avoid_block(used_titles: list = None) -> str:
             "\n".join(f"  - {t}" for t in recent))
 
 
+KIDS_SYSTEM_PROMPT = """You are a cheerful children's educational content creator who makes
+engaging, age-appropriate videos for kids aged 3-8. Your scripts are simple, fun, and full of
+wonder. Use easy vocabulary, short sentences, and a warm encouraging tone.
+Always respond with valid JSON only — no markdown fences, no extra commentary."""
+
+KIDS_TEMPLATE = """Write a fun ~2-minute educational video script for young children (ages 3-8).
+
+Category: {category}
+Topic: {title}
+Learning Goal: {premise}
+
+CRITICAL RULES:
+- Total spoken length: ~2 minutes (~200-250 words, shorter sentences for kids)
+- Simple vocabulary — no words above a 2nd grade reading level
+- Warm, enthusiastic, encouraging tone ("Wow!", "Let's find out!", "Amazing!")
+- Structure:
+    HELLO/HOOK (greet kids, ask a fun question to grab attention)
+    → EXPLORE (3-4 short paragraphs, each teaching one fun fact or idea)
+    → FUN ACTIVITY (one simple thing kids can try at home)
+    → GOODBYE (friendly sign-off with positive encouragement)
+- The "on_screen_hook" field is the EXACT text displayed as a large caption — max 5 words, ALL CAPS
+- No scary, sad, or violent content — keep it 100% positive and age-appropriate
+
+Return ONLY this JSON (no markdown):
+{{
+  "topic": "{title}",
+  "hook": "the opening greeting/question (10-15 words, warm and friendly)",
+  "on_screen_hook": "SHORT ON-SCREEN TEXT (max 5 words, ALL CAPS)",
+  "script": "full ~200-250 word script for kids, simple and fun",
+  "keywords": ["4 to 6 colourful visual keywords for scene image/video generation"]
+}}"""
+
+
+def generate_kids_script(topic: dict, retries: int = 3) -> dict:
+    """
+    Generate a ~2-minute children's educational video script.
+    `topic` is one entry from kids_topics.KIDS_TOPICS (id, category, title, premise).
+    Returns a dict with keys: topic, hook, on_screen_hook, script, keywords.
+    """
+    prompt = KIDS_TEMPLATE.format(
+        category=topic["category"], title=topic["title"], premise=topic["premise"],
+    )
+    client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
+
+    for attempt in range(1, retries + 1):
+        try:
+            log.info("Generating kids script for '%s' via Claude (attempt %d)...",
+                     topic["title"], attempt)
+            message = client.messages.create(
+                model=CLAUDE_MODEL,
+                max_tokens=1000,
+                system=KIDS_SYSTEM_PROMPT,
+                messages=[{"role": "user", "content": prompt}],
+            )
+            raw = message.content[0].text.strip()
+            result = json.loads(raw)
+
+            for key in ("topic", "hook", "script", "keywords"):
+                if key not in result:
+                    raise ValueError(f"Missing key '{key}' in Claude response")
+
+            result.setdefault("on_screen_hook", result["hook"][:30].upper())
+            log.info("Kids script generated [#%d %s]: '%s'",
+                     topic["id"], topic["category"], result["topic"])
+            return result
+
+        except json.JSONDecodeError as exc:
+            log.warning("JSON parse error on attempt %d: %s", attempt, exc)
+        except Exception as exc:
+            log.warning("Kids script generation error on attempt %d: %s", attempt, exc)
+
+        if attempt < retries:
+            time.sleep(2 ** attempt)
+
+    raise RuntimeError(f"Kids script generation failed after {retries} attempts")
+
+
 def generate_story_script(topic: dict, retries: int = 3, used_titles: list = None) -> dict:
     """
     Generate a ~2-minute YouTube video script for a fixed story topic.
