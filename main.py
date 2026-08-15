@@ -29,13 +29,15 @@ import schedule
 
 from agents.audio_agent import generate_voiceover
 from agents.image_agent import generate_images
-from agents.script_agent import generate_story_script
-from agents.seo_agent import generate_seo
+from agents.script_agent import generate_kids_script, generate_story_script
+from agents.seo_agent import generate_kids_seo, generate_seo
 from agents.thumbnail_agent import create_thumbnail
 from agents.upload_agent import upload_thumbnail, upload_video
-from agents.video_agent import create_ai_video
+from agents.veo_agent import generate_veo_clips
+from agents.video_agent import create_ai_video, create_veo_video
 from agents.video_editor import enhance_video
-from config import OUTPUT_DIR, POSTING_TIMES, YOUTUBE_CATEGORY_ID
+from config import CONTENT_TYPE, OUTPUT_DIR, POSTING_TIMES, YOUTUBE_CATEGORY_ID
+from kids_topics import KIDS_TOPICS
 from story_topics import STORY_TOPICS
 from utils.logger import get_logger
 
@@ -43,6 +45,7 @@ log = get_logger("main")
 
 HISTORY_PATH = Path(__file__).parent / "state" / "history.json"
 TOPIC_STATE_PATH = Path(__file__).parent / "state" / "topic_state.json"
+KIDS_TOPIC_STATE_PATH = Path(__file__).parent / "state" / "kids_topic_state.json"
 HISTORY_MAX = 150
 
 
@@ -95,6 +98,31 @@ def _save_next_topic_index(next_index: int):
         json.dump({"next_index": next_index}, f, indent=2)
 
 
+def _next_kids_topic() -> dict:
+    """Pop the next unused kids topic from the fixed pool."""
+    try:
+        if KIDS_TOPIC_STATE_PATH.exists():
+            with open(KIDS_TOPIC_STATE_PATH, encoding="utf-8") as f:
+                next_index = json.load(f).get("next_index", 0)
+        else:
+            next_index = 0
+    except Exception as exc:
+        log.warning("Could not load kids topic state: %s — starting from 0", exc)
+        next_index = 0
+
+    if next_index >= len(KIDS_TOPICS):
+        raise RuntimeError(
+            f"All {len(KIDS_TOPICS)} kids topics have been used — add more topics "
+            f"to kids_topics.KIDS_TOPICS before the pipeline can continue."
+        )
+    topic = KIDS_TOPICS[next_index]
+    KIDS_TOPIC_STATE_PATH.parent.mkdir(parents=True, exist_ok=True)
+    with open(KIDS_TOPIC_STATE_PATH, "w", encoding="utf-8") as f:
+        json.dump({"next_index": next_index + 1}, f, indent=2)
+    log.info("Selected kids topic #%d/%d: %s", topic["id"], len(KIDS_TOPICS), topic["title"])
+    return topic
+
+
 def _next_story_topic() -> dict:
     """Pop the next unused topic from the fixed pool. Raises once exhausted."""
     next_index = _load_next_topic_index()
@@ -107,6 +135,117 @@ def _next_story_topic() -> dict:
     _save_next_topic_index(next_index + 1)
     log.info("Selected topic #%d/%d: %s", topic["id"], len(STORY_TOPICS), topic["title"])
     return topic
+
+
+# ── kids pipeline ─────────────────────────────────────────────────────────────
+
+def _run_kids_pipeline(job_id, job_dir, temp_dir, result, history, slot) -> dict:
+    """Children's educational pipeline using Google Veo 2 AI video clips."""
+    try:
+        topic = _next_kids_topic()
+
+        log.info("[1] Generating kids script for '%s'...", topic["title"])
+        script_data = generate_kids_script(topic)
+        _save_json(job_dir / "script.json", script_data)
+
+        clips_dir = temp_dir / "veo_clips"
+        vo_path = temp_dir / "voiceover.mp3"
+
+        log.info("[2] Generating Veo 2 video clips...")
+        clip_paths = generate_veo_clips(
+            topic=script_data["topic"],
+            keywords=script_data["keywords"],
+            output_dir=clips_dir,
+        )
+        if not clip_paths:
+            raise RuntimeError("Veo 2 clip generation returned no clips")
+
+        log.info("[3] Generating voiceover...")
+        generate_voiceover(script_data["script"], vo_path)
+
+        log.info("[4] Assembling kids video from Veo clips...")
+        raw_path = job_dir / "final_raw.mp4"
+        create_veo_video(
+            topic=script_data["topic"],
+            clip_paths=clip_paths,
+            voiceover_path=vo_path,
+            output_path=raw_path,
+            temp_dir=temp_dir,
+            on_screen_hook=script_data.get("on_screen_hook"),
+        )
+
+        log.info("[4b] Enhancing with FFmpeg...")
+        final_path = job_dir / "final.mp4"
+        try:
+            enhance_video(raw_path, final_path, temp_dir)
+        except Exception as exc:
+            log.warning("Enhancement failed: %s — using raw", exc)
+            shutil.copy2(raw_path, final_path)
+
+        log.info("[5] Generating kids SEO metadata...")
+        seo_data = generate_kids_seo(
+            topic=script_data["topic"],
+            hook=script_data["hook"],
+        )
+        _save_json(job_dir / "seo.json", seo_data)
+        log.info("Title: %s", seo_data["title"])
+
+        log.info("[5b] Generating thumbnail...")
+        thumb_path = job_dir / "thumbnail.jpg"
+        try:
+            # Use first frame from first clip as background for thumbnail
+            from agents.thumbnail_agent import create_thumbnail as _create_thumb
+            _create_thumb(
+                title=seo_data["title"],
+                hook=script_data["hook"],
+                image_paths=[],
+                output_path=thumb_path,
+            )
+        except Exception as exc:
+            log.warning("Thumbnail generation failed: %s — continuing without", exc)
+            thumb_path = None
+
+        log.info("[6] Uploading to YouTube...")
+        video_id = upload_video(
+            video_path=final_path,
+            title=seo_data["title"],
+            description=seo_data["description"],
+            tags=seo_data["tags"],
+            hashtags=seo_data["hashtags"],
+            category_id="27",  # 27 = Education
+        )
+
+        if thumb_path and thumb_path.exists():
+            log.info("[6b] Uploading thumbnail...")
+            upload_thumbnail(video_id, thumb_path)
+
+        _update_history(history, seo_data["title"], script_data["topic"])
+
+        result.update({
+            "status":   "success",
+            "video_id": video_id,
+            "url":      f"https://www.youtube.com/watch?v={video_id}",
+            "title":    seo_data["title"],
+            "source":   script_data["topic"],
+            "topic_id": topic["id"],
+            "category": topic["category"],
+        })
+        _save_json(job_dir / "result.json", result)
+
+        log.info("=" * 60)
+        log.info("SUCCESS (kids): %s", result["url"])
+        log.info("=" * 60)
+
+    except Exception as exc:
+        result["error"] = str(exc)
+        _save_json(job_dir / "result.json", result)
+        log.error("KIDS JOB FAILED (%s): %s", job_id, exc, exc_info=True)
+
+    finally:
+        if temp_dir.exists():
+            shutil.rmtree(temp_dir, ignore_errors=True)
+
+    return result
 
 
 # ── main pipeline ─────────────────────────────────────────────────────────────
@@ -124,10 +263,13 @@ def run_pipeline(slot: int = 0) -> dict:
     log.info("STARTING JOB: %s", job_id)
     log.info("=" * 60)
 
-    result  = {"job_id": job_id, "status": "failed"}
+    result  = {"job_id": job_id, "status": "failed", "content_type": CONTENT_TYPE}
     history = _load_history()
 
     try:
+        if CONTENT_TYPE == "kids":
+            return _run_kids_pipeline(job_id, job_dir, temp_dir, result, history, slot)
+
         topic = _next_story_topic()
 
         log.info("[1] Generating story script for '%s'...", topic["title"])

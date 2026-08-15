@@ -38,5 +38,8 @@ CLAUDE_MODEL = "claude-sonnet-4-6"
 
 MADE_FOR_KIDS: bool = os.getenv("MADE_FOR_KIDS", "false").lower() == "true"
 
+# Pipeline mode: "story" (default) or "kids" (children's educational with Veo 2)
+CONTENT_TYPE: str = os.getenv("CONTENT_TYPE", "story")
+
 # Default YouTube category for uploads (22 = People & Blogs)
 YOUTUBE_CATEGORY_ID: str = os.getenv("YOUTUBE_CATEGORY_ID", "22")

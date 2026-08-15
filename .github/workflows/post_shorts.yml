@@ -28,6 +28,7 @@ jobs:
       POSTING_TIMES: "02:00,08:00,14:00,20:00"
       MADE_FOR_KIDS: "false"
       GEMINI_TTS_VOICE: "Charon"
+      CONTENT_TYPE: ${{ vars.CONTENT_TYPE || 'story' }}
 
     steps:
       - name: Checkout code
@@ -76,7 +77,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add state/history.json state/topic_state.json
+          git add state/history.json state/topic_state.json state/kids_topic_state.json
           if git diff --cached --quiet; then
             echo "No history changes to commit"
           else
