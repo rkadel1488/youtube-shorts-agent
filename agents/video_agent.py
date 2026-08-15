@@ -4,6 +4,8 @@ Assembles the final YouTube video from stock images + voiceover:
   2. Title card + on-screen hook caption overlays
   3. Mux voiceover audio
   4. Export 1920x1080 landscape MP4
+
+Compatible with MoviePy 2.x (with_duration/with_position/etc.)
 """
 import textwrap
 from pathlib import Path
@@ -11,13 +13,11 @@ from pathlib import Path
 import numpy as np
 from PIL import Image, ImageDraw, ImageFont
 
-if not hasattr(Image, "ANTIALIAS"):
-    Image.ANTIALIAS = Image.LANCZOS
-
-from moviepy.editor import (
+from moviepy import (
     AudioFileClip,
     CompositeVideoClip,
     ImageClip,
+    VideoFileClip,
     concatenate_videoclips,
 )
 
@@ -25,79 +25,6 @@ from config import VIDEO_FPS, VIDEO_HEIGHT, VIDEO_WIDTH
 from utils.logger import get_logger
 
 log = get_logger(__name__)
-
-# ── Veo kids video assembler ─────────────────────────────────────────────────
-
-def create_veo_video(
-    topic: str,
-    clip_paths: list,
-    voiceover_path: Path,
-    output_path: Path,
-    temp_dir: Path,
-    on_screen_hook: str | None = None,
-) -> Path:
-    """
-    Stitch Veo 2 mp4 clips together to fill the voiceover duration,
-    mux voiceover audio, add title + hook overlays.
-    """
-    from moviepy.editor import VideoFileClip, concatenate_videoclips, CompositeVideoClip
-
-    temp_dir.mkdir(parents=True, exist_ok=True)
-    output_path.parent.mkdir(parents=True, exist_ok=True)
-
-    if not clip_paths:
-        raise RuntimeError("No Veo clips provided for video assembly")
-
-    voiceover = AudioFileClip(str(voiceover_path))
-    total_duration = max(voiceover.duration, 20.0)
-
-    # Load clips and loop until we have enough duration
-    raw_clips = [VideoFileClip(str(p)) for p in clip_paths]
-    looped = []
-    accumulated = 0.0
-    i = 0
-    while accumulated < total_duration:
-        clip = raw_clips[i % len(raw_clips)]
-        remaining = total_duration - accumulated
-        if clip.duration > remaining:
-            clip = clip.subclip(0, remaining)
-        looped.append(clip)
-        accumulated += clip.duration
-        i += 1
-
-    video = concatenate_videoclips(looped, method="compose")
-    if video.duration > total_duration:
-        video = video.subclip(0, total_duration)
-
-    video = video.set_audio(voiceover)
-
-    title_clip = _title_overlay(topic, min(6.0, total_duration))
-    layers = [video, title_clip]
-    if on_screen_hook:
-        layers.append(_hook_overlay(on_screen_hook, total_duration))
-    final = CompositeVideoClip(layers, size=(video.w, video.h))
-
-    log.info("Rendering Veo video -> %s", output_path)
-    final.write_videofile(
-        str(output_path),
-        fps=VIDEO_FPS,
-        codec="libx264",
-        audio_codec="aac",
-        temp_audiofile=str(temp_dir / "tmp_audio.m4a"),
-        remove_temp=True,
-        logger=None,
-        threads=4,
-        preset="fast",
-    )
-
-    final.close()
-    video.close()
-    for c in raw_clips:
-        c.close()
-
-    log.info("Veo video done: %s (%.1f MB)", output_path, output_path.stat().st_size / 1e6)
-    return output_path
-
 
 TITLE_FONT_SIZE = 48
 TITLE_Y_RATIO   = 0.04
@@ -148,10 +75,10 @@ def _title_overlay(text: str, duration: float) -> ImageClip:
         y_cur += line_h + TITLE_PADDING
 
     return (
-        ImageClip(np.array(img), ismask=False)
-        .set_start(0)
-        .set_duration(min(6.0, duration))
-        .set_position(("center", int(VIDEO_HEIGHT * TITLE_Y_RATIO)))
+        ImageClip(np.array(img))
+        .with_start(0)
+        .with_duration(min(6.0, duration))
+        .with_position(("center", int(VIDEO_HEIGHT * TITLE_Y_RATIO)))
     )
 
 
@@ -184,11 +111,81 @@ def _hook_overlay(text: str, duration: float) -> ImageClip:
 
     y_pos = int(VIDEO_HEIGHT * 0.42) - img_h // 2
     return (
-        ImageClip(np.array(img), ismask=False)
-        .set_start(0)
-        .set_duration(min(4.0, duration))
-        .set_position(("center", max(0, y_pos)))
+        ImageClip(np.array(img))
+        .with_start(0)
+        .with_duration(min(4.0, duration))
+        .with_position(("center", max(0, y_pos)))
     )
+
+
+# ── Veo kids video assembler ─────────────────────────────────────────────────
+
+def create_veo_video(
+    topic: str,
+    clip_paths: list,
+    voiceover_path: Path,
+    output_path: Path,
+    temp_dir: Path,
+    on_screen_hook: str | None = None,
+) -> Path:
+    """
+    Stitch Veo 2 mp4 clips together to fill the voiceover duration,
+    mux voiceover audio, add title + hook overlays.
+    """
+    temp_dir.mkdir(parents=True, exist_ok=True)
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+
+    if not clip_paths:
+        raise RuntimeError("No Veo clips provided for video assembly")
+
+    voiceover = AudioFileClip(str(voiceover_path))
+    total_duration = max(voiceover.duration, 20.0)
+
+    raw_clips = [VideoFileClip(str(p)) for p in clip_paths]
+    looped = []
+    accumulated = 0.0
+    i = 0
+    while accumulated < total_duration:
+        clip = raw_clips[i % len(raw_clips)]
+        remaining = total_duration - accumulated
+        if clip.duration > remaining:
+            clip = clip.subclipped(0, remaining)
+        looped.append(clip)
+        accumulated += clip.duration
+        i += 1
+
+    video = concatenate_videoclips(looped, method="compose")
+    if video.duration > total_duration:
+        video = video.subclipped(0, total_duration)
+
+    video = video.with_audio(voiceover)
+
+    title_clip = _title_overlay(topic, min(6.0, total_duration))
+    layers = [video, title_clip]
+    if on_screen_hook:
+        layers.append(_hook_overlay(on_screen_hook, total_duration))
+    final = CompositeVideoClip(layers, size=(video.w, video.h))
+
+    log.info("Rendering Veo video -> %s", output_path)
+    final.write_videofile(
+        str(output_path),
+        fps=VIDEO_FPS,
+        codec="libx264",
+        audio_codec="aac",
+        temp_audiofile=str(temp_dir / "tmp_audio.m4a"),
+        remove_temp=True,
+        logger=None,
+        threads=4,
+        preset="fast",
+    )
+
+    final.close()
+    video.close()
+    for c in raw_clips:
+        c.close()
+
+    log.info("Veo video done: %s (%.1f MB)", output_path, output_path.stat().st_size / 1e6)
+    return output_path
 
 
 # ── main entry ───────────────────────────────────────────────────────────────
@@ -205,8 +202,6 @@ def create_ai_video(
     Assemble a landscape YouTube video from stock images + voiceover.
     Applies Ken Burns zoom effect to each image, muxes voiceover audio.
     """
-    from moviepy.editor import concatenate_videoclips
-
     temp_dir.mkdir(parents=True, exist_ok=True)
     output_path.parent.mkdir(parents=True, exist_ok=True)
 
@@ -233,19 +228,19 @@ def create_ai_video(
 
         clip = (
             ImageClip(arr)
-            .set_duration(seg_duration)
-            .resize(_make_zoom(start_scale, end_scale, seg_duration))
-            .crop(x_center=VIDEO_WIDTH // 2, y_center=VIDEO_HEIGHT // 2,
-                  width=VIDEO_WIDTH, height=VIDEO_HEIGHT)
-            .resize((VIDEO_WIDTH, VIDEO_HEIGHT))
+            .with_duration(seg_duration)
+            .resized(_make_zoom(start_scale, end_scale, seg_duration))
+            .cropped(x_center=VIDEO_WIDTH // 2, y_center=VIDEO_HEIGHT // 2,
+                     width=VIDEO_WIDTH, height=VIDEO_HEIGHT)
+            .resized((VIDEO_WIDTH, VIDEO_HEIGHT))
         )
         clips.append(clip)
 
     video = concatenate_videoclips(clips, method="compose")
     if video.duration > total_duration:
-        video = video.subclip(0, total_duration)
+        video = video.subclipped(0, total_duration)
 
-    video = video.set_audio(voiceover)
+    video = video.with_audio(voiceover)
 
     title = _title_overlay(topic, min(6.0, total_duration))
     layers = [video, title]
