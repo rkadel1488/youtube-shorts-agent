@@ -22,7 +22,6 @@ YOUTUBE_CLIENT_SECRETS_FILE: str = os.getenv("YOUTUBE_CLIENT_SECRETS_FILE", "cli
 YOUTUBE_TOKEN_FILE: str = os.getenv("YOUTUBE_TOKEN_FILE", "youtube_token.json")
 YOUTUBE_SCOPES = [
     "https://www.googleapis.com/auth/youtube.upload",
-    "https://www.googleapis.com/auth/youtubepartner",
 ]
 
 # Posting schedule — 4 slots per day (02:00, 08:00, 14:00, 20:00 UTC by default)
