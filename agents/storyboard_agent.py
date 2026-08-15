@@ -48,7 +48,7 @@ Art style: {style}
 Main character: {character}
 
 Rules:
-- Exactly 7 scenes (one per 15-17 seconds of a ~2-minute video)
+- Exactly 6 scenes (one per 18-20 seconds of a ~2-minute video)
 - Each scene's narration: 1-2 short simple sentences, friendly tone, ages 3-8
 - Consistent character appearance across ALL scenes (same colours, same features)
 - Each image_prompt must:
@@ -114,11 +114,18 @@ def generate_storyboard(topic: dict, retries: int = 3) -> dict:
             log.info("Generating storyboard for '%s' (attempt %d)...", topic["title"], attempt)
             message = client.messages.create(
                 model=CLAUDE_MODEL,
-                max_tokens=2000,
+                max_tokens=4000,
                 system=STORYBOARD_SYSTEM,
                 messages=[{"role": "user", "content": prompt}],
             )
             raw = message.content[0].text.strip()
+            if not raw:
+                raise ValueError("Empty response from Claude API")
+            if raw.startswith("```"):
+                raw = raw.split("```")[1]
+                if raw.startswith("json"):
+                    raw = raw[4:]
+                raw = raw.strip()
             result = json.loads(raw)
 
             if "scenes" not in result or len(result["scenes"]) < 4:
