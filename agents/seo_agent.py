@@ -110,48 +110,36 @@ Return ONLY this JSON:
 def generate_animated_kids_seo(topic: str, hook: str, retries: int = 3) -> dict:
     """Generate SEO metadata for an animated children's educational video."""
     client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
-    prompt = f"""Generate YouTube metadata for a SHORT animated educational video for children (ages 3-8).
-
-Topic: {topic}
-Opening line: {hook}
-
-TITLE rules (60 chars max):
-- Child-friendly, fun, educational e.g.:
-    "Learn About {topic}! 🌟 Animated Kids Video"
-    "{topic} for Kids! Fun Cartoon Learning 🎨"
-    "Amazing {topic} Facts! Kids Animation 🦋"
-- ONE emoji at end, colourful/friendly
-
-DESCRIPTION:
-- Line 1: what kids learn
-- Lines 2-3: 2 fun highlights
-- Line 4: "Subscribe for more fun animated learning videos!"
-
-TAGS (20 total, no #):
-- Include: kids animation, animated educational video, cartoon for kids, learning for toddlers, kids youtube
-
-HASHTAGS (8 total with #):
-- Always: #KidsAnimation #EducationalCartoon #LearnWithMe #KidsVideos
-- Add 4 topic-specific
-
-Return ONLY JSON:
-{{
-  "title": "...",
-  "description": "...",
-  "tags": ["tag1", ...],
-  "hashtags": ["#KidsAnimation", "#EducationalCartoon", "#LearnWithMe", "#KidsVideos", "#tag5", "#tag6", "#tag7", "#tag8"]
-}}"""
+    prompt = (
+        f"Generate YouTube metadata for a short animated educational video for children ages 3-8.\n\n"
+        f"Topic: {topic}\n"
+        f"Opening line: {hook}\n\n"
+        "Rules:\n"
+        "- TITLE: 60 chars max, child-friendly, fun, one emoji at end\n"
+        "- DESCRIPTION: 4 lines — what kids learn, 2 fun highlights, subscribe CTA\n"
+        "- TAGS: list of 20 strings (no # symbol), include: kids animation, cartoon for kids, learning for toddlers\n"
+        "- HASHTAGS: list of 8 strings with # symbol, always include #KidsAnimation #EducationalCartoon #LearnWithMe #KidsVideos\n\n"
+        'Return ONLY valid JSON with keys: "title", "description", "tags", "hashtags"'
+    )
 
     for attempt in range(1, retries + 1):
         try:
             log.info("Generating animated kids SEO (attempt %d)...", attempt)
             message = client.messages.create(
                 model=CLAUDE_MODEL,
-                max_tokens=700,
+                max_tokens=1000,
                 system="You are a children's YouTube SEO expert. Respond with valid JSON only.",
                 messages=[{"role": "user", "content": prompt}],
             )
             raw = message.content[0].text.strip()
+            if not raw:
+                raise ValueError("Empty response from Claude API")
+            # Strip markdown fences if present
+            if raw.startswith("```"):
+                raw = raw.split("```")[1]
+                if raw.startswith("json"):
+                    raw = raw[4:]
+                raw = raw.strip()
             result = json.loads(raw)
             for key in ("title", "description", "tags", "hashtags"):
                 if key not in result:
