@@ -27,9 +27,9 @@ YOUTUBE_SCOPES = [
 # Posting schedule — 4 slots per day (02:00, 08:00, 14:00, 20:00 UTC by default)
 POSTING_TIMES: list[str] = os.getenv("POSTING_TIMES", "02:00,08:00,14:00,20:00").split(",")
 
-# Video output settings (landscape 16:9 for regular long-form YouTube videos)
-VIDEO_WIDTH = 1920
-VIDEO_HEIGHT = 1080
+# Video output settings (portrait 9:16 for YouTube Shorts)
+VIDEO_WIDTH = 1080
+VIDEO_HEIGHT = 1920
 VIDEO_FPS = 30
 
 # Claude model

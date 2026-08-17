@@ -18,8 +18,8 @@ from utils.logger import get_logger
 log = get_logger(__name__)
 
 POLLINATIONS_URL = "https://image.pollinations.ai/prompt/{prompt}"
-IMG_W = 1920
-IMG_H = 1080
+IMG_W = 1080
+IMG_H = 1920
 
 
 def _fetch_cartoon_image(prompt: str, output_path: Path, retries: int = 3) -> bool:

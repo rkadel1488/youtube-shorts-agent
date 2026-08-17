@@ -29,31 +29,30 @@ Your scripts run about 2 minutes, open with a hook that stops the scroll, build 
 a compelling narrative arc, and land a memorable twist or payoff at the end.
 Always respond with valid JSON only — no markdown fences, no extra commentary."""
 
-STORY_TEMPLATE = """Write a compelling ~2-minute YouTube story script based on this concept:
+STORY_TEMPLATE = """Write a punchy YouTube Shorts story script based on this concept:
 
 Category: {category}
 Title: {title}
 Premise: {premise}
 
 CRITICAL RULES:
-- Total spoken length: ~2 minutes (~300-350 words)
-- Structure:
-    HOOK (first 10-15 words, second-person "you", instantly gripping)
-    → BUILD (develop the scenario over 3-4 paragraphs, each raising tension or adding detail)
-    → CLIMAX (the most intense or surprising moment, 1-2 paragraphs)
-    → TWIST/PAYOFF (final 2-3 sentences — the scare, laugh, revelation, or emotional gut-punch)
+- Total spoken length: ~50 seconds (~120-130 words MAXIMUM — count carefully)
+- Structure (all in one tight flow):
+    HOOK (first 8-10 words, second-person "you", instantly gripping)
+    → BUILD (2-3 short sentences raising tension)
+    → TWIST/PAYOFF (final 2 sentences — the scare, revelation, or gut-punch)
 - Write in vivid present tense, second person ("you walk in", "you hear", "you realize")
-- Each paragraph should be 2-4 sentences and feel like a scene
+- Short punchy sentences — no paragraph longer than 2 sentences
 - The "on_screen_hook" field is the EXACT text displayed as a large caption — max 6 words, ALL CAPS
-- Do not end with a generic CTA like "follow for more" unless it fits naturally
+- End on the twist — no CTA
 
 Return ONLY this JSON (no markdown):
 {{
   "topic": "{title}",
-  "hook": "the opening hook line (10-15 words, second person)",
+  "hook": "the opening hook line (8-10 words, second person)",
   "on_screen_hook": "VERY SHORT ON-SCREEN TEXT (max 6 words, ALL CAPS)",
-  "script": "full ~300-350 word script including hook, build, climax, and twist",
-  "keywords": ["5 to 8 vivid visual keywords for scene image generation"]
+  "script": "full ~120-130 word script — hook, build, twist",
+  "keywords": ["4 to 6 vivid visual keywords for scene image generation"]
 }}"""
 
 
@@ -70,30 +69,29 @@ engaging, age-appropriate videos for kids aged 3-8. Your scripts are simple, fun
 wonder. Use easy vocabulary, short sentences, and a warm encouraging tone.
 Always respond with valid JSON only — no markdown fences, no extra commentary."""
 
-KIDS_TEMPLATE = """Write a fun ~2-minute educational video script for young children (ages 3-8).
+KIDS_TEMPLATE = """Write a fun YouTube Shorts educational script for young children (ages 3-8).
 
 Category: {category}
 Topic: {title}
 Learning Goal: {premise}
 
 CRITICAL RULES:
-- Total spoken length: ~2 minutes (~200-250 words, shorter sentences for kids)
+- Total spoken length: ~50 seconds (~100-120 words MAXIMUM — count carefully)
 - Simple vocabulary — no words above a 2nd grade reading level
-- Warm, enthusiastic, encouraging tone ("Wow!", "Let's find out!", "Amazing!")
+- Warm, enthusiastic tone ("Wow!", "Did you know?", "Amazing!")
 - Structure:
-    HELLO/HOOK (greet kids, ask a fun question to grab attention)
-    → EXPLORE (3-4 short paragraphs, each teaching one fun fact or idea)
-    → FUN ACTIVITY (one simple thing kids can try at home)
-    → GOODBYE (friendly sign-off with positive encouragement)
+    HOOK (1 fun question to grab attention — 8-10 words)
+    → 2-3 SHORT fun facts (1 sentence each)
+    → GOODBYE (1 encouraging closing line)
 - The "on_screen_hook" field is the EXACT text displayed as a large caption — max 5 words, ALL CAPS
-- No scary, sad, or violent content — keep it 100% positive and age-appropriate
+- No scary, sad, or violent content — 100% positive and age-appropriate
 
 Return ONLY this JSON (no markdown):
 {{
   "topic": "{title}",
-  "hook": "the opening greeting/question (10-15 words, warm and friendly)",
+  "hook": "the opening question (8-10 words, warm and friendly)",
   "on_screen_hook": "SHORT ON-SCREEN TEXT (max 5 words, ALL CAPS)",
-  "script": "full ~200-250 word script for kids, simple and fun",
+  "script": "full ~100-120 word script for kids, simple and fun",
   "keywords": ["4 to 6 colourful visual keywords for scene image/video generation"]
 }}"""
 
@@ -110,17 +108,17 @@ def generate_animated_kids_script(storyboard: dict, retries: int = 3) -> dict:
     title = storyboard.get("title", "")
     character = storyboard.get("character", "a friendly animal friend")
 
-    prompt = f"""We have a children's animated video called "{title}" featuring {character}.
+    prompt = f"""We have a children's animated YouTube Short called "{title}" featuring {character}.
 Here is the scene-by-scene narration already written:
 
 {full_narration}
 
-Your job: rewrite this as a smooth, warm, flowing voiceover script for a friendly narrator.
-- Keep the same facts and story beats but make transitions between scenes natural
-- Add a warm opening ("Hello little learners! Today we're going to discover...")
-- Add an encouraging closing ("Great job learning today! See you next time!")
+Your job: rewrite this as a smooth, warm, flowing voiceover for a friendly narrator.
+- Keep the same facts but make transitions between scenes natural
+- Add a warm opening ("Hello little learners! Today...")
+- Add an encouraging closing ("See you next time!")
 - Keep vocabulary simple (ages 3-8), short sentences, enthusiastic tone
-- Total: ~200-240 words
+- Total: ~100-120 words MAXIMUM (this is a 50-second Short)
 
 Return ONLY this JSON:
 {{

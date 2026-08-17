@@ -48,7 +48,7 @@ Art style: {style}
 Main character: {character}
 
 Rules:
-- Exactly 6 scenes (one per 18-20 seconds of a ~2-minute video)
+- Exactly 4 scenes (one per 12-15 seconds of a ~50-second Short)
 - Each scene's narration: 1-2 short simple sentences, friendly tone, ages 3-8
 - Consistent character appearance across ALL scenes (same colours, same features)
 - Each image_prompt must:
