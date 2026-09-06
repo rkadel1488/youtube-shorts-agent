@@ -1,6 +1,5 @@
 {
   "titles": [
-    "GE Aerospace just raised its profit outlook big 🔥",
     "GOOG stock just dropped harder than the market 😳",
     "Fairlife ransomware shut down US milk production 🚨",
     "Chips and Netflix just crashed the market 🚨",
@@ -149,10 +148,10 @@
     "Three knocks hit your window — you're on floor twenty 😱",
     "Everyone around you is smiling — then you realize why 😱",
     "Call log shows a number you never dialed 😱",
-    "Your shadow moves before you do — then it stops 👁"
+    "Your shadow moves before you do — then it stops 👁",
+    "Shortcut through the woods ends with something wrong 😱"
   ],
   "topics": [
-    "Lucid EV Bankruptcy Fears",
     "ASUS ROG Xbox Ally X20 Goes Solo",
     "FCC Approves Orbital Mirror Satellite",
     "GE Aerospace Stock Surge",
@@ -301,7 +300,8 @@
     "The Knocking",
     "The Smile",
     "The Phone",
-    "The Shadows"
+    "The Shadows",
+    "The Forest"
   ],
   "video_ids": []
 }
