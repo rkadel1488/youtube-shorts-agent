@@ -1,6 +1,5 @@
 {
   "titles": [
-    "FCC just approved a satellite that lights up Earth 🤯",
     "GE Aerospace just raised its profit outlook big 🔥",
     "GOOG stock just dropped harder than the market 😳",
     "Fairlife ransomware shut down US milk production 🚨",
@@ -149,10 +148,10 @@
     "Mirror looks back one second too late 😱",
     "Three knocks hit your window — you're on floor twenty 😱",
     "Everyone around you is smiling — then you realize why 😱",
-    "Call log shows a number you never dialed 😱"
+    "Call log shows a number you never dialed 😱",
+    "Your shadow moves before you do — then it stops 👁"
   ],
   "topics": [
-    "IBM Bob AI Platform Major Updates",
     "Lucid EV Bankruptcy Fears",
     "ASUS ROG Xbox Ally X20 Goes Solo",
     "FCC Approves Orbital Mirror Satellite",
@@ -301,7 +300,8 @@
     "The Visitor",
     "The Knocking",
     "The Smile",
-    "The Phone"
+    "The Phone",
+    "The Shadows"
   ],
   "video_ids": []
 }
