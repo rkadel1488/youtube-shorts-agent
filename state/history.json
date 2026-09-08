@@ -1,6 +1,5 @@
 {
   "titles": [
-    "Two men lived wrong lives for 38 years 😳",
     "Caitlin Clark just scored 45 — a WNBA first 🤯",
     "ICE agents must now film every traffic stop 🚨",
     "Fallout 5 roadmap just dropped — here's what's next 🔥",
@@ -149,10 +148,10 @@
     "Doll facing the wall — but now it's watching you 👁",
     "Unplugged speaker whispers your name in the dark 👁",
     "Footsteps upstairs — but you live in a bungalow 👁",
-    "Key in your pocket — you never put it there 🤯"
+    "Key in your pocket — you never put it there 🤯",
+    "Something outside stares back when you look through the window 👁"
   ],
   "topics": [
-    "GOOG Stock Drops",
     "Fairlife Ransomware Attack Halts US Production",
     "Stock Market Losing Week: Chips & Netflix Crash",
     "385-Million-Year-Old Amber Found in China",
@@ -301,7 +300,8 @@
     "The Forest",
     "The Doll",
     "The Attic",
-    "The Key"
+    "The Key",
+    "The Window"
   ],
   "video_ids": []
 }
