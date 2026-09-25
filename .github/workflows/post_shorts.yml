@@ -1,11 +1,12 @@
 name: Post YouTube Videos
 
 on:
-  schedule:
-    - cron: '0 2 * * *'    #  2 AM UTC — Slot 0 (night)
-    - cron: '0 8 * * *'    #  8 AM UTC — Slot 1 (morning)
-    - cron: '0 14 * * *'   #  2 PM UTC — Slot 2 (afternoon)
-    - cron: '0 20 * * *'   #  8 PM UTC — Slot 3 (evening)
+  # Automated schedule disabled by user request. Uncomment when ready to resume:
+  # schedule:
+  #   - cron: '0 2 * * *'    #  2 AM UTC — Slot 0 (night)
+  #   - cron: '0 8 * * *'    #  8 AM UTC — Slot 1 (morning)
+  #   - cron: '0 14 * * *'   #  2 PM UTC — Slot 2 (afternoon)
+  #   - cron: '0 20 * * *'   #  8 PM UTC — Slot 3 (evening)
   workflow_dispatch:        # Manual trigger from GitHub UI
     inputs:
       slot:
