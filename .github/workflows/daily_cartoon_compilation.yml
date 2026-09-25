@@ -47,10 +47,9 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: 'npm'
 
       - name: Install dependencies
-        run: npm ci || npm install
+        run: npm install
 
       - name: Install system dependencies & fonts
         run: sudo apt-get update && sudo apt-get install -y ffmpeg fonts-dejavu-core
