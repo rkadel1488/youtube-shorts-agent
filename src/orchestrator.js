@@ -217,14 +217,6 @@ class WorkflowOrchestrator {
       createdAt: new Date().toISOString()
     };
 
-    fs.writeFileSync(
-      path.join(compilationDir, 'compilation_project.json'),
-      JSON.stringify(compilationProject, null, 2)
-    );
-
-    // Save also to global compilations index
-    this._saveToHistory(compilationProject);
-
     // 7. Auto-Upload to YouTube if requested
     let uploadResult = null;
     if (autoUpload) {
@@ -238,6 +230,14 @@ class WorkflowOrchestrator {
       });
       compilationProject.youtube = uploadResult;
     }
+
+    fs.writeFileSync(
+      path.join(compilationDir, 'compilation_project.json'),
+      JSON.stringify(compilationProject, null, 2)
+    );
+
+    // Save also to global compilations index
+    this._saveToHistory(compilationProject);
 
     report('Workflow Pipeline Completed Successfully!', 100);
     console.log(`\n======================================================`);
