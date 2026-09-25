@@ -132,17 +132,33 @@ This video is created specifically for preschool children, toddlers, and familie
 
     // Add specific song title tags
     allSongs.forEach(s => {
-      baseTags.push(s.title.toLowerCase());
+      baseTags.push(s.title);
       if (s.seoKeywords) {
-        s.seoKeywords.forEach(k => {
-          if (!baseTags.includes(k.toLowerCase())) baseTags.push(k.toLowerCase());
-        });
+        s.seoKeywords.forEach(k => baseTags.push(k));
       }
     });
 
-    // Deduplicate and cap to ~45 tags (YouTube allows max 500 characters total)
-    const unique = Array.from(new Set(baseTags));
-    return unique.slice(0, 45);
+    // Sanitize tags (YouTube forbids &, <, >, etc. and caps total chars to 500)
+    const cleanTags = [];
+    let totalLength = 0;
+
+    for (const raw of baseTags) {
+      if (!raw) continue;
+      const sanitized = raw
+        .replace(/&/g, 'and')
+        .replace(/[<>:"/\\|?*#$!@%^()=+`~[\]{};]/g, '')
+        .replace(/\s+/g, ' ')
+        .trim()
+        .toLowerCase();
+
+      if (sanitized && sanitized.length >= 2 && sanitized.length <= 35 && !cleanTags.includes(sanitized)) {
+        if (totalLength + sanitized.length + 1 > 400) break;
+        cleanTags.push(sanitized);
+        totalLength += sanitized.length + 1;
+      }
+    }
+
+    return cleanTags;
   }
 }
 

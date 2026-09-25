@@ -58,7 +58,7 @@ class YouTubeUploader {
       snippet: {
         title: seo.title.substring(0, 99), // Max 100 chars
         description: seo.description.substring(0, 4999), // Max 5000 chars
-        tags: seo.tags || [],
+        tags: (seo.tags || []).map(t => String(t).replace(/&/g, 'and').replace(/[<>]/g, '').trim()).filter(Boolean),
         categoryId: seo.categoryId || '27', // Education
         defaultLanguage: 'en',
         defaultAudioLanguage: 'en'
