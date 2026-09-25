@@ -1,27 +1,79 @@
 const fs = require('fs');
 const path = require('path');
+const ffmpeg = require('fluent-ffmpeg');
+const ffmpegPath = require('ffmpeg-static');
+const config = require('../../config');
+ffmpeg.setFfmpegPath(ffmpegPath);
 
 /**
- * Polyphonic Nursery Rhyme Instrumental Music Synthesizer
- * Generates cheerful, melodic WAV backing tracks with glockenspiel chimes, bass, and toddler beats.
- * Requires ZERO external API keys and runs instantly in Node.js.
+ * Trending Kids Pop & Nursery Music Synthesizer
+ * Generates modern, upbeat, 124 BPM toddler dance tracks inspired by YouTube trending kids music
+ * (Cocomelon, Super Simple Songs, Baby Shark style).
+ * Features:
+ * - 4-on-the-floor punchy kick & crisp toddler handclaps
+ * - 16th-note shaker/tambourine rhythm section
+ * - Ukulele / acoustic guitar offbeat reggae/pop skank strums
+ * - Bouncy funk bassline with toddler bopping groove
+ * - Sparkling glockenspiel / xylophone hook melodies
+ * - Seamless support for external royalty-free tracks from assets/audio/trending_music/
  */
 class NurserySynthesizer {
   constructor() {
     this.sampleRate = 44100;
+    this.trendingMusicDir = path.join(config.paths.assets, 'audio', 'trending_music');
+    if (!fs.existsSync(this.trendingMusicDir)) {
+      fs.mkdirSync(this.trendingMusicDir, { recursive: true });
+    }
   }
 
   /**
-   * Generates an instrumental backing track for a nursery rhyme
+   * Generates or loads an instrumental backing track for a song
    * @param {string} outputPath Destination file path (.wav)
    * @param {number} durationSec Length in seconds
-   * @param {string} style 'bounce' | 'adventure' | 'learning' | 'lullaby'
-   * @param {number} bpm Beats per minute (e.g. 115)
+   * @param {string} style 'trending_pop' | 'bounce' | 'adventure' | 'learning' | 'lullaby'
+   * @param {number} bpm Beats per minute (default: 124)
    */
-  async generateBackingTrack(outputPath, durationSec = 30, style = 'bounce', bpm = 115) {
+  async generateBackingTrack(outputPath, durationSec = 30, style = 'trending_pop', bpm = 124) {
     const dir = path.dirname(outputPath);
     if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
 
+    // 1. Check if user placed a custom copyright-free audio track in assets/audio/trending_music/
+    const customTrack = this._findCustomTrendingTrack(style);
+    if (customTrack) {
+      console.log(`🎵 [Trending Music] Using royalty-free backing track: ${path.basename(customTrack)}`);
+      return await this._adaptCustomTrack(customTrack, durationSec, outputPath);
+    }
+
+    // 2. Synthesize modern Trending Kids Pop audio track
+    return this._synthesizeTrendingPopTrack(outputPath, durationSec, style, bpm);
+  }
+
+  _findCustomTrendingTrack(style) {
+    if (!fs.existsSync(this.trendingMusicDir)) return null;
+    const files = fs.readdirSync(this.trendingMusicDir).filter(f => f.endsWith('.mp3') || f.endsWith('.wav'));
+    if (files.length === 0) return null;
+
+    // Look for matching style or take the first available
+    const matched = files.find(f => f.toLowerCase().includes(style.toLowerCase()));
+    return path.join(this.trendingMusicDir, matched || files[0]);
+  }
+
+  async _adaptCustomTrack(trackPath, durationSec, outputPath) {
+    return new Promise((resolve, reject) => {
+      ffmpeg(trackPath)
+        .inputOptions([`-stream_loop -1`]) // Loop continuously
+        .outputOptions([
+          `-t ${durationSec}`,
+          '-af', `afade=t=in:ss=0:d=1.0,afade=t=out:st=${Math.max(0, durationSec - 2)}:d=2.0`
+        ])
+        .audioCodec('pcm_s16le')
+        .save(outputPath)
+        .on('end', () => resolve(outputPath))
+        .on('error', reject);
+    });
+  }
+
+  _synthesizeTrendingPopTrack(outputPath, durationSec, style, bpm) {
     const sampleRate = this.sampleRate;
     const numChannels = 2; // Stereo
     const totalSamples = Math.floor(durationSec * sampleRate);
@@ -42,15 +94,24 @@ class NurserySynthesizer {
     buffer.write('data', 36);
     buffer.writeUInt32LE(totalSamples * numChannels * 2, 40);
 
-    // Nursery Major Key Progression (C - F - G - C)
-    const chords = [
+    // 1. World-famous Top-40 Kids Pop Chord Progression (I - V - vi - IV):
+    // C Major -> G Major -> A Minor -> F Major
+    const popChords = [
       [261.63, 329.63, 392.00], // C major (C4, E4, G4)
-      [349.23, 440.00, 523.25], // F major (F4, A4, C5)
       [392.00, 493.88, 587.33], // G major (G4, B4, D5)
-      [261.63, 329.63, 523.25]  // C major octave
+      [220.00, 261.63, 329.63], // A minor (A3, C4, E4)
+      [349.23, 440.00, 523.25]  // F major (F4, A4, C5)
     ];
 
-    // Lullaby Progression (gentler, softer)
+    // Cheerful Bounce (C - F - G - C)
+    const bounceChords = [
+      [261.63, 329.63, 392.00], // C
+      [349.23, 440.00, 523.25], // F
+      [392.00, 493.88, 587.33], // G
+      [261.63, 329.63, 523.25]  // C
+    ];
+
+    // Lullaby Progression
     const lullabyChords = [
       [261.63, 329.63, 392.00], // C
       [220.00, 261.63, 329.63], // Am
@@ -58,10 +119,18 @@ class NurserySynthesizer {
       [392.00, 493.88, 587.33]  // G
     ];
 
-    const activeChords = (style === 'lullaby') ? lullabyChords : chords;
-    const actualBpm = (style === 'lullaby') ? Math.min(bpm, 80) : bpm;
-    const beatSec = 60 / actualBpm;
+    let activeChords = popChords;
+    let effectiveBpm = bpm || 124;
 
+    if (style === 'lullaby') {
+      activeChords = lullabyChords;
+      effectiveBpm = 75;
+    } else if (style === 'bounce') {
+      activeChords = bounceChords;
+      effectiveBpm = 120;
+    }
+
+    const beatSec = 60 / effectiveBpm;
     let offset = 44;
 
     for (let i = 0; i < totalSamples; i++) {
@@ -69,61 +138,101 @@ class NurserySynthesizer {
       const beat = t / beatSec;
       const chordIndex = Math.floor(beat / 4) % activeChords.length;
       const currentChord = activeChords[chordIndex];
+      const beatFract = beat % 1;
 
-      // 1. Glockenspiel / Xylophone Arpeggio Melodic Chimes
-      const arpeggioSpeed = (style === 'bounce' || style === 'learning') ? 2 : 1;
-      const noteInBeat = Math.floor(beat * arpeggioSpeed) % currentChord.length;
-      const baseNote = currentChord[noteInBeat];
-      const octaveMult = (style === 'lullaby') ? 1.5 : 2.0;
-      const chimeFreq = baseNote * octaveMult;
-      const noteTime = (beat * arpeggioSpeed) % 1;
-      const decayRate = (style === 'lullaby') ? 3.5 : 6.0;
-      const chimeEnvelope = Math.exp(-noteTime * decayRate);
-
-      // Bell harmonics (fundamental + subtle 2nd harmonic chime shimmer)
-      const chime = (
-        Math.sin(2 * Math.PI * chimeFreq * t) * 0.7 +
-        Math.sin(2 * Math.PI * chimeFreq * 2.02 * t) * 0.2 +
-        Math.sin(2 * Math.PI * chimeFreq * 3.01 * t) * 0.1
-      ) * chimeEnvelope * 0.28;
-
-      // 2. Playful Bouncy Bassline
-      const bassFreq = currentChord[0] / 2;
-      const bassDecay = (style === 'lullaby') ? Math.exp(-(beat % 2) * 1.5) : Math.exp(-(beat % 1) * 3.0);
-      const bass = (
-        Math.sin(2 * Math.PI * bassFreq * t) +
-        0.35 * Math.sin(2 * Math.PI * bassFreq * 2 * t)
-      ) * bassDecay * ((style === 'lullaby') ? 0.18 : 0.32);
-
-      // 3. Cheerful Percussion (Snare/Handclap & Gentle Kick)
-      let snare = 0;
+      // -------------------------------------------------------------
+      // 1. DRUMS & PERCUSSION SECTION
+      // -------------------------------------------------------------
       let kick = 0;
+      let handclap = 0;
+      let shaker = 0;
+
       if (style !== 'lullaby') {
-        const beatFract = beat % 1;
-        const isSnareBeat = (Math.floor(beat) % 2 === 1);
-        if (isSnareBeat && beatFract < 0.12) {
-          snare = (Math.random() * 2 - 1) * Math.exp(-beatFract * 32) * 0.16;
+        // Four-on-the-floor punchy kick (every beat: 1, 2, 3, 4)
+        if (beatFract < 0.16) {
+          const kickFreq = 120 * Math.exp(-beatFract * 26);
+          kick = Math.sin(2 * Math.PI * kickFreq * t) * Math.exp(-beatFract * 16) * 0.38;
         }
-        if (!isSnareBeat && beatFract < 0.18) {
-          const kickFreq = 110 * Math.exp(-beatFract * 22);
-          kick = Math.sin(2 * Math.PI * kickFreq * t) * Math.exp(-beatFract * 14) * 0.32;
+
+        // Snappy Toddler Handclaps on beats 2 and 4
+        const beatNumInBar = Math.floor(beat % 4);
+        const isClapBeat = (beatNumInBar === 1 || beatNumInBar === 3);
+        if (isClapBeat && beatFract < 0.14) {
+          handclap = (Math.random() * 2 - 1) * Math.exp(-beatFract * 36) * 0.24;
+        }
+
+        // 16th-Note Shaker / Tambourine Sizzle
+        const sixteenthFract = (beat * 4) % 1;
+        if (sixteenthFract < 0.05) {
+          shaker = (Math.random() * 2 - 1) * Math.exp(-sixteenthFract * 60) * 0.08;
         }
       }
 
-      // Gentle fade in (first 1.5 sec) and fade out (last 2 sec)
+      // -------------------------------------------------------------
+      // 2. UKULELE / ACOUSTIC OFFBEAT STRUM (The signature kids pop sunshine vibe!)
+      // -------------------------------------------------------------
+      let ukeStrum = 0;
+      if (style !== 'lullaby') {
+        // Offbeat strum on the "&" of the beat (0.5 to 0.75)
+        const offbeatDist = beatFract - 0.5;
+        if (offbeatDist >= 0 && offbeatDist < 0.22) {
+          const ukeDecay = Math.exp(-offbeatDist * 18);
+          // Play triad chord with bright acoustic timbre
+          ukeStrum = (
+            Math.sin(2 * Math.PI * currentChord[0] * 2 * t) * 0.4 +
+            Math.sin(2 * Math.PI * currentChord[1] * 2 * t) * 0.35 +
+            Math.sin(2 * Math.PI * currentChord[2] * 2 * t) * 0.25
+          ) * ukeDecay * 0.18;
+        }
+      }
+
+      // -------------------------------------------------------------
+      // 3. BOUNCY TODDLER FUNK BASSLINE
+      // -------------------------------------------------------------
+      let bass = 0;
+      const rootNote = currentChord[0] / 2;
+      const fifthNote = currentChord[2] / 2;
+      // Walking bass pattern: Root on 1, 5th on 2.5, Root on 3
+      const bassNote = (beatFract > 0.5 && Math.floor(beat % 2) === 0) ? fifthNote : rootNote;
+      const bassDecay = (style === 'lullaby') ? Math.exp(-(beat % 2) * 1.5) : Math.exp(-(beatFract % 0.5) * 6);
+      bass = (
+        Math.sin(2 * Math.PI * bassNote * t) * 0.75 +
+        Math.sin(2 * Math.PI * bassNote * 2 * t) * 0.25
+      ) * bassDecay * ((style === 'lullaby') ? 0.16 : 0.30);
+
+      // -------------------------------------------------------------
+      // 4. GLOCKENSPIEL / XYLOPHONE SPARKLE LEAD
+      // -------------------------------------------------------------
+      const arpeggioSpeed = (style === 'lullaby') ? 1 : 2;
+      const noteInBeat = Math.floor(beat * arpeggioSpeed) % currentChord.length;
+      const chimeBase = currentChord[noteInBeat];
+      const chimeFreq = chimeBase * 2;
+      const noteTime = (beat * arpeggioSpeed) % 1;
+      const chimeDecay = (style === 'lullaby') ? 3.5 : 5.5;
+      const chimeEnv = Math.exp(-noteTime * chimeDecay);
+
+      // Bell harmonics
+      const glockenspiel = (
+        Math.sin(2 * Math.PI * chimeFreq * t) * 0.65 +
+        Math.sin(2 * Math.PI * chimeFreq * 2.01 * t) * 0.25 +
+        Math.sin(2 * Math.PI * chimeFreq * 3.02 * t) * 0.10
+      ) * chimeEnv * 0.25;
+
+      // -------------------------------------------------------------
+      // 5. MASTER MIX & STEREO IMAGING
+      // -------------------------------------------------------------
       let masterGain = 1.0;
-      if (t < 1.5) masterGain = t / 1.5;
-      if (t > durationSec - 2.0) masterGain = Math.max(0, (durationSec - t) / 2.0);
+      if (t < 1.2) masterGain = t / 1.2; // Fade-in
+      if (t > durationSec - 2.0) masterGain = Math.max(0, (durationSec - t) / 2.0); // Fade-out
 
-      // Combine channels with slight stereo panning for wide studio sound
-      const leftMix = (chime * 1.1 + bass * 0.9 + kick * 1.0 + snare * 0.8) * masterGain;
-      const rightMix = (chime * 0.9 + bass * 1.1 + kick * 1.0 + snare * 1.1) * masterGain;
+      const left = (glockenspiel * 1.05 + ukeStrum * 1.1 + bass * 0.95 + kick * 1.0 + handclap * 0.9 + shaker * 0.8) * masterGain;
+      const right = (glockenspiel * 0.95 + ukeStrum * 0.9 + bass * 1.05 + kick * 1.0 + handclap * 1.1 + shaker * 1.2) * masterGain;
 
-      const leftClamped = Math.max(-1, Math.min(1, leftMix));
-      const rightClamped = Math.max(-1, Math.min(1, rightMix));
+      const clampedL = Math.max(-1, Math.min(1, left));
+      const clampedR = Math.max(-1, Math.min(1, right));
 
-      buffer.writeInt16LE(Math.floor(leftClamped * 32767), offset);
-      buffer.writeInt16LE(Math.floor(rightClamped * 32767), offset + 2);
+      buffer.writeInt16LE(Math.floor(clampedL * 32767), offset);
+      buffer.writeInt16LE(Math.floor(clampedR * 32767), offset + 2);
       offset += 4;
     }
 

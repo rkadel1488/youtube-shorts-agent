@@ -6,20 +6,20 @@ An end-to-end autonomous CLI automation engine for generating children's cartoon
 
 ## 🌟 Key Features
 
-1. **Catchy Song & Lyrics Generation**:
-   - Curated catalog of toddler favorites (*The Wheels on the Bus*, *Old MacDonald's Farm*, *Baby Dino Stomp*, *Colors of the Rainbow*, *Five Little Ducks*, *Twinkle Twinkle*, and *Alphabet Safari*).
-   - Generates rhyming, repetitive, rhythmic verse structures designed for toddler retention and parent sing-alongs.
-   - Optional AI integration via Google Gemini API for infinite dynamic song generation.
+1. **Persistent Character Creation & Storyboard Generator**:
+   - Curated persistent cartoon cast (Barnaby the Bunny, Pip the Duckling, Rexy the Baby Dino, Leo the Lion Cub, Dotti the Elephant).
+   - Generates official **Character Specification Cards** (`character_card.png`) and locks character visual tokens across all scenes for persistent 3D animation.
+   - Generates multi-scene **Motion Storyboards** (`storyboard.json` and interactive `storyboard.html`) with shot directions, camera motions, and preschool action choreography.
 
-2. **Studio Vocal Singer & Polyphonic Nursery Music**:
-   - **Zero subscription cost**: Powered by Microsoft Edge Speech engine (`msedge-tts`) producing clear children's cartoon voices (Ana, Jenny, Christopher, Sonia).
-   - Polyphonic instrumental synthesizer generates cheerful glockenspiel chimes, bouncy basslines, and toddler handclaps in major nursery scales.
-   - Built-in automatic vocal ducking (-2.5 dB) and YouTube EBU R128 loudness normalization (-14 LUFS target).
+2. **Google Flow & Google Veo 2 Video Generation**:
+   - Integrates directly with Google's newest video generation model **Veo 2 (`veo-2.0-generate-001`)** via `@google/genai` using your Google AI Studio API key.
+   - Generates real 3D animated motion video clips instead of static pan/zoom images.
+   - Built-in **Active Motion Cartoon Synthesizer** fallback featuring rhythmic character bounce synced to the beat, multi-axis camera panning, floating sparkles, and chunky sing-along karaoke subtitle banners.
 
-3. **1080p 3D Cartoon Animations**:
-   - High-saturation, Pixar/Cocomelon-style 1920x1080 cartoon scenes (sunny hills, red farm barns, friendly dinosaurs, underwater ponds, magical starry skies).
-   - Ken Burns dynamic camera motion (smooth zoom-in, pan left/right, cartoon rhythm bounce).
-   - High-contrast sing-along bubble subtitle banners with deep cartoon outlines (`#1A0033`, 14px stroke) ensuring 100% readability.
+3. **Trending Copyright-Free Kids Music (124 BPM Preschool Pop)**:
+   - Modern, upbeat toddler dance rhythm inspired by YouTube trending nursery hits (Cocomelon, Super Simple Songs, Baby Shark).
+   - Features 4-on-the-floor punchy kick, snappy toddler handclaps on 2 and 4, 16th-note shaker sizzle, ukulele offbeat reggae/pop strums, bouncy funk bass, and sparkling glockenspiel earworm melodies.
+   - Seamlessly supports external copyright-free MP3/WAV tracks from `assets/audio/trending_music/`.
 
 4. **Long-Form Video Compilation Builder**:
    - Stacks multiple songs (e.g., 3, 5, 8, or 10 songs) into a continuous long-form compilation.

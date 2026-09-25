@@ -6,6 +6,9 @@ const ttsSinger = require('./services/music/tts_singer');
 const audioMixer = require('./services/music/mixer');
 const sceneGenerator = require('./services/visuals/scene_generator');
 const cartoonAnimator = require('./services/visuals/animator');
+const characterCreator = require('./services/visuals/character_creator');
+const storyboardGenerator = require('./services/visuals/storyboard_generator');
+const veoVideoGenerator = require('./services/visuals/veo_video_generator');
 const compilationBuilder = require('./services/compiler/video_compiler');
 const thumbnailMaker = require('./services/thumbnail/thumbnail_maker');
 const seoOptimizer = require('./services/seo/seo_optimizer');
@@ -13,8 +16,9 @@ const youtubeUploader = require('./services/youtube/uploader');
 
 /**
  * Master YouTube Workflow Orchestrator
- * End-to-end automation connecting song generation, visual animation,
- * long-form compilation compilation, high-CTR thumbnail design, SEO, and YouTube publishing.
+ * End-to-end automation connecting character creation, storyboard generation,
+ * Google Flow / Veo 2 video synthesis, trending copyright-free music, long-form compilation,
+ * high-CTR thumbnail design, SEO, and YouTube publishing.
  */
 class WorkflowOrchestrator {
   constructor() {
@@ -45,45 +49,54 @@ class WorkflowOrchestrator {
       if (onProgress) onProgress({ step, percent });
     };
 
-    report('1/5: Generating Rhyming Song Script & Verses...', 10);
+    report('1/6: Generating Rhyming Song Script & Verses...', 10);
     const song = await lyricsGenerator.generateSong({ songId, topic });
     const songDir = path.join(config.paths.songs, `${song.id}_${Date.now()}`);
     fs.mkdirSync(songDir, { recursive: true });
 
-    report('2/5: Synthesizing Vocal Singer Audio (Edge TTS)...', 30);
+    report('2/6: Creating Persistent Cartoon Character & Model Card...', 25);
+    const character = characterCreator.getCharacterForSong(song);
+    const characterCardPath = path.join(songDir, 'character_card.png');
+    await characterCreator.generateCharacterCard(character, characterCardPath);
+
+    report('3/6: Designing Scene-by-Scene Motion Storyboard (Google Flow / Veo)...', 40);
+    const storyboard = await storyboardGenerator.generateStoryboard(song);
+    await storyboardGenerator.saveStoryboard(storyboard, songDir);
+
+    report('4/6: Synthesizing Vocal Singer Audio (Edge TTS)...', 55);
     const vocalResult = await ttsSinger.generateVocals(song, songDir, { voice });
 
-    report('3/5: Synthesizing & Mixing Children Instrumental Music...', 50);
+    report('5/6: Synthesizing Trending Kids Pop Backing Track & Mixing Audio...', 70);
     const mixedAudio = await audioMixer.produceSongAudio({
       vocalPath: vocalResult.vocalPath,
       totalDurationSec: vocalResult.totalDurationSec,
-      song: song,
+      song: { ...song, musicalStyle: 'trending_pop', bpm: 124 },
       outputDir: songDir
     });
 
-    report('4/5: Generating 1920x1080 Cartoon Scenes & Animations...', 70);
+    report('6/6: Generating 3D Motion Video Clips (Google Flow / Veo 2)...', 85);
     const verseClipPaths = [];
-    for (let i = 0; i < vocalResult.verses.length; i++) {
-      const v = vocalResult.verses[i];
-      const sceneImgPath = path.join(songDir, `scene_v${v.verseNumber}.png`);
-      const clipPath = path.join(songDir, `clip_v${v.verseNumber}.mp4`);
+    for (let i = 0; i < storyboard.scenes.length; i++) {
+      const scene = storyboard.scenes[i];
+      const clipPath = path.join(songDir, `clip_s${scene.sceneNumber}.mp4`);
 
-      // 1. Generate 3D Cartoon Scene
-      await sceneGenerator.generateScene(v, song, sceneImgPath);
+      // Match duration to vocal verse duration if available
+      const matchingVerse = vocalResult.verses[i];
+      if (matchingVerse && matchingVerse.durationSec) {
+        scene.durationSec = matchingVerse.durationSec + 1.2;
+      }
 
-      // 2. Animate with Ken Burns motion & sing-along lyric subtitle
-      await cartoonAnimator.createVerseClip(
-        sceneImgPath,
-        v.durationSec + 1.5,
-        v.lyrics,
+      await veoVideoGenerator.generateSceneVideo(
+        scene,
+        song,
         clipPath,
-        { motionIndex: i }
+        { motionIndex: i, bpm: 124 }
       );
 
       verseClipPaths.push(clipPath);
     }
 
-    report('5/5: Stitching Complete Song Video...', 90);
+    console.log(`\n🎞️ Stitching ${verseClipPaths.length} motion clips with master audio...`);
     const finalVideoPath = path.join(songDir, `${song.id}_video.mp4`);
     await cartoonAnimator.stitchSongVideo(verseClipPaths, mixedAudio.audioPath, finalVideoPath);
 
@@ -93,6 +106,9 @@ class WorkflowOrchestrator {
       id: song.id,
       title: song.title,
       theme: song.theme,
+      character: character,
+      storyboardPath: path.join(songDir, 'storyboard.json'),
+      characterCardPath: characterCardPath,
       durationSec: vocalResult.totalDurationSec,
       durationFormatted: `${Math.floor(vocalResult.totalDurationSec / 60)}m ${Math.round(vocalResult.totalDurationSec % 60)}s`,
       audioPath: mixedAudio.audioPath,

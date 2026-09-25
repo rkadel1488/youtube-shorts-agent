@@ -268,7 +268,45 @@ program
     console.log(table.toString());
   });
 
-// 9. INSTANT DEMO VERIFICATION
+// 9. STORYBOARD & CHARACTER GENERATOR
+program
+  .command('storyboard')
+  .description('Generate character specification sheet and Google Flow / Veo 2 motion storyboard')
+  .option('-t, --topic <topic>', 'Song topic or theme', 'bus')
+  .action(async (options) => {
+    printBanner();
+    try {
+      const lyricsGenerator = require('../src/services/lyrics/generator');
+      const characterCreator = require('../src/services/visuals/character_creator');
+      const storyboardGenerator = require('../src/services/visuals/storyboard_generator');
+
+      console.log(chalk.bold.green(`🎬 Generating Cartoon Character & Storyboard for topic: "${options.topic}"...`));
+      const song = await lyricsGenerator.generateSong({ topic: options.topic });
+      const character = characterCreator.getCharacterForSong(song);
+
+      const outDir = path.join(config.paths.output, `storyboard_${Date.now()}`);
+      fs.mkdirSync(outDir, { recursive: true });
+
+      const cardPath = path.join(outDir, 'character_card.png');
+      await characterCreator.generateCharacterCard(character, cardPath);
+
+      const sb = await storyboardGenerator.generateStoryboard(song);
+      const { jsonPath, htmlPath } = await storyboardGenerator.saveStoryboard(sb, outDir);
+
+      console.log(chalk.bold.green('\n🎉 STORYBOARD & CHARACTER CREATED!'));
+      console.log(chalk.cyan(`⭐ Character: ${character.name} (${character.species})`));
+      console.log(chalk.yellow(`🖼️ Character Card: ${cardPath}`));
+      console.log(chalk.magenta(`📜 Storyboard JSON: ${jsonPath}`));
+      console.log(chalk.blue(`🌐 Visual HTML Storyboard: ${htmlPath}`));
+      console.log(chalk.cyan(`\n⚡ Google Flow / Veo 2 Prompt Sample (Scene 1):`));
+      console.log(chalk.dim(sb.scenes[0].veoPrompt));
+    } catch (err) {
+      console.error(chalk.bold.red('\n❌ Error generating storyboard:'), err.message);
+      process.exit(1);
+    }
+  });
+
+// 10. INSTANT DEMO VERIFICATION
 program
   .command('demo')
   .description('Run a rapid end-to-end test verification of audio synthesis, cartoon art, and thumbnail')
