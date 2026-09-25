@@ -1,0 +1,99 @@
+name: Daily Cartoon Compilation Workflow
+
+on:
+  schedule:
+    # Runs daily at 10:00 AM UTC
+    - cron: '0 10 * * *'
+  workflow_dispatch:
+    inputs:
+      song_count:
+        description: 'Number of songs in compilation'
+        required: false
+        default: '5'
+      theme:
+        description: 'Theme (vehicles, animals, dinosaurs, colors, counting, bedtime, or random)'
+        required: false
+        default: ''
+      auto_upload:
+        description: 'Upload directly to YouTube? (true/false)'
+        required: false
+        default: 'true'
+      privacy:
+        description: 'Privacy status (unlisted, private, public)'
+        required: false
+        default: 'unlisted'
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    permissions:
+      contents: write
+
+    env:
+      GOOGLE_AI_STUDIO_API_KEY: ${{ secrets.GOOGLE_AI_STUDIO_API_KEY }}
+      GEMINI_API_KEY: ${{ secrets.GOOGLE_AI_STUDIO_API_KEY }}
+      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+      YOUTUBE_CLIENT_SECRETS: ${{ secrets.YOUTUBE_CLIENT_SECRETS }}
+      YOUTUBE_TOKEN: ${{ secrets.YOUTUBE_TOKEN }}
+      YOUTUBE_PRIVACY: ${{ github.event.inputs.privacy || 'unlisted' }}
+      AUTOPILOT_AUTO_PUBLISH: ${{ github.event.inputs.auto_upload || 'true' }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci || npm install
+
+      - name: Restore YouTube credentials from secrets
+        run: |
+          if [ -n "${{ secrets.YOUTUBE_CLIENT_SECRETS }}" ]; then
+            echo '${{ secrets.YOUTUBE_CLIENT_SECRETS }}' > client_secrets.json
+          fi
+          if [ -n "${{ secrets.YOUTUBE_TOKEN }}" ]; then
+            echo '${{ secrets.YOUTUBE_TOKEN }}' > youtube_token.json
+          fi
+
+      - name: Generate & Publish Cartoon Compilation
+        run: |
+          SONG_COUNT="${{ github.event.inputs.song_count || '5' }}"
+          THEME="${{ github.event.inputs.theme || '' }}"
+          UPLOAD_FLAG=""
+          if [ "${{ github.event.inputs.auto_upload || 'true' }}" = "true" ]; then
+            UPLOAD_FLAG="--upload"
+          fi
+          THEME_FLAG=""
+          if [ -n "$THEME" ] && [ "$THEME" != "random" ]; then
+            THEME_FLAG="-t $THEME"
+          fi
+
+          node bin/yt-agent.js compile -n $SONG_COUNT $THEME_FLAG $UPLOAD_FLAG --privacy ${{ github.event.inputs.privacy || 'unlisted' }}
+
+      - name: Commit compilation history
+        if: always()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/compilations_history.json
+          if git diff --cached --quiet; then
+            echo "No history changes to commit"
+          else
+            git commit -m "chore: update compilations history [skip ci]"
+            git push
+          fi
+
+      - name: Upload Compilation Artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: compilation-output-${{ github.run_number }}
+          path: |
+            output/compilations/**/*.json
+            output/compilations/**/*.jpg

@@ -1,0 +1,50 @@
+{
+  "name": "yt-agent",
+  "version": "1.0.0",
+  "description": "Autonomous YouTube Children's Cartoon Music Video Compilation Engine",
+  "main": "src/orchestrator.js",
+  "bin": {
+    "yt-agent": "./bin/yt-agent.js"
+  },
+  "scripts": {
+    "start": "node bin/yt-agent.js",
+    "demo": "node bin/yt-agent.js demo",
+    "compile": "node bin/yt-agent.js compile",
+    "song": "node bin/yt-agent.js song",
+    "thumbnail": "node bin/yt-agent.js thumbnail",
+    "seo": "node bin/yt-agent.js seo",
+    "auth": "node bin/yt-agent.js auth",
+    "upload": "node bin/yt-agent.js upload",
+    "list": "node bin/yt-agent.js list",
+    "autopilot": "node bin/yt-agent.js autopilot"
+  },
+  "keywords": [
+    "youtube-automation",
+    "children-cartoons",
+    "nursery-rhymes",
+    "kids-songs",
+    "ffmpeg",
+    "ai-music",
+    "edge-tts",
+    "seo",
+    "autopilot"
+  ],
+  "author": "Antigravity",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^1.7.9",
+    "chalk": "^4.1.2",
+    "cli-table3": "^0.6.5",
+    "commander": "^12.1.0",
+    "dotenv": "^16.4.7",
+    "ffmpeg-static": "^5.3.0",
+    "ffprobe-static": "^3.1.0",
+    "figlet": "^1.8.0",
+    "fluent-ffmpeg": "^2.1.3",
+    "googleapis": "^144.0.0",
+    "msedge-tts": "^2.0.8",
+    "node-cron": "^3.0.3",
+    "ora": "^5.4.1",
+    "sharp": "^0.33.5"
+  }
+}
