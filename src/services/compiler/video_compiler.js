@@ -166,23 +166,21 @@ class CompilationBuilder {
 
     await sharp(Buffer.from(svg)).resize(this.width, this.height).png().toFile(imagePath);
 
-    // Render video clip with gentle glockenspiel tone
+    // Generate portable WAV chime audio (C5-E5-G5-C6 glockenspiel) - zero lavfi dependence
+    const audioPath = path.join(dir, `bumper_aud_${Date.now()}.wav`);
+    this._generateBumperChime(audioPath, durationSec);
+
+    // Render bumper video clip
     return new Promise((resolve, reject) => {
       ffmpeg()
         .input(imagePath)
         .loop(durationSec)
-        // Synthesize a cheerful sine bell chime for the bumper
-        .input('eval:0')
-        .inputOptions([
-          '-f', 'lavfi',
-          '-i', `sine=frequency=523.25:duration=${durationSec},volume=0.3[a1];sine=frequency=659.25:duration=${durationSec},volume=0.25[a2];sine=frequency=783.99:duration=${durationSec},volume=0.2[a3];[a1][a2][a3]amix=inputs=3[aout]`
-        ])
+        .input(audioPath)
         .outputOptions([
           '-c:v libx264',
+          '-preset fast',
           '-pix_fmt yuv420p',
           '-r 30',
-          '-map 0:v',
-          '-map 1:a',
           '-c:a aac',
           '-b:a 192k',
           `-t ${durationSec}`,
@@ -191,41 +189,62 @@ class CompilationBuilder {
         .save(outputPath)
         .on('end', () => {
           try { fs.unlinkSync(imagePath); } catch (e) {}
+          try { fs.unlinkSync(audioPath); } catch (e) {}
           resolve(outputPath);
         })
         .on('error', (err) => {
-          // If lavfi audio syntax differs, render silent bumper
-          this._createSilentBumper(imagePath, durationSec, outputPath)
-            .then(resolve)
-            .catch(reject);
+          try { fs.unlinkSync(imagePath); } catch (e) {}
+          try { fs.unlinkSync(audioPath); } catch (e) {}
+          reject(err);
         });
     });
   }
 
   /**
-   * Fallback silent bumper
+   * Generates a 4-note glockenspiel chime in PCM WAV format
    */
-  _createSilentBumper(imagePath, durationSec, outputPath) {
-    return new Promise((resolve, reject) => {
-      ffmpeg()
-        .input(imagePath)
-        .loop(durationSec)
-        .input('anullsrc=channel_layout=stereo:sample_rate=44100')
-        .inputFormat('lavfi')
-        .outputOptions([
-          '-c:v libx264',
-          '-pix_fmt yuv420p',
-          '-r 30',
-          '-c:a aac',
-          `-t ${durationSec}`
-        ])
-        .save(outputPath)
-        .on('end', () => {
-          try { fs.unlinkSync(imagePath); } catch (e) {}
-          resolve(outputPath);
-        })
-        .on('error', reject);
-    });
+  _generateBumperChime(outputPath, durationSec) {
+    const sampleRate = 44100;
+    const numChannels = 2;
+    const totalSamples = Math.floor(durationSec * sampleRate);
+    const buffer = Buffer.alloc(44 + totalSamples * numChannels * 2);
+
+    buffer.write('RIFF', 0);
+    buffer.writeUInt32LE(36 + totalSamples * numChannels * 2, 4);
+    buffer.write('WAVE', 8);
+    buffer.write('fmt ', 12);
+    buffer.writeUInt32LE(16, 16);
+    buffer.writeUInt16LE(1, 20); // PCM
+    buffer.writeUInt16LE(numChannels, 22);
+    buffer.writeUInt32LE(sampleRate, 24);
+    buffer.writeUInt32LE(sampleRate * numChannels * 2, 28);
+    buffer.writeUInt16LE(numChannels * 2, 32);
+    buffer.writeUInt16LE(16, 34);
+    buffer.write('data', 36);
+    buffer.writeUInt32LE(totalSamples * numChannels * 2, 40);
+
+    const freqs = [523.25, 659.25, 783.99, 1046.50]; // Joyful C5, E5, G5, C6 arpeggio
+    let offset = 44;
+
+    for (let i = 0; i < totalSamples; i++) {
+      const t = i / sampleRate;
+      let sample = 0;
+      freqs.forEach((f, idx) => {
+        const noteStart = idx * 0.22;
+        if (t >= noteStart) {
+          const noteTime = t - noteStart;
+          sample += Math.sin(2 * Math.PI * f * noteTime) * Math.exp(-noteTime * 4.5) * 0.22;
+        }
+      });
+      const clamped = Math.max(-1, Math.min(1, sample));
+      const intVal = Math.floor(clamped * 32767);
+      buffer.writeInt16LE(intVal, offset);
+      buffer.writeInt16LE(intVal, offset + 2);
+      offset += 4;
+    }
+
+    fs.writeFileSync(outputPath, buffer);
+    return outputPath;
   }
 
   /**
