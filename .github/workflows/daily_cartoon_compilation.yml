@@ -52,6 +52,9 @@ jobs:
       - name: Install dependencies
         run: npm ci || npm install
 
+      - name: Install system dependencies & fonts
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg fonts-dejavu-core
+
       - name: Restore YouTube credentials from secrets
         run: |
           if [ -n "${{ secrets.YOUTUBE_CLIENT_SECRETS }}" ]; then
@@ -81,7 +84,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add data/compilations_history.json
+          [ -f data/compilations_history.json ] && git add data/compilations_history.json
           if git diff --cached --quiet; then
             echo "No history changes to commit"
           else
