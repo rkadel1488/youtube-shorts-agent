@@ -1,9 +1,9 @@
 name: Daily Cartoon Compilation Workflow
 
 on:
-  schedule:
-    # Runs daily at 10:00 AM UTC
-    - cron: '0 10 * * *'
+  # Automated schedule disabled by user request. Uncomment when ready to resume:
+  # schedule:
+  #   - cron: '0 10 * * *'
   workflow_dispatch:
     inputs:
       song_count:
@@ -17,7 +17,7 @@ on:
       auto_upload:
         description: 'Upload directly to YouTube? (true/false)'
         required: false
-        default: 'true'
+        default: 'false'
       privacy:
         description: 'Privacy status (unlisted, private, public)'
         required: false
@@ -37,7 +37,7 @@ jobs:
       YOUTUBE_CLIENT_SECRETS: ${{ secrets.YOUTUBE_CLIENT_SECRETS }}
       YOUTUBE_TOKEN: ${{ secrets.YOUTUBE_TOKEN }}
       YOUTUBE_PRIVACY: ${{ github.event.inputs.privacy || 'unlisted' }}
-      AUTOPILOT_AUTO_PUBLISH: ${{ github.event.inputs.auto_upload || 'true' }}
+      AUTOPILOT_AUTO_PUBLISH: ${{ github.event.inputs.auto_upload || 'false' }}
 
     steps:
       - name: Checkout code
@@ -68,7 +68,7 @@ jobs:
           SONG_COUNT="${{ github.event.inputs.song_count || '5' }}"
           THEME="${{ github.event.inputs.theme || '' }}"
           UPLOAD_FLAG=""
-          if [ "${{ github.event.inputs.auto_upload || 'true' }}" = "true" ]; then
+          if [ "${{ github.event.inputs.auto_upload || 'false' }}" = "true" ]; then
             UPLOAD_FLAG="--upload"
           fi
           THEME_FLAG=""
