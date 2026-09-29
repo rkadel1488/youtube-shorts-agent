@@ -25,18 +25,17 @@ MAX_POLL_WAIT  = 300  # 5 minutes max per clip
 
 def _build_kid_prompts(topic: str, keywords: list[str]) -> list[str]:
     """
-    Build 4 child-friendly scene prompts for Veo 2 from topic + keywords.
+    Build 3 child-friendly scene prompts for Veo 2 from topic + keywords.
     Each prompt is cinematic, colourful, and safe for kids.
     """
-    base = [k for k in (keywords or []) if k][:4] or [topic]
+    base = [k for k in (keywords or []) if k][:3] or [topic]
     moods = [
         "colourful playful introduction scene, bright cheerful lighting, cartoon style",
-        "close-up cute detail, soft focus, warm colours, children's storybook feel",
         "exciting moment of discovery, vibrant colours, joyful expression, animated style",
         "happy resolution ending scene, sunshine, smiling characters, gentle motion",
     ]
     prompts = []
-    for i in range(4):
+    for i in range(3):
         term = base[i % len(base)]
         prompts.append(
             f"{term}, {moods[i]}, 4K, safe for kids, no text, no humans, "
@@ -52,8 +51,8 @@ def generate_veo_clips(
     retries: int = 2,
 ) -> list[Path]:
     """
-    Generate 4 Veo 2 video clips (8s each) and save as .mp4 files.
-    Returns list of saved clip paths (may be fewer than 4 if some fail).
+    Generate 3 Veo 2 video clips (8s each) and save as .mp4 files.
+    Returns list of saved clip paths (may be fewer than 3 if some fail).
     """
     output_dir.mkdir(parents=True, exist_ok=True)
     client = genai.Client(api_key=GOOGLE_AI_STUDIO_API_KEY)
@@ -62,7 +61,7 @@ def generate_veo_clips(
 
     for i, prompt in enumerate(prompts):
         clip_path = output_dir / f"clip_{i:02d}.mp4"
-        log.info("Generating Veo 2 clip %d/4: %s...", i + 1, prompt[:60])
+        log.info("Generating Veo 2 clip %d/3: %s...", i + 1, prompt[:60])
 
         for attempt in range(1, retries + 1):
             try:

@@ -1,12 +1,8 @@
 name: Post YouTube Videos
 
 on:
-  # Automated schedule disabled by user request. Uncomment when ready to resume:
-  # schedule:
-  #   - cron: '0 2 * * *'    #  2 AM UTC — Slot 0 (night)
-  #   - cron: '0 8 * * *'    #  8 AM UTC — Slot 1 (morning)
-  #   - cron: '0 14 * * *'   #  2 PM UTC — Slot 2 (afternoon)
-  #   - cron: '0 20 * * *'   #  8 PM UTC — Slot 3 (evening)
+  schedule:
+    - cron: '0 12 */2 * *'    # 12 PM UTC — Every 2 days
   workflow_dispatch:        # Manual trigger from GitHub UI
     inputs:
       slot:
@@ -16,7 +12,7 @@ on:
       content_type:
         description: 'Pipeline mode: story, kids, or animated_kids'
         required: false
-        default: 'story'
+        default: 'kids'
 
 jobs:
   post-video:
@@ -35,7 +31,7 @@ jobs:
       POSTING_TIMES: "02:00,08:00,14:00,20:00"
       MADE_FOR_KIDS: "false"
       GEMINI_TTS_VOICE: "Charon"
-      CONTENT_TYPE: ${{ github.event.inputs.content_type || vars.CONTENT_TYPE || 'story' }}
+      CONTENT_TYPE: ${{ github.event.inputs.content_type || vars.CONTENT_TYPE || 'kids' }}
 
     steps:
       - name: Checkout code

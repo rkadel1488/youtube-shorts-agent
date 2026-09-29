@@ -158,16 +158,18 @@ class LyricsGenerator {
    */
   async _generateWithGemini(topic, premise = '') {
     const prompt = this._buildSongPrompt(topic, premise);
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${this.geminiApiKey}`;
+    const { GoogleGenAI } = require('@google/genai');
+    const ai = new GoogleGenAI({ apiKey: this.geminiApiKey });
 
-    const response = await axios.post(url, {
-      contents: [{ parts: [{ text: prompt }] }],
-      generationConfig: {
+    const response = await ai.models.generateContent({
+      model: 'gemini-2.5-flash',
+      contents: prompt,
+      config: {
         responseMimeType: 'application/json'
       }
-    }, { timeout: 20000 });
+    });
 
-    const rawText = response.data?.candidates?.[0]?.content?.parts?.[0]?.text;
+    const rawText = response.text;
     if (rawText) {
       return JSON.parse(rawText);
     }
