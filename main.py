@@ -262,27 +262,58 @@ def _run_kids_pipeline(job_id, job_dir, temp_dir, result, history, slot) -> dict
         vo_path = temp_dir / "voiceover.mp3"
 
         log.info("[2] Generating Veo 2 video clips...")
-        clip_paths = generate_veo_clips(
-            topic=script_data["topic"],
-            keywords=script_data["keywords"],
-            output_dir=clips_dir,
-        )
-        if not clip_paths:
-            raise RuntimeError("Veo 2 clip generation returned no clips")
+        fallback_images = []
+        try:
+            clip_paths = generate_veo_clips(
+                topic=script_data["topic"],
+                keywords=script_data["keywords"],
+                output_dir=clips_dir,
+            )
+        except Exception as exc:
+            log.warning("Veo 2 clip generation exception: %s", exc)
+            clip_paths = []
 
         log.info("[3] Generating voiceover...")
         generate_voiceover(script_data["script"], vo_path)
 
-        log.info("[4] Assembling kids video from Veo clips...")
         raw_path = job_dir / "final_raw.mp4"
-        create_veo_video(
-            topic=script_data["topic"],
-            clip_paths=clip_paths,
-            voiceover_path=vo_path,
-            output_path=raw_path,
-            temp_dir=temp_dir,
-            on_screen_hook=script_data.get("on_screen_hook"),
-        )
+        if clip_paths:
+            log.info("[4] Assembling kids video from %d Veo clips...", len(clip_paths))
+            create_veo_video(
+                topic=script_data["topic"],
+                clip_paths=clip_paths,
+                voiceover_path=vo_path,
+                output_path=raw_path,
+                temp_dir=temp_dir,
+                on_screen_hook=script_data.get("on_screen_hook"),
+            )
+        else:
+            log.warning("Veo 2 clips unavailable — falling back to animated cartoon images...")
+            images_dir = temp_dir / "fallback_images"
+            fallback_images = generate_images(
+                topic=script_data["topic"],
+                keywords=script_data["keywords"],
+                output_dir=images_dir,
+            )
+            if not fallback_images:
+                from agents.cartoon_image_agent import _fetch_cartoon_image
+                fallback_images = []
+                for idx, kw in enumerate((script_data.get("keywords") or [])[:3]):
+                    p = images_dir / f"scene_{idx:02d}.jpg"
+                    if _fetch_cartoon_image(f"{script_data['topic']}, {kw}, 3D cartoon style", p):
+                        fallback_images.append(p)
+
+            if not fallback_images:
+                raise RuntimeError("Failed to generate both Veo clips and fallback images")
+
+            create_ai_video(
+                topic=script_data["topic"],
+                image_paths=fallback_images,
+                voiceover_path=vo_path,
+                output_path=raw_path,
+                temp_dir=temp_dir,
+                on_screen_hook=script_data.get("on_screen_hook"),
+            )
 
         log.info("[4b] Enhancing with FFmpeg...")
         final_path = job_dir / "final.mp4"

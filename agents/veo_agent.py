@@ -65,13 +65,14 @@ def generate_veo_clips(
 
         for attempt in range(1, retries + 1):
             try:
+                config_dict = {
+                    "aspect_ratio": "16:9",
+                    "duration_seconds": CLIP_DURATION,
+                }
                 operation = client.models.generate_videos(
                     model=VEO_MODEL,
                     prompt=prompt,
-                    config=types.GenerateVideoConfig(
-                        aspect_ratio="16:9",
-                        duration_seconds=CLIP_DURATION,
-                    ),
+                    config=config_dict,
                 )
 
                 # Poll until done
@@ -89,14 +90,30 @@ def generate_veo_clips(
                     raise RuntimeError(f"Veo 2 returned no video for clip {i+1}")
 
                 # Download the first generated video
-                client.files.download(
-                    file=generated[0].video,
-                    download_to_file=str(clip_path),
-                )
+                video_obj = generated[0].video
+                if hasattr(client.files, "download"):
+                    try:
+                        client.files.download(
+                            file=video_obj,
+                            download_to_file=str(clip_path),
+                        )
+                    except Exception:
+                        pass
+                if not clip_path.exists() or clip_path.stat().st_size == 0:
+                    if hasattr(video_obj, "video_bytes") and video_obj.video_bytes:
+                        with open(clip_path, "wb") as f:
+                            f.write(video_obj.video_bytes)
+                    elif hasattr(video_obj, "uri") and video_obj.uri:
+                        import requests
+                        r = requests.get(video_obj.uri)
+                        with open(clip_path, "wb") as f:
+                            f.write(r.content)
+
                 log.info("Clip %d saved -> %s (%.1f MB)", i + 1, clip_path,
-                         clip_path.stat().st_size / 1e6)
-                paths.append(clip_path)
-                break
+                         clip_path.stat().st_size / 1e6 if clip_path.exists() else 0)
+                if clip_path.exists() and clip_path.stat().st_size > 1000:
+                    paths.append(clip_path)
+                    break
 
             except Exception as exc:
                 log.warning("Veo clip %d attempt %d failed: %s", i + 1, attempt, exc)
