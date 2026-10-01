@@ -39,7 +39,7 @@ scene-by-scene storyboards for 1-2 minute educational animated videos aimed at k
 Your image prompts must be detailed enough for an AI image generator to produce consistent,
 child-safe cartoon illustrations. Always respond with valid JSON only — no markdown fences."""
 
-STORYBOARD_TEMPLATE = """Create a storyboard for a children's animated educational video.
+STORYBOARD_TEMPLATE = """Create a cinematic storyboard for a children's animated educational feature video in 16:9 widescreen.
 
 Topic: {title}
 Learning goal: {premise}
@@ -48,14 +48,16 @@ Art style: {style}
 Main character: {character}
 
 Rules:
-- Exactly 4 scenes (one per 12-15 seconds of a ~50-second Short)
-- Each scene's narration: 1-2 short simple sentences, friendly tone, ages 3-8
+- 5 to 7 scenes structured as a complete, heartwarming mini-story
+- Each scene must have a short punchy title (2-4 words) for the on-screen scene badge
+- Each scene's narration: 1-2 friendly, engaging sentences
 - Consistent character appearance across ALL scenes (same colours, same features)
+- Camera motion per scene: pick from "dolly_in", "pan_right", "pan_left", "push_tilt", "slow_pullback", "slow_zoom"
 - Each image_prompt must:
-    • Start with the art style and character description
-    • Describe the exact action and background
-    • End with: "children's educational video, bright colours, safe for kids, no text, no humans, no violence"
-- Backgrounds should be varied (forest, classroom, ocean, sky, etc.) to keep it visually interesting
+    • Start with: "Pixar 3D animation style, 16:9 widescreen cinematic shot, "
+    • Describe the character and exact action clearly
+    • Include lighting: "warm volumetric lighting, rich textures, vibrant colors, 4k render, cinematic 35mm lens"
+    • End with: "safe for kids, no text, no captions, no watermarks"
 
 Return ONLY this JSON:
 {{
@@ -65,20 +67,21 @@ Return ONLY this JSON:
   "scenes": [
     {{
       "scene_number": 1,
+      "title": "Scene Name",
       "narration": "short friendly sentence for voiceover",
       "action": "what the character is doing",
       "background": "the setting/environment",
-      "image_prompt": "full detailed prompt for AI image generation"
+      "camera_motion": "dolly_in",
+      "image_prompt": "full detailed 16:9 prompt for AI image generation"
     }}
   ]
 }}"""
 
 ART_STYLES = [
-    "Pixar 3D animation style",
-    "colourful children's book watercolour illustration",
-    "cute cartoon flat design, bold outlines",
-    "soft pastel children's storybook illustration",
-    "vibrant 2D animation style like a Disney short",
+    "Disney Pixar 3D Animated Feature style",
+    "Pixar 3D animation style with warm volumetric lighting",
+    "colourful 3D Disney animation style",
+    "vibrant 3D cinematic CGI storybook style",
 ]
 
 CHARACTERS = [

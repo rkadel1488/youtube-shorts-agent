@@ -18,6 +18,7 @@ from googleapiclient.http import MediaFileUpload
 from config import (
     MADE_FOR_KIDS,
     YOUTUBE_CLIENT_SECRETS_FILE,
+    YOUTUBE_PRIVACY,
     YOUTUBE_SCOPES,
     YOUTUBE_TOKEN_FILE,
 )
@@ -63,9 +64,11 @@ def _build_body(
     tags: list[str],
     hashtags: list[str],
     category_id: str,
+    privacy_status: str | None = None,
 ) -> dict:
     """Build the YouTube video metadata payload."""
     full_description = f"{description}\n\n{' '.join(hashtags)}"
+    status_privacy = privacy_status or YOUTUBE_PRIVACY or "unlisted"
     return {
         "snippet": {
             "title": title[:100],
@@ -75,7 +78,7 @@ def _build_body(
             "defaultLanguage": "en",
         },
         "status": {
-            "privacyStatus": "public",
+            "privacyStatus": status_privacy,
             "selfDeclaredMadeForKids": MADE_FOR_KIDS,
         },
     }
@@ -89,6 +92,7 @@ def upload_video(
     hashtags: list[str],
     category_id: str,
     retries: int = MAX_RETRIES,
+    privacy_status: str | None = None,
 ) -> str:
     """
     Upload *video_path* to YouTube with the supplied metadata.
@@ -97,7 +101,7 @@ def upload_video(
     creds = _get_credentials()
     youtube = build("youtube", "v3", credentials=creds)
 
-    body = _build_body(title, description, tags, hashtags, category_id)
+    body = _build_body(title, description, tags, hashtags, category_id, privacy_status=privacy_status)
     media = MediaFileUpload(
         str(video_path),
         mimetype="video/mp4",

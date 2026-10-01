@@ -1,8 +1,9 @@
-name: Post YouTube Videos
+name: Post YouTube Videos (Landscape 16:9 Storyboard)
 
 on:
-  schedule:
-    - cron: '0 12 */2 * *'    # 12 PM UTC — Every 2 days
+  # Automated schedule paused by user request. Uncomment to resume automated posting:
+  # schedule:
+  #   - cron: '0 12 */2 * *'    # 12 PM UTC — Every 2 days
   workflow_dispatch:        # Manual trigger from GitHub UI
     inputs:
       slot:
@@ -10,9 +11,13 @@ on:
         required: false
         default: '1'
       content_type:
-        description: 'Pipeline mode: story, kids, or animated_kids'
+        description: 'Pipeline mode: storyboard, story, kids, or animated_kids'
         required: false
-        default: 'kids'
+        default: 'storyboard'
+      privacy:
+        description: 'YouTube upload privacy status (unlisted, private, public)'
+        required: false
+        default: 'unlisted'
 
 jobs:
   post-video:
@@ -30,7 +35,8 @@ jobs:
       POSTING_TIMES: "02:00,08:00,14:00,20:00"
       MADE_FOR_KIDS: "false"
       GEMINI_TTS_VOICE: "Charon"
-      CONTENT_TYPE: ${{ github.event.inputs.content_type || vars.CONTENT_TYPE || 'kids' }}
+      CONTENT_TYPE: ${{ github.event.inputs.content_type || vars.CONTENT_TYPE || 'storyboard' }}
+      YOUTUBE_PRIVACY: ${{ github.event.inputs.privacy || vars.YOUTUBE_PRIVACY || 'unlisted' }}
 
     steps:
       - name: Checkout code

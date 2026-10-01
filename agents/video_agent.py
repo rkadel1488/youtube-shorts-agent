@@ -188,35 +188,71 @@ def create_veo_video(
     return output_path
 
 
-# ── animated kids video assembler ────────────────────────────────────────────
+# ── animated kids & storyboard video assembler ────────────────────────────────
 
 def _kids_caption_overlay(text: str, start: float, duration: float,
-                           color: tuple = (255, 220, 0)) -> ImageClip:
-    """Large colourful caption bar at the bottom for kids — word-wrapped, bold."""
-    font_size = 72
+                           color: tuple = (255, 220, 0), scene_title: str | None = None) -> ImageClip:
+    """Cinematic subtitle banner with optional scene badge in Pixar storyboard style."""
+    is_landscape = VIDEO_WIDTH >= 1280
+    font_size = 36 if is_landscape else 72
     font = _load_font(font_size)
-    wrapped = textwrap.fill(text, width=28)
+    wrap_width = 75 if is_landscape else 28
+    wrapped = textwrap.fill(text, width=wrap_width)
     lines = wrapped.split("\n")
 
     dummy = Image.new("RGBA", (1, 1))
     draw = ImageDraw.Draw(dummy)
     bboxes = [draw.textbbox((0, 0), l, font=font) for l in lines]
     line_h = max(b[3] - b[1] for b in bboxes) if bboxes else font_size
-    pad = 28
+    pad = 20 if is_landscape else 28
+
+    if is_landscape:
+        box_h = line_h * len(lines) + pad * 2
+        box_w = min(int(VIDEO_WIDTH * 0.88), 1680)
+        img = Image.new("RGBA", (VIDEO_WIDTH, VIDEO_HEIGHT), (0, 0, 0, 0))
+        draw = ImageDraw.Draw(img)
+
+        # 1. Top left scene tag if provided
+        if scene_title:
+            badge_font = _load_font(20)
+            badge_text = f"🎬 SCENE: {scene_title.upper()}"
+            tb = draw.textbbox((0, 0), badge_text, font=badge_font)
+            bw = tb[2] - tb[0] + 50
+            draw.rounded_rectangle([70, 50, 70 + bw, 104], radius=14,
+                                   fill=(13, 17, 23, 220), outline=(255, 183, 77, 255), width=2)
+            draw.text((94, 68), badge_text, font=badge_font, fill=(255, 248, 225, 255))
+
+        # 2. Bottom subtitle pill banner with gold border and dark glass fill
+        bx0 = (VIDEO_WIDTH - box_w) // 2
+        by0 = VIDEO_HEIGHT - box_h - 45
+        draw.rounded_rectangle([bx0, by0, bx0 + box_w, by0 + box_h], radius=24,
+                               fill=(13, 17, 23, 225), outline=(255, 224, 130, 255), width=2)
+        y_cur = by0 + pad
+        for line, bbox in zip(lines, bboxes):
+            lw = bbox[2] - bbox[0]
+            lx = (VIDEO_WIDTH - lw) // 2
+            draw.text((lx + 2, y_cur + 2), line, font=font, fill=(0, 0, 0, 240))
+            draw.text((lx, y_cur), line, font=font, fill=(255, 255, 255, 255))
+            y_cur += line_h + 4
+
+        return (
+            ImageClip(np.array(img))
+            .with_start(start)
+            .with_duration(duration)
+            .with_position((0, 0))
+        )
+
+    # Portrait mode fallback
     img_h = line_h * len(lines) + pad * (len(lines) + 1)
     img_w = VIDEO_WIDTH
-
     img = Image.new("RGBA", (img_w, img_h), (0, 0, 0, 0))
     draw = ImageDraw.Draw(img)
-    # Rounded dark background pill
     draw.rectangle([0, 0, img_w, img_h], fill=(20, 20, 20, 210))
     y_cur = pad
     for line, bbox in zip(lines, bboxes):
         lw = bbox[2] - bbox[0]
         lx = (img_w - lw) // 2
-        # Shadow
         draw.text((lx + 3, y_cur + 3), line, font=font, fill=(0, 0, 0, 200))
-        # Main colourful text
         draw.text((lx, y_cur), line, font=font, fill=color + (255,))
         y_cur += line_h + pad
 
@@ -295,11 +331,12 @@ def create_animated_kids_video(
         # Caption from storyboard narration
         if i < len(scenes):
             narration = scenes[i].get("narration", "")
+            scene_title = scenes[i].get("title", f"Scene {i+1}")
             if narration:
                 color = caption_colors[i % len(caption_colors)]
                 start_t = i * seg_duration
                 caption_layers.append(
-                    _kids_caption_overlay(narration, start_t, seg_duration, color)
+                    _kids_caption_overlay(narration, start_t, seg_duration, color, scene_title=scene_title)
                 )
 
     video = concatenate_videoclips(clips, method="compose")

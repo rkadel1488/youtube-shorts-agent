@@ -408,7 +408,7 @@ def run_pipeline(slot: int = 0) -> dict:
     history = _load_history()
 
     try:
-        if CONTENT_TYPE == "animated_kids":
+        if CONTENT_TYPE in ("storyboard", "animated_kids"):
             return _run_animated_kids_pipeline(job_id, job_dir, temp_dir, result, history, slot)
         if CONTENT_TYPE == "kids":
             return _run_kids_pipeline(job_id, job_dir, temp_dir, result, history, slot)
